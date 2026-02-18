@@ -1,42 +1,82 @@
-#root {
-  max-width: 1280px;
+/* ═══════════════════════════════════════════════
+   Sweet&Treat App Styles - Dessert Recipe Theme
+   ═══════════════════════════════════════════════ */
+
+/* ── APP CONTAINER ── */
+.app-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  /*background: var(--soft-pink);*/
+  background: var(--white);
+}
+
+.main-content {
+  flex: 1;
+  padding-top: var(--nav-height);
+  /*background: radial-gradient(ellipse at 20% 60%, rgba(232, 196, 154, 0.18) 0%, transparent 55%),
+    radial-gradient(ellipse at 80% 30%, rgba(232, 121, 154, 0.15) 0%, transparent 55%), 
+    var(--soft-pink);*/
+  background: radial-gradient(ellipse at 20% 60%, rgba(232, 196, 154, 0.18) 0%, transparent 55%),
+    radial-gradient(ellipse at 80% 30%, rgba(232, 121, 154, 0.15) 0%, transparent 55%), 
+    var(--white);
+  min-height: calc(100vh - var(--nav-height));
+}
+
+/* ── ANIMATIONS ── */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.fade-in {
+  animation: fadeIn 0.6s ease both;
+}
+
+.slide-in {
+  animation: slideIn 0.6s ease both;
+}
+
+/* ── UTILITY CLASSES ── */
+.container {
+  max-width: 1200px;
   margin: 0 auto;
-  padding: 2rem;
+  padding: 0 2rem;
+  width: 100%;
+}
+
+.text-center {
   text-align: center;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
-}
-
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
+/* ── RESPONSIVE ── */
+@media (max-width: 768px) {
+  :root {
+    --nav-height: 64px;
   }
-  to {
-    transform: rotate(360deg);
+  
+  .container {
+    padding: 0 1rem;
   }
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
+  
+  .main-content {
+    min-height: calc(100vh - 64px);
   }
-}
-
-.card {
-  padding: 2em;
-}
-
-.read-the-docs {
-  color: #888;
 }
