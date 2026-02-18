@@ -1,0 +1,30 @@
+/* ═══════════════════════════════════════════════
+   MUI Theme Enhancements - Sweet&Treat Design
+   ═══════════════════════════════════════════════ */
+
+/* Force consistent background */
+body {
+  /*background: var(--soft-pink) !important;*/
+  background: var(--white) !important;
+}
+
+/* Ensure MUI doesn't override our layout */
+.MuiContainer-root {
+  padding-left: 16px !important;
+  padding-right: 16px !important;
+}
+
+/* Make sure links work with our design */
+.MuiLink-root {
+  color: var(--deep-pink) !important;
+}
+
+/* Consistent rounded corners */
+.MuiPaper-rounded {
+  border-radius: 16px !important;
+}
+
+/* Remove default MUI padding that conflicts */
+.MuiBox-root {
+  /* Let our custom styles handle padding */
+}
