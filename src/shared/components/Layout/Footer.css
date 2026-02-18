@@ -1,0 +1,136 @@
+/* ═══════════════════════════════════════════════
+   Footer - Sweet&Treat Theme
+   ═══════════════════════════════════════════════ */
+
+.main-footer {
+  background: linear-gradient(135deg, #4a2c3a 0%, #6b3d52 100%);
+  color: var(--cream);
+  padding: 60px 0 20px;
+  margin-top: auto;
+}
+
+.footer-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+/* ── Footer Top ── */
+.footer-top {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 40px;
+  padding-bottom: 40px;
+  border-bottom: 1px solid rgba(255, 248, 242, 0.15);
+}
+
+/* ── Brand Section ── */
+.footer-brand {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.footer-logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.footer-logo .logo-text {
+  font-family: 'Dancing Script', cursive;
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--pink);
+}
+
+.footer-logo .logo-emoji {
+  font-size: 1.8rem;
+}
+
+.footer-tagline {
+  font-size: 0.95rem;
+  color: var(--light);
+  line-height: 1.6;
+  max-width: 280px;
+}
+
+/* ── Footer Sections ── */
+.footer-section h4 {
+  font-family: 'Nunito', sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--gold-light);
+  margin-bottom: 16px;
+  letter-spacing: 0.05em;
+}
+
+.footer-section ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.footer-section ul li a {
+  color: var(--light);
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: color 0.2s, padding-left 0.2s;
+  display: inline-block;
+}
+
+.footer-section ul li a:hover {
+  color: var(--pink);
+  padding-left: 6px;
+}
+
+/* ── Social Links ── */
+.social-links {
+  display: flex;
+  gap: 12px;
+}
+
+.social-icon {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 50%;
+  font-size: 1.2rem;
+  text-decoration: none;
+  transition: all 0.3s;
+}
+
+.social-icon:hover {
+  background: var(--pink);
+  transform: translateY(-4px);
+  box-shadow: 0 4px 12px rgba(232, 121, 154, 0.4);
+}
+
+/* ── Footer Bottom ── */
+.footer-bottom {
+  padding-top: 24px;
+  text-align: center;
+}
+
+.copyright {
+  font-size: 0.85rem;
+  color: var(--light);
+}
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  .footer-top {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+
+  .footer-tagline {
+    max-width: 100%;
+  }
+}
