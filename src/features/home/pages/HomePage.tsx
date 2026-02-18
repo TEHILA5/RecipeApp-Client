@@ -10,6 +10,7 @@ import logo from '../../../assets/images/logoo.png';
 import sweetyTip from '../../../assets/images/sweety-tip.png';
 import starsImg from '../../../assets/images/stars.png';
 import './HomePage.css';
+import FeaturedRecipes from '../components/FeaturedRecipes';
 
 // ── כרטיס מתכון ──────────────────────────────
 function RecipeCard({ recipe, badge }: { recipe: Recipe; badge?: string }) {
@@ -153,12 +154,12 @@ export default function HomePage() {
   const { isAuthenticated } = useAppSelector((state) => state.auth);
   const { recipes, loading, error } = useAppSelector((state) => state.recipes);
 
-  // שליפת מתכונים בטעינת הדף
+  // ✅ שליפת מתכונים בטעינת הדף - גם למי שלא מחובר!
   useEffect(() => {
-    if (isAuthenticated && recipes.length === 0) {
+    if (recipes.length === 0) {
       dispatch(fetchAllRecipes());
     }
-  }, [isAuthenticated, dispatch, recipes.length]);
+  }, [dispatch, recipes.length]);
 
   // 3 המתכונים הראשונים לגריד
   const popularRecipes = recipes.slice(0, 3);
@@ -224,9 +225,7 @@ export default function HomePage() {
         {/* שגיאה */}
         {error && (
           <div style={{ textAlign: 'center', color: 'var(--deep-pink)', marginBottom: 24 }}>
-            {isAuthenticated
-              ? `Failed to load recipes: ${error}`
-              : '👆 Sign in to see recipes!'}
+            Failed to load recipes: {error}
           </div>
         )}
 
@@ -247,28 +246,12 @@ export default function HomePage() {
                 badge={i === 0 ? 'Popular' : i === 1 ? 'Trending' : 'New'}
               />
             ))
-          ) : !isAuthenticated ? (
-            // לא מחובר - placeholder עם הנחיה
-            ['🧁', '🍰', '🍪'].map((emoji, i) => (
-              <div key={i} className="recipe-card" style={{ opacity: 0.6 }}>
-                <div className="card-img-wrap">
-                  <div className="card-img"
-                       style={{ background: 'linear-gradient(135deg, #f9e4ec, #e8c49a)',
-                                display: 'flex', alignItems: 'center',
-                                justifyContent: 'center', fontSize: '72px' }}>
-                    {emoji}
-                  </div>
-                  <div className="card-badge">Sign in to view</div>
-                </div>
-                <div className="card-body">
-                  <h3 className="card-title" style={{ color: 'var(--light)' }}>
-                    Sign in to see recipes ✨
-                  </h3>
-                  <p className="card-desc">Create an account to access all our dessert recipes!</p>
-                </div>
-              </div>
-            ))
-          ) : null}
+          ) : (
+            // אין מתכונים במערכת
+            <div style={{ gridColumn: '1/-1', textAlign: 'center', padding: '40px', color: 'var(--mid)' }}>
+              No recipes available yet. Check back soon! 🍰
+            </div>
+          )}
         </div>
 
         {recipes.length > 3 && (
@@ -277,6 +260,9 @@ export default function HomePage() {
           </div>
         )}
       </section>
+
+      {/* ── Recommended (רק למשתמשים מחוברים) ── */}
+      {isAuthenticated && <FeaturedRecipes />}
 
       {/* ── Categories ── */}
       <section className="section section-bg">
@@ -334,11 +320,13 @@ export default function HomePage() {
             </div>
             <div className="featured-body">
               <div className="featured-badge">⭐ Featured</div>
-              <h3 className="featured-title">Sign in to discover recipes</h3>
+              <h3 className="featured-title">No recipes yet</h3>
               <p className="featured-desc">
-                Create a free account and explore hundreds of amazing dessert recipes!
+                Be the first to discover amazing dessert recipes when they're added!
               </p>
-              <Link to="/register" className="btn-pink">Get Started Free →</Link>
+              {!isAuthenticated && (
+                <Link to="/register" className="btn-pink">Get Started Free →</Link>
+              )}
             </div>
           </div>
         )}
