@@ -1,34 +1,43 @@
 // ===============================================
-// Auth Types - TypeScript Interfaces
+// Auth Types - מותאם לשרת
 // ===============================================
-
+ 
 export interface User {
-  id?: number;
   name: string;
   email: string;
   phone: string;
-  isAdmin?: boolean;
   createdAt?: string;
-  updatedAt?: string;
+  isAdmin?: boolean;  
 }
-
+ 
+export interface UserAdmin extends User {
+  id: number;
+}
+ 
 export interface LoginCredentials {
   email: string;
   password: string;
 }
-
+ 
 export interface RegisterData {
   name: string;
-  email: string;
   phone: string;
+  email: string;
   password: string;
 }
-
+ 
+export interface UpdateUserData {
+  name?: string;
+  phone?: string;
+  email?: string;
+  password?: string;
+}
+ 
 export interface AuthResponse {
   user: User;
   token: string;
 }
-
+ 
 export interface AuthState {
   user: User | null;
   token: string | null;
