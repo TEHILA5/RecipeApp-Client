@@ -22,6 +22,8 @@ import ProfilePage from '../features/user/pages/ProfilePage.tsx';
 import MyRecipesPage from '../features/user/pages/MyRecipesPage.tsx';
 import AdminDashboard from '../features/admin/pages/AdminDashboard.tsx';
 import SearchPage from '../features/search/pages/SearchPage.tsx';
+import SweetieChat from '../features/chat/SweetieChat.tsx';
+import IngredientManagePage from '../features/ingredient/pages/IngredientManagePage.tsx';
 
 function AppRoutes() {
   return (
@@ -34,60 +36,33 @@ function AppRoutes() {
           <Route path="/" element={<HomePage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
-          
-          {/* מתכונים - דורשים התחברות */}
-          <Route path="/recipes" element={
-            <ProtectedRoute>
-              <RecipeListPage />
-            </ProtectedRoute>
-          } />
-          
-          <Route path="/recipes/:id" element={
-            <ProtectedRoute>
-              <RecipeDetailPage />
-            </ProtectedRoute>
-          } />
-          
-          <Route path="/search" element={
-            <ProtectedRoute>
-              <SearchPage />
-            </ProtectedRoute>
-          } />
-          
-          {/* פרופיל משתמש - דורש התחברות */}
-          <Route path="/profile" element={
-            <ProtectedRoute>
-              <ProfilePage />
-            </ProtectedRoute>
-          } />
-          
-          <Route path="/my-recipes" element={
-            <ProtectedRoute>
-              <MyRecipesPage />
-            </ProtectedRoute>
-          } />
-          
+
+          {/* ✅ specific routes BEFORE dynamic :id routes */}
+
           {/* ניהול מתכונים - רק למנהל */}
           <Route path="/recipes/create" element={
-            <AdminRoute>
-              <RecipeCreatePage />
-            </AdminRoute>
+            <AdminRoute><RecipeCreatePage /></AdminRoute>
           } />
-          
-          <Route path="/recipes/edit/:id" element={
-            <AdminRoute>
-              <RecipeEditPage />
-            </AdminRoute>
+          <Route path="/recipes/:id/edit" element={
+            <AdminRoute><RecipeEditPage /></AdminRoute>
           } />
-          
+          <Route path="/admin/ingredients" element={
+            <AdminRoute><IngredientManagePage /></AdminRoute>
+            } />
+          {/* ✅ מתכונים - פתוח לכולם, גם לא מחוברים */}
+          <Route path="/recipes" element={<RecipeListPage />} />
+          <Route path="/recipes/:id" element={<RecipeDetailPage />} />
+
+          {/* שאר הדפים - דורשים התחברות */}
+          <Route path="/search" element={<ProtectedRoute><SearchPage /></ProtectedRoute>} />
+          <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
+          <Route path="/my-recipes" element={<ProtectedRoute><MyRecipesPage /></ProtectedRoute>} />
+          <Route path="/chat" element={<ProtectedRoute><SweetieChat /></ProtectedRoute>} />
+
           {/* לוח בקרה למנהל */}
-          <Route path="/admin" element={
-            <AdminRoute>
-              <AdminDashboard />
-            </AdminRoute>
-          } />
+          <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
           
-          {/* 404 - דף לא נמצא */}
+          {/* 404 */}
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </main>

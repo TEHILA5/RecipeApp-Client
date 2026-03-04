@@ -1,0 +1,560 @@
+/* ═══════════════════════════════════════════════
+   Recipe List Page - Sweet&Treat Theme
+   ═══════════════════════════════════════════════ */
+
+.recipe-list-page {
+  min-height: 100vh;
+  padding-top: var(--nav-height);
+  background: var(--soft-pink);
+}
+
+/* ── Page Header ── */
+.page-header {
+  background: linear-gradient(135deg, 
+    rgba(232, 121, 154, 0.08) 0%, 
+    rgba(232, 196, 154, 0.08) 100%);
+  padding: 60px 64px 40px;
+  border-bottom: 2px solid rgba(232, 121, 154, 0.1);
+}
+
+.header-content {
+  max-width: 1400px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 32px;
+}
+
+.header-text {
+  flex: 1;
+}
+
+.page-title {
+  font-family: 'Dancing Script', cursive;
+  font-size: clamp(2.5rem, 4vw, 3.5rem);
+  color: var(--text);
+  margin-bottom: 12px;
+  line-height: 1.1;
+}
+
+.page-title span {
+  color: var(--deep-pink);
+}
+
+.page-subtitle {
+  font-size: 1rem;
+  color: var(--mid);
+  font-weight: 500;
+}
+
+.btn-add-recipe {
+  background: linear-gradient(135deg, var(--pink), var(--deep-pink));
+  color: white;
+  padding: 14px 32px;
+  border-radius: 999px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 700;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 6px 20px rgba(212, 84, 122, 0.35);
+  transition: all 0.2s;
+}
+
+.btn-add-recipe span {
+  font-size: 1.3rem;
+  line-height: 1;
+}
+
+.btn-add-recipe:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 28px rgba(212, 84, 122, 0.4);
+}
+
+/* ── Filters Section ── */
+.filters-section {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 32px 64px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* Search Bar */
+.search-bar-wrapper {
+  position: relative;
+  max-width: 600px;
+}
+
+.search-input {
+  width: 100%;
+  padding: 16px 52px 16px 20px;
+  border: 2px solid var(--blush);
+  border-radius: 999px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.95rem;
+  background: white;
+  transition: all 0.2s;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: var(--pink);
+  box-shadow: 0 0 0 4px rgba(232, 121, 154, 0.1);
+}
+
+.search-icon {
+  position: absolute;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 1.2rem;
+  pointer-events: none;
+}
+
+/* Filters Component */
+.recipe-filters {
+  background: white;
+  border-radius: 20px;
+  padding: 24px;
+  box-shadow: 0 4px 20px rgba(212, 84, 122, 0.08);
+}
+
+.filters-toggle {
+  display: none; /* Hidden on desktop */
+}
+
+.filters-content {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.filter-title {
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--mid);
+}
+
+.filter-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.filter-chip {
+  padding: 8px 18px;
+  border-radius: 999px;
+  border: 2px solid var(--blush);
+  background: white;
+  color: var(--text);
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.filter-chip:hover {
+  border-color: var(--pink);
+  background: var(--blush);
+}
+
+.filter-chip.active {
+  background: linear-gradient(135deg, var(--pink), var(--deep-pink));
+  border-color: var(--deep-pink);
+  color: white;
+  box-shadow: 0 4px 12px rgba(212, 84, 122, 0.3);
+}
+
+.clear-filters-btn {
+  align-self: flex-start;
+  padding: 10px 24px;
+  border-radius: 999px;
+  border: 2px solid var(--pink);
+  background: transparent;
+  color: var(--deep-pink);
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.clear-filters-btn:hover {
+  background: var(--blush);
+  transform: translateY(-2px);
+}
+
+/* Sort Section */
+.sort-section {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.sort-label {
+  font-weight: 600;
+  color: var(--mid);
+  font-size: 0.9rem;
+}
+
+.sort-select {
+  padding: 10px 16px;
+  border: 2px solid var(--blush);
+  border-radius: 12px;
+  background: white;
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.sort-select:focus {
+  outline: none;
+  border-color: var(--pink);
+}
+
+/* Active Filters Pills */
+.active-filters {
+  max-width: 1400px;
+  margin: -16px auto 0;
+  padding: 0 64px 24px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.filter-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--mid);
+}
+
+.filter-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  background: var(--blush);
+  color: var(--deep-pink);
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.filter-pill button {
+  background: transparent;
+  border: none;
+  color: var(--deep-pink);
+  font-size: 1.2rem;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0;
+  margin: 0;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+
+.filter-pill button:hover {
+  opacity: 1;
+}
+
+.clear-all-btn {
+  padding: 6px 14px;
+  background: transparent;
+  border: 1px solid var(--pink);
+  color: var(--deep-pink);
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.clear-all-btn:hover {
+  background: var(--pink);
+  color: white;
+}
+
+/* ── Recipes Grid ── */
+.recipes-grid {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 64px 80px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 28px;
+}
+
+/* Recipe Card - inherits from HomePage.css but with additions */
+.recipe-card {
+  background: white;
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(212, 84, 122, 0.08);
+  text-decoration: none;
+  transition: all 0.3s;
+  display: flex;
+  flex-direction: column;
+}
+
+.recipe-card:hover {
+  transform: translateY(-8px) scale(1.01);
+  box-shadow: 0 16px 40px rgba(212, 84, 122, 0.18);
+}
+
+.card-img-wrap {
+  position: relative;
+  overflow: hidden;
+}
+
+.card-img {
+  width: 100%;
+  aspect-ratio: 4/3;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.5s ease;
+}
+
+.recipe-card:hover .card-img {
+  transform: scale(1.08);
+}
+
+.card-badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background: linear-gradient(135deg, var(--pink), var(--deep-pink));
+  color: white;
+  padding: 5px 14px;
+  border-radius: 999px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  z-index: 10;
+}
+
+.card-body {
+  padding: 22px 24px 26px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.card-rating {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.rating-num {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--gold);
+}
+
+.rating-count {
+  font-size: 0.75rem;
+  color: var(--light);
+}
+
+.card-title {
+  font-family: 'Dancing Script', cursive;
+  font-size: 1.45rem;
+  color: var(--text);
+  margin-bottom: 10px;
+  line-height: 1.2;
+  transition: color 0.2s;
+}
+
+.recipe-card:hover .card-title {
+  color: var(--deep-pink);
+}
+
+.card-desc {
+  font-size: 0.85rem;
+  line-height: 1.6;
+  color: var(--mid);
+  margin-bottom: auto;
+}
+
+.card-meta {
+  display: flex;
+  gap: 16px;
+  padding-top: 16px;
+  border-top: 1px dashed rgba(232, 121, 154, 0.25);
+  margin-top: 16px;
+}
+
+.meta-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--mid);
+}
+
+.meta-icon {
+  font-size: 0.9rem;
+}
+
+/* ── Loading & Error States ── */
+.loading-state {
+  text-align: center;
+  padding: 80px 20px;
+  color: var(--mid);
+}
+
+.spinner-large {
+  width: 50px;
+  height: 50px;
+  border: 4px solid var(--blush);
+  border-top-color: var(--pink);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin: 0 auto 20px;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.error-message {
+  max-width: 600px;
+  margin: 40px auto;
+  padding: 20px;
+  background: #fee2e2;
+  color: #991b1b;
+  border-radius: 12px;
+  border: 1px solid #fecaca;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.no-results {
+  text-align: center;
+  padding: 80px 20px;
+  color: var(--mid);
+}
+
+.no-results-icon {
+  font-size: 80px;
+  margin-bottom: 20px;
+}
+
+.no-results h3 {
+  font-family: 'Dancing Script', cursive;
+  font-size: 2rem;
+  color: var(--text);
+  margin-bottom: 12px;
+}
+
+.no-results p {
+  font-size: 1rem;
+  margin-bottom: 24px;
+}
+
+/* ── Responsive ── */
+@media (max-width: 1024px) {
+  .recipes-grid {
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 20px;
+    padding: 0 40px 60px;
+  }
+}
+
+@media (max-width: 768px) {
+  .page-header {
+    padding: 40px 32px 32px;
+  }
+
+  .header-content {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .filters-section {
+    padding: 24px 32px;
+  }
+
+  .active-filters {
+    padding: 0 32px 20px;
+  }
+
+  .recipes-grid {
+    grid-template-columns: 1fr;
+    padding: 0 32px 60px;
+  }
+
+  /* Mobile filters toggle */
+  .filters-toggle {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    padding: 14px 20px;
+    background: white;
+    border: 2px solid var(--blush);
+    border-radius: 12px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--text);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .filter-count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    background: var(--pink);
+    color: white;
+    border-radius: 50%;
+    font-size: 0.7rem;
+    font-weight: 700;
+  }
+
+  .toggle-icon {
+    margin-left: auto;
+    transition: transform 0.2s;
+  }
+
+  .toggle-icon.expanded {
+    transform: rotate(180deg);
+  }
+
+  .filters-content {
+    display: none;
+    margin-top: 20px;
+  }
+
+  .filters-content.expanded {
+    display: flex;
+  }
+}

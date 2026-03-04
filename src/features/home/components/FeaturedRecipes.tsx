@@ -6,9 +6,8 @@ import { Link } from 'react-router-dom';
 import { useAppSelector, useAppDispatch } from '../../../redux/hooks';
 import { fetchRecommendedRecipes } from '../../recipe/redux/recipeSlice';
 import { type Recipe, LEVEL_LABELS, CATEGORY_EMOJIS } from '../../recipe/types/recipe.types';
-import starsImg from '../../../assets/images/stars.png';
+import StarRating from '../../../shared/components/StarRating';
 
-// ── כרטיס מתכון מומלץ ────────────────────────
 function FeaturedRecipeCard({ recipe }: { recipe: Recipe }) {
   const emoji = CATEGORY_EMOJIS[recipe.category] ?? '🍰';
   const levelLabel = LEVEL_LABELS[recipe.level as 1 | 2 | 3] ?? 'Easy';
@@ -34,9 +33,7 @@ function FeaturedRecipeCard({ recipe }: { recipe: Recipe }) {
           style={{
             background: 'linear-gradient(135deg, #f9e4ec, #e8c49a)',
             display: recipe.arrImage ? 'none' : 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontSize: '72px',
+            alignItems: 'center', justifyContent: 'center', fontSize: '72px',
           }}
         >
           {emoji}
@@ -46,44 +43,27 @@ function FeaturedRecipeCard({ recipe }: { recipe: Recipe }) {
 
       <div className="card-body">
         <div className="card-rating">
-          <img src={starsImg} alt="stars" style={{ height: '18px', objectFit: 'contain' }} />
-          <span className="rating-num">
-            {recipe.averageRating ? recipe.averageRating.toFixed(1) : '—'}
-          </span>
-          {recipe.commentCount ? (
-            <span style={{ fontSize: '0.72rem', color: 'var(--light)' }}>
-              ({recipe.commentCount})
-            </span>
-          ) : null}
+          <StarRating rating={recipe.averageRating} showCount={recipe.commentCount} />
         </div>
         <h3 className="card-title">{recipe.name}</h3>
         <p className="card-desc">{recipe.description}</p>
         <div className="card-meta">
-          <span className="meta-item">
-            <span className="meta-icon">⏱️</span> {recipe.totalTime} min
-          </span>
-          <span className="meta-item">
-            <span className="meta-icon">👨‍🍳</span> {levelLabel}
-          </span>
-          <span className="meta-item">
-            <span className="meta-icon">🍽️</span> {recipe.servings}
-          </span>
+          <span className="meta-item"><span className="meta-icon">⏱️</span> {recipe.totalTime} min</span>
+          <span className="meta-item"><span className="meta-icon">👨‍🍳</span> {levelLabel}</span>
+          <span className="meta-item"><span className="meta-icon">🍽️</span> {recipe.servings}</span>
         </div>
       </div>
     </Link>
   );
 }
 
-// ── Skeleton ──────────────────────────────────
 function Skeleton() {
   return (
     <div className="recipe-card" style={{ pointerEvents: 'none' }}>
       <div style={{
-        width: '100%',
-        aspectRatio: '4/3',
+        width: '100%', aspectRatio: '4/3',
         background: 'linear-gradient(90deg, #f9e4ec 25%, #fdf0f5 50%, #f9e4ec 75%)',
-        backgroundSize: '200% 100%',
-        animation: 'shimmer 1.5s infinite',
+        backgroundSize: '200% 100%', animation: 'shimmer 1.5s infinite',
         borderRadius: '24px 24px 0 0',
       }} />
       <div className="card-body" style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
@@ -96,45 +76,35 @@ function Skeleton() {
   );
 }
 
-// ── הקומפוננטה הראשית ─────────────────────────
 export default function FeaturedRecipes() {
   const dispatch = useAppDispatch();
   const { recommendedRecipes, loading, error } = useAppSelector((state) => state.recipes);
   const { isAuthenticated } = useAppSelector((state) => state.auth);
 
   useEffect(() => {
-    if (isAuthenticated) {
-      dispatch(fetchRecommendedRecipes());
-    }
+    if (isAuthenticated) dispatch(fetchRecommendedRecipes());
   }, [isAuthenticated, dispatch]);
 
-  // אין מה להציג למשתמשים לא מחוברים
   if (!isAuthenticated) return null;
 
   return (
     <section className="section">
       <div className="section-header">
         <div className="section-eyebrow">✦ Just For You</div>
-        <h2 className="section-title">
-          Recommended <span>Recipes</span>
-        </h2>
+        <h2 className="section-title">Recommended <span>Recipes</span></h2>
         <div className="section-divider"></div>
       </div>
 
-      {/* שגיאה */}
       {error && !loading && (
         <p style={{ textAlign: 'center', color: 'var(--deep-pink)', marginBottom: 24 }}>
-          Could not load recommendations. <Link to="/recipes" className="btn-outline" style={{ display: 'inline' }}>Browse all recipes →</Link>
+          Could not load recommendations.{' '}
+          <Link to="/recipes" className="btn-outline" style={{ display: 'inline' }}>Browse all recipes →</Link>
         </p>
       )}
 
       <div className="recipes-grid">
         {loading ? (
-          <>
-            <Skeleton />
-            <Skeleton />
-            <Skeleton />
-          </>
+          <><Skeleton /><Skeleton /><Skeleton /></>
         ) : recommendedRecipes.length > 0 ? (
           recommendedRecipes.slice(0, 3).map((recipe) => (
             <FeaturedRecipeCard key={recipe.id} recipe={recipe} />
@@ -148,9 +118,7 @@ export default function FeaturedRecipes() {
 
       {recommendedRecipes.length > 3 && (
         <div style={{ textAlign: 'center', marginTop: 40 }}>
-          <Link to="/recipes" className="btn-outline">
-            See All Recommendations →
-          </Link>
+          <Link to="/recipes" className="btn-outline">See All Recommendations →</Link>
         </div>
       )}
     </section>

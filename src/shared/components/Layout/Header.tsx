@@ -11,7 +11,7 @@ import './Header.css';
 export default function Header() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  const { isAuthenticated, user } = useAppSelector((state) => state.auth);
+  const { isAuthenticated, user, isAdmin } = useAppSelector((state) => state.auth);
 
   const handleLogout = () => {
     dispatch(logout());
@@ -27,21 +27,28 @@ export default function Header() {
 
       {/* Navigation Links */}
       <ul className="nav-links">
-        <li>
-          <Link to="/">Home</Link>
-        </li>
-        <li>
-          <Link to="/recipes">Recipes</Link>
-        </li>
+        <li><Link to="/">Home</Link></li>
+        <li><Link to="/recipes">Recipes</Link></li>
         {isAuthenticated && (
           <>
-            <li>
-              <Link to="/search">Search</Link>
-            </li>
-            <li>
-              <Link to="/my-recipes">My Recipes</Link>
-            </li>
+            <li><Link to="/search">Search</Link></li>
+            <li><Link to="/my-recipes">My Recipes</Link></li>
+            <li><Link to="/chat">🍰 Sweetie</Link></li>
           </>
+        )}
+        {isAdmin && (
+          <li>
+            <Link to="/admin" style={{
+              background: 'linear-gradient(135deg, #e8799a, #d4547a)',
+              color: 'white',
+              padding: '6px 16px',
+              borderRadius: '999px',
+              fontWeight: 700,
+              fontSize: '0.85rem',
+            }}>
+              🛠️ Admin
+            </Link>
+          </li>
         )}
       </ul>
 
@@ -59,12 +66,8 @@ export default function Header() {
           </>
         ) : (
           <>
-            <Link to="/login" className="btn-login">
-              Login
-            </Link>
-            <Link to="/register" className="btn-signup">
-              Sign Up
-            </Link>
+            <Link to="/login" className="btn-login">Login</Link>
+            <Link to="/register" className="btn-signup">Sign Up</Link>
           </>
         )}
       </div>
