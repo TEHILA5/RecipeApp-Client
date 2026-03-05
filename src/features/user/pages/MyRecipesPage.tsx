@@ -4,6 +4,7 @@
 import { useState } from 'react';
 import { useAppSelector } from '../../../redux/hooks';
 import MyFavorites from '../components/MyFavorites';
+import myBook from '../../../assets/images/my-book.jpg';
 
 type Tab = 'saved';
 
@@ -26,19 +27,28 @@ export default function MyRecipesPage() {
         borderBottom: '2px solid rgba(232,121,154,0.1)',
       }}>
         <div style={{ maxWidth: '1100px', margin: '0 auto' }}>
-          <div style={{ fontSize: '0.8rem', fontWeight: 700, color: '#d4547a', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '8px' }}>
-            ✦ My Collection
+          <div style={{ display: 'flex', alignItems: 'center', gap: '28px', flexWrap: 'wrap' }}>
+            <img src={myBook} alt="Recipe Book" style={{
+              width: 110, height: 'auto', borderRadius: '12px',
+              boxShadow: '0 8px 24px rgba(212,84,122,0.2)',
+              transform: 'rotate(-3deg)',
+            }} />
+            <div>
+              <div style={{ fontSize: '0.8rem', fontWeight: 700, color: '#d4547a', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '8px' }}>
+                ✦ My Collection
+              </div>
+              <h1 style={{
+                fontFamily: "'Dancing Script', cursive",
+                fontSize: 'clamp(2rem, 3.5vw, 3rem)',
+                color: '#1f2937', marginBottom: '6px', lineHeight: 1.1,
+              }}>
+                {user?.name ? `${user.name}'s` : 'My'} <span style={{ color: '#d4547a' }}>Recipe Book</span>
+              </h1>
+              <p style={{ color: '#9ca3af', fontSize: '0.95rem', fontWeight: 500, marginBottom: '28px' }}>
+                Your saved dessert recipes, all in one place
+              </p>
+            </div>
           </div>
-          <h1 style={{
-            fontFamily: "'Dancing Script', cursive",
-            fontSize: 'clamp(2rem, 3.5vw, 3rem)',
-            color: '#1f2937', marginBottom: '6px', lineHeight: 1.1,
-          }}>
-            {user?.name ? `${user.name}'s` : 'My'} <span style={{ color: '#d4547a' }}>Recipe Book</span>
-          </h1>
-          <p style={{ color: '#9ca3af', fontSize: '0.95rem', fontWeight: 500, marginBottom: '28px' }}>
-            Your saved dessert recipes, all in one place
-          </p>
 
           {/* Tabs */}
           <div style={{ display: 'flex', gap: '4px' }}>
