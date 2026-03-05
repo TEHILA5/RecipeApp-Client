@@ -35,6 +35,16 @@ export const getMyComments = async (): Promise<UserActionDto[]> => {
   }
 };
 
+// GET: api/UserAction/recipe/{recipeId}/comments - ציבורי לכולם
+export const getRecipeComments = async (recipeId: number): Promise<UserActionDto[]> => {
+  try {
+    const response = await axiosInstance.get<UserActionDto[]>(`/useraction/recipe/${recipeId}/comments`);
+    return response.data;
+  } catch (error) {
+    throw new Error(handleApiError(error));
+  }
+};
+
 // POST: api/UserAction/book
 export const addBookmark = async (recipeId: number): Promise<UserActionDto> => {
   try {
@@ -103,6 +113,7 @@ export const userActionApi = {
   removeComment,
   addHistory,
   getUserPreferences,
+  getRecipeComments,
 };
 
 export default userActionApi;

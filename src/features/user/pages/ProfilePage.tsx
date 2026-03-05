@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import { getMe } from '../../../api/userApi';
 import type { UserDto } from '../../../api/userApi';
 import { getMySavedRecipes, getMyComments } from '../../../api/userActionApi';
+import type { UserActionDto } from '../../recipe/types/userAction.types';
 import ProfileCard from '../components/ProfileCard';
 
 export default function ProfilePage() {
@@ -19,6 +20,8 @@ export default function ProfilePage() {
   const [loading, setLoading] = useState(true);
   const [savedCount, setSavedCount] = useState(0);
   const [commentCount, setCommentCount] = useState(0);
+  const [comments, setComments] = useState<UserActionDto[]>([]);
+  const [showComments, setShowComments] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   useEffect(() => {
@@ -26,10 +29,11 @@ export default function ProfilePage() {
       getMe(),
       getMySavedRecipes().catch(() => []),
       getMyComments().catch(() => []),
-    ]).then(([userData, saved, comments]) => {
+    ]).then(([userData, saved, commentsData]) => {
       setUser(userData);
       setSavedCount(saved.length);
-      setCommentCount(comments.length);
+      setCommentCount((commentsData as UserActionDto[]).length);
+      setComments(commentsData as UserActionDto[]);
     }).finally(() => setLoading(false));
   }, []);
 
@@ -55,7 +59,7 @@ export default function ProfilePage() {
 
   const stats = [
     { icon: '🔖', label: 'Saved Recipes', value: savedCount, link: '/my-recipes' },
-    { icon: '⭐', label: 'Reviews Written', value: commentCount, link: null },
+    { icon: '⭐', label: 'Reviews Written', value: commentCount, link: 'comments' },
   ];
 
   return (
@@ -86,12 +90,12 @@ export default function ProfilePage() {
         {/* Stats row */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '16px' }}>
           {stats.map((stat) => (
-            <div key={stat.label} onClick={() => stat.link && navigate(stat.link)} style={{ textDecoration: 'none' }}>
+            <div key={stat.label} onClick={() => { if (stat.link === 'comments') setShowComments(s => !s); else if (stat.link) navigate(stat.link); }} style={{ textDecoration: 'none' }}>
               <div style={{
                 background: 'white', borderRadius: '20px', padding: '24px',
                 boxShadow: '0 4px 20px rgba(212,84,122,0.07)',
                 display: 'flex', alignItems: 'center', gap: '16px',
-                transition: 'all 0.2s', cursor: stat.link ? 'pointer' : 'default',
+                transition: 'all 0.2s', cursor: stat.link ? 'pointer' : 'default', background: stat.link === 'comments' && showComments ? '#fdf2f8' : 'white',
               }}
                 onMouseEnter={(e) => { if (stat.link) e.currentTarget.style.transform = 'translateY(-3px)'; }}
                 onMouseLeave={(e) => { e.currentTarget.style.transform = 'none'; }}
@@ -115,6 +119,47 @@ export default function ProfilePage() {
             </div>
           ))}
         </div>
+
+        {/* My Reviews */}
+        {showComments && (
+          <div style={{ background: 'white', borderRadius: '24px', padding: '28px', boxShadow: '0 4px 24px rgba(212,84,122,0.08)' }}>
+            <h3 style={{ fontFamily: "'Dancing Script',cursive", fontSize: '1.4rem', color: '#1f2937', marginBottom: '20px' }}>
+              ⭐ My Reviews
+            </h3>
+            {comments.length === 0 ? (
+              <p style={{ color: '#9ca3af', textAlign: 'center', padding: '20px 0' }}>You haven't written any reviews yet.</p>
+            ) : (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+                {comments.map((comment) => (
+                  <div key={comment.id} style={{
+                    padding: '16px 20px', background: '#fdf2f8',
+                    borderRadius: '16px', border: '1px solid #fce7f3',
+                  }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px' }}>
+                      <a href={`/recipes/${comment.recipeId}`} style={{
+                        fontFamily: "'Dancing Script',cursive", fontSize: '1.1rem',
+                        color: '#d4547a', textDecoration: 'none', fontWeight: 700,
+                      }}>
+                        🍰 {comment.recipeName || `Recipe #${comment.recipeId}`}
+                      </a>
+                      <span style={{ fontSize: '0.75rem', color: '#9ca3af', flexShrink: 0, marginLeft: '12px' }}>
+                        {new Date(comment.createdAt).toLocaleDateString()}
+                      </span>
+                    </div>
+                    {comment.rating !== undefined && (
+                      <div style={{ display: 'flex', gap: '2px', marginBottom: '6px' }}>
+                        {[1,2,3,4,5].map(s => (
+                          <span key={s} style={{ color: s <= comment.rating! ? '#f59e0b' : '#d1d5db', fontSize: '0.95rem' }}>★</span>
+                        ))}
+                      </div>
+                    )}
+                    <p style={{ margin: 0, color: '#4b5563', fontSize: '0.88rem', lineHeight: 1.6 }}>{comment.content}</p>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Profile card with edit */}
         <ProfileCard user={user} />

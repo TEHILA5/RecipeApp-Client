@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppSelector, useAppDispatch } from '../../../redux/hooks';
 import { deleteExistingRecipe } from '../redux/recipeSlice';
-import * as userActionApi from '../../../api/userActionApi';
+import { getMySavedRecipes, addBookmark, removeBookmark, addComment, addHistory, getMyComments, getRecipeComments } from '../../../api/userActionApi';
 import type { Recipe } from '../types/recipe.types';
 import type { UserActionDto, CommentCreateDto } from '../types/userAction.types';
 import { LEVEL_LABELS, CATEGORY_EMOJIS } from '../types/recipe.types';
@@ -30,11 +30,11 @@ export default function RecipeDetail({ recipe }: RecipeDetailProps) {
   const [commentError, setCommentError] = useState('');
   const [bookmarkLoading, setBookmarkLoading] = useState(false);
   const [activeTab, setActiveTab] = useState<'ingredients' | 'instructions' | 'comments'>('ingredients');
+  const [hasCommented, setHasCommented] = useState(false);
 
   const emoji = CATEGORY_EMOJIS[recipe.category] ?? '🍰';
   const levelLabel = LEVEL_LABELS[recipe.level as 1 | 2 | 3] ?? 'Easy';
 
-  // Load comments & check bookmark on mount
   useEffect(() => {
     loadComments();
     if (isLoggedIn) {
@@ -44,11 +44,16 @@ export default function RecipeDetail({ recipe }: RecipeDetailProps) {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [recipe.id, isLoggedIn]);
 
+  // ✅ טעינת תגובות - endpoint ציבורי לכולם
   const loadComments = async () => {
     setLoadingComments(true);
     try {
-      const data = await userActionApi.getRecipeComments(recipe.id);
-      setComments(data);
+      const recipeComments = await getRecipeComments(recipe.id);
+      setComments(recipeComments);
+      // בדוק אם המשתמש הנוכחי כבר הגיב
+      if (isLoggedIn) {
+        setHasCommented(recipeComments.some(c => c.userName === user?.name));
+      }
     } catch {
       // fail silently
     } finally {
@@ -56,10 +61,11 @@ export default function RecipeDetail({ recipe }: RecipeDetailProps) {
     }
   };
 
+  // ✅ בדיקת bookmark - דרך my-saved
   const checkBookmarkStatus = async () => {
     try {
-      const actions = await userActionApi.getUserActionsByType('Book');
-      setIsBookmarked(actions.some((a) => a.recipeId === recipe.id));
+      const saved = await getMySavedRecipes();
+      setIsBookmarked(saved.some((a) => a.recipeId === recipe.id));
     } catch {
       // fail silently
     }
@@ -67,7 +73,7 @@ export default function RecipeDetail({ recipe }: RecipeDetailProps) {
 
   const recordHistory = async () => {
     try {
-      await userActionApi.addHistory({ category: recipe.category });
+      await addHistory({ category: recipe.category });
     } catch {
       // fail silently
     }
@@ -78,10 +84,10 @@ export default function RecipeDetail({ recipe }: RecipeDetailProps) {
     setBookmarkLoading(true);
     try {
       if (isBookmarked) {
-        await userActionApi.removeBookmark(recipe.id);
+        await removeBookmark(recipe.id);
         setIsBookmarked(false);
       } else {
-        await userActionApi.addBookmark(recipe.id);
+        await addBookmark(recipe.id);
         setIsBookmarked(true);
       }
     } catch {
@@ -105,9 +111,10 @@ export default function RecipeDetail({ recipe }: RecipeDetailProps) {
         content: commentForm.content.trim(),
         rating: commentForm.rating,
       };
-      await userActionApi.addComment(dto);
+      const newComment = await addComment(dto);
+      setComments(prev => [...prev, newComment]);
       setCommentForm({ content: '', rating: 5 });
-      await loadComments();
+      setHasCommented(true);
     } catch (err: unknown) {
       setCommentError(err instanceof Error ? err.message : 'Failed to submit comment');
     } finally {
@@ -138,32 +145,22 @@ export default function RecipeDetail({ recipe }: RecipeDetailProps) {
             color: star <= rating ? '#f59e0b' : '#d1d5db',
             transition: 'color 0.15s',
           }}
-        >
-          ★
-        </span>
+        >★</span>
       ))}
     </div>
   );
 
-  const levelColors: Record<number, string> = {
-    1: '#22c55e',
-    2: '#f59e0b',
-    3: '#ef4444',
-  };
+  const levelColors: Record<number, string> = { 1: '#22c55e', 2: '#f59e0b', 3: '#ef4444' };
 
   return (
     <div style={{ maxWidth: '900px', margin: '0 auto', padding: '32px 24px', fontFamily: "'Nunito', sans-serif" }}>
 
-      {/* ── Hero Section ── */}
+      {/* Hero */}
       <div style={{
-        borderRadius: '28px',
-        overflow: 'hidden',
+        borderRadius: '28px', overflow: 'hidden',
         boxShadow: '0 8px 40px rgba(212,84,122,0.15)',
-        marginBottom: '32px',
-        position: 'relative',
-        background: 'white',
+        marginBottom: '32px', position: 'relative', background: 'white',
       }}>
-        {/* Image or Emoji */}
         <div style={{ position: 'relative', aspectRatio: '16/7', background: 'linear-gradient(135deg,#f9e4ec,#e8c49a)', overflow: 'hidden' }}>
           {recipe.arrImage ? (
             <img src={recipe.arrImage} alt={recipe.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
@@ -172,96 +169,66 @@ export default function RecipeDetail({ recipe }: RecipeDetailProps) {
               {emoji}
             </div>
           )}
-          {/* Overlay gradient */}
           <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.55) 0%, transparent 60%)' }} />
 
-          {/* Admin Buttons */}
           {isAdmin && (
             <div style={{ position: 'absolute', top: '16px', right: '16px', display: 'flex', gap: '8px' }}>
-              <button
-                onClick={() => navigate(`/recipes/${recipe.id}/edit`)}
-                style={{
-                  padding: '8px 20px', borderRadius: '999px', border: 'none',
-                  background: 'rgba(255,255,255,0.95)', color: '#d4547a',
-                  fontFamily: "'Nunito',sans-serif", fontWeight: 700, fontSize: '0.85rem',
-                  cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px',
-                  boxShadow: '0 2px 12px rgba(0,0,0,0.15)',
-                }}
-              >
-                ✏️ Edit
-              </button>
-              <button
-                onClick={() => setShowDeleteConfirm(true)}
-                style={{
-                  padding: '8px 20px', borderRadius: '999px', border: 'none',
-                  background: 'rgba(239,68,68,0.9)', color: 'white',
-                  fontFamily: "'Nunito',sans-serif", fontWeight: 700, fontSize: '0.85rem',
-                  cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px',
-                  boxShadow: '0 2px 12px rgba(0,0,0,0.15)',
-                }}
-              >
-                🗑️ Delete
-              </button>
+              <button onClick={() => navigate(`/recipes/${recipe.id}/edit`)} style={{
+                padding: '8px 20px', borderRadius: '999px', border: 'none',
+                background: 'rgba(255,255,255,0.95)', color: '#d4547a',
+                fontFamily: "'Nunito',sans-serif", fontWeight: 700, fontSize: '0.85rem',
+                cursor: 'pointer', boxShadow: '0 2px 12px rgba(0,0,0,0.15)',
+              }}>✏️ Edit</button>
+              <button onClick={() => setShowDeleteConfirm(true)} style={{
+                padding: '8px 20px', borderRadius: '999px', border: 'none',
+                background: 'rgba(239,68,68,0.9)', color: 'white',
+                fontFamily: "'Nunito',sans-serif", fontWeight: 700, fontSize: '0.85rem',
+                cursor: 'pointer', boxShadow: '0 2px 12px rgba(0,0,0,0.15)',
+              }}>🗑️ Delete</button>
             </div>
           )}
 
-          {/* Bookmark Button */}
-          <button
-            onClick={handleBookmark}
-            disabled={bookmarkLoading}
-            style={{
-              position: 'absolute', top: '16px', left: '16px',
-              width: '44px', height: '44px', borderRadius: '50%', border: 'none',
-              background: isBookmarked ? '#d4547a' : 'rgba(255,255,255,0.9)',
-              color: isBookmarked ? 'white' : '#d4547a',
-              fontSize: '1.3rem', cursor: 'pointer',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              boxShadow: '0 2px 12px rgba(0,0,0,0.15)',
-              transition: 'all 0.2s',
-            }}
-            title={isBookmarked ? 'Remove from favorites' : 'Save to favorites'}
-          >
+          <button onClick={handleBookmark} disabled={bookmarkLoading} style={{
+            position: 'absolute', top: '16px', left: '16px',
+            width: '44px', height: '44px', borderRadius: '50%', border: 'none',
+            background: isBookmarked ? '#d4547a' : 'rgba(255,255,255,0.9)',
+            color: isBookmarked ? 'white' : '#d4547a',
+            fontSize: '1.3rem', cursor: 'pointer',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            boxShadow: '0 2px 12px rgba(0,0,0,0.15)', transition: 'all 0.2s',
+          }}>
             {isBookmarked ? '🔖' : '🤍'}
           </button>
 
-          {/* Title overlay */}
           <div style={{ position: 'absolute', bottom: '24px', left: '28px', right: '28px' }}>
             <span style={{
               display: 'inline-block', padding: '4px 14px', borderRadius: '999px',
               background: 'rgba(212,84,122,0.85)', color: 'white',
               fontSize: '0.75rem', fontWeight: 700, letterSpacing: '0.08em',
               textTransform: 'uppercase', marginBottom: '8px',
-            }}>
-              {recipe.category}
-            </span>
+            }}>{recipe.category}</span>
             <h1 style={{
               fontFamily: "'Dancing Script', cursive",
               fontSize: 'clamp(1.8rem, 4vw, 2.8rem)',
               color: 'white', margin: 0, lineHeight: 1.1,
               textShadow: '0 2px 12px rgba(0,0,0,0.4)',
-            }}>
-              {recipe.name}
-            </h1>
+            }}>{recipe.name}</h1>
           </div>
         </div>
 
         {/* Meta Bar */}
         <div style={{
           display: 'flex', flexWrap: 'wrap', gap: '24px',
-          padding: '20px 28px', borderBottom: '1px dashed rgba(212,84,122,0.2)',
-          alignItems: 'center',
+          padding: '20px 28px', borderBottom: '1px dashed rgba(212,84,122,0.2)', alignItems: 'center',
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <span>⏱️</span>
-            <span style={{ fontSize: '0.85rem', fontWeight: 600, color: '#6b7280' }}>Prep: <strong style={{ color: '#1f2937' }}>{recipe.prepTime}m</strong></span>
+            <span>⏱️</span><span style={{ fontSize: '0.85rem', fontWeight: 600, color: '#6b7280' }}>Prep: <strong style={{ color: '#1f2937' }}>{recipe.prepTime}m</strong></span>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <span>⏰</span>
-            <span style={{ fontSize: '0.85rem', fontWeight: 600, color: '#6b7280' }}>Total: <strong style={{ color: '#1f2937' }}>{recipe.totalTime}m</strong></span>
+            <span>⏰</span><span style={{ fontSize: '0.85rem', fontWeight: 600, color: '#6b7280' }}>Total: <strong style={{ color: '#1f2937' }}>{recipe.totalTime}m</strong></span>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <span>🍽️</span>
-            <span style={{ fontSize: '0.85rem', fontWeight: 600, color: '#6b7280' }}>Servings: <strong style={{ color: '#1f2937' }}>{recipe.servings}</strong></span>
+            <span>🍽️</span><span style={{ fontSize: '0.85rem', fontWeight: 600, color: '#6b7280' }}>Servings: <strong style={{ color: '#1f2937' }}>{recipe.servings}</strong></span>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
             <span style={{ fontSize: '0.75rem', fontWeight: 700, padding: '3px 10px', borderRadius: '999px', background: levelColors[recipe.level] + '22', color: levelColors[recipe.level] }}>
@@ -271,38 +238,29 @@ export default function RecipeDetail({ recipe }: RecipeDetailProps) {
           {recipe.averageRating !== undefined && recipe.averageRating > 0 && (
             <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginLeft: 'auto' }}>
               {renderStars(Math.round(recipe.averageRating))}
-              <span style={{ fontSize: '0.85rem', fontWeight: 700, color: '#f59e0b' }}>
-                {recipe.averageRating.toFixed(1)}
-              </span>
+              <span style={{ fontSize: '0.85rem', fontWeight: 700, color: '#f59e0b' }}>{recipe.averageRating.toFixed(1)}</span>
               <span style={{ fontSize: '0.78rem', color: '#9ca3af' }}>({recipe.commentCount ?? 0})</span>
             </div>
           )}
         </div>
 
-        {/* Description */}
         <div style={{ padding: '20px 28px 24px' }}>
           <p style={{ margin: 0, color: '#6b7280', lineHeight: 1.7, fontSize: '0.95rem' }}>{recipe.description}</p>
         </div>
       </div>
 
-      {/* ── Tabs ── */}
+      {/* Tabs */}
       <div style={{ background: 'white', borderRadius: '24px', boxShadow: '0 4px 20px rgba(212,84,122,0.08)', overflow: 'hidden' }}>
-        {/* Tab Headers */}
         <div style={{ display: 'flex', borderBottom: '2px solid #fce7f3' }}>
           {(['ingredients', 'instructions', 'comments'] as const).map((tab) => (
-            <button
-              key={tab}
-              onClick={() => setActiveTab(tab)}
-              style={{
-                flex: 1, padding: '16px', border: 'none', cursor: 'pointer',
-                fontFamily: "'Nunito',sans-serif", fontWeight: 700, fontSize: '0.9rem',
-                background: activeTab === tab ? 'white' : '#fdf2f8',
-                color: activeTab === tab ? '#d4547a' : '#9ca3af',
-                borderBottom: activeTab === tab ? '3px solid #d4547a' : '3px solid transparent',
-                marginBottom: '-2px', transition: 'all 0.2s',
-                textTransform: 'capitalize',
-              }}
-            >
+            <button key={tab} onClick={() => setActiveTab(tab)} style={{
+              flex: 1, padding: '16px', border: 'none', cursor: 'pointer',
+              fontFamily: "'Nunito',sans-serif", fontWeight: 700, fontSize: '0.9rem',
+              background: activeTab === tab ? 'white' : '#fdf2f8',
+              color: activeTab === tab ? '#d4547a' : '#9ca3af',
+              borderBottom: activeTab === tab ? '3px solid #d4547a' : '3px solid transparent',
+              marginBottom: '-2px', transition: 'all 0.2s', textTransform: 'capitalize',
+            }}>
               {tab === 'ingredients' && `🧂 Ingredients (${recipe.ingredients?.length ?? 0})`}
               {tab === 'instructions' && '📋 Instructions'}
               {tab === 'comments' && `💬 Comments (${comments.length})`}
@@ -310,36 +268,23 @@ export default function RecipeDetail({ recipe }: RecipeDetailProps) {
           ))}
         </div>
 
-        {/* Tab Content */}
         <div style={{ padding: '28px' }}>
 
-          {/* ── Ingredients Tab ── */}
+          {/* Ingredients */}
           {activeTab === 'ingredients' && (
             <div>
-              {recipe.ingredients?.length === 0 ? (
+              {!recipe.ingredients?.length ? (
                 <p style={{ color: '#9ca3af', textAlign: 'center' }}>No ingredients listed.</p>
               ) : (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                  {recipe.ingredients?.map((ing, i) => {
-                    const importanceColors: Record<string, string> = {
-                      Essential: '#fee2e2',
-                      Recommended: '#fef3c7',
-                      Optional: '#f0fdf4',
-                    };
-                    const importanceText: Record<string, string> = {
-                      Essential: '#991b1b',
-                      Recommended: '#92400e',
-                      Optional: '#166534',
-                    };
-                    const bg = importanceColors[ing.importance ?? 'Essential'] ?? '#fdf2f8';
-                    const textColor = importanceText[ing.importance ?? 'Essential'] ?? '#831843';
-
+                  {recipe.ingredients.map((ing, i) => {
+                    const importanceColors: Record<string, string> = { Essential: '#fee2e2', Recommended: '#fef3c7', Optional: '#f0fdf4' };
+                    const importanceText: Record<string, string> = { Essential: '#991b1b', Recommended: '#92400e', Optional: '#166534' };
                     return (
                       <div key={i} style={{
                         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
                         padding: '14px 20px', borderRadius: '14px',
                         background: '#fdf2f8', border: '1px solid #fce7f3',
-                        transition: 'transform 0.15s',
                       }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                           <span style={{ fontSize: '1.2rem' }}>🥄</span>
@@ -354,11 +299,11 @@ export default function RecipeDetail({ recipe }: RecipeDetailProps) {
                           {ing.importance && (
                             <span style={{
                               fontSize: '0.7rem', fontWeight: 700, padding: '3px 10px',
-                              borderRadius: '999px', background: bg, color: textColor,
+                              borderRadius: '999px',
+                              background: importanceColors[ing.importance] ?? '#fdf2f8',
+                              color: importanceText[ing.importance] ?? '#831843',
                               letterSpacing: '0.05em',
-                            }}>
-                              {ing.importance}
-                            </span>
+                            }}>{ing.importance}</span>
                           )}
                         </div>
                       </div>
@@ -369,7 +314,7 @@ export default function RecipeDetail({ recipe }: RecipeDetailProps) {
             </div>
           )}
 
-          {/* ── Instructions Tab ── */}
+          {/* Instructions */}
           {activeTab === 'instructions' && (
             <div>
               {!recipe.instructions ? (
@@ -377,18 +322,14 @@ export default function RecipeDetail({ recipe }: RecipeDetailProps) {
               ) : (
                 <div>
                   {recipe.instructions.split('\n').filter(Boolean).map((step, i) => (
-                    <div key={i} style={{
-                      display: 'flex', gap: '16px', marginBottom: '20px', alignItems: 'flex-start',
-                    }}>
+                    <div key={i} style={{ display: 'flex', gap: '16px', marginBottom: '20px', alignItems: 'flex-start' }}>
                       <div style={{
                         minWidth: '32px', height: '32px', borderRadius: '50%',
                         background: 'linear-gradient(135deg, #e8799a, #d4547a)',
                         color: 'white', display: 'flex', alignItems: 'center',
                         justifyContent: 'center', fontWeight: 800, fontSize: '0.85rem',
                         flexShrink: 0, marginTop: '2px',
-                      }}>
-                        {i + 1}
-                      </div>
+                      }}>{i + 1}</div>
                       <p style={{ margin: 0, lineHeight: 1.75, color: '#374151', fontSize: '0.95rem' }}>{step}</p>
                     </div>
                   ))}
@@ -397,11 +338,11 @@ export default function RecipeDetail({ recipe }: RecipeDetailProps) {
             </div>
           )}
 
-          {/* ── Comments Tab ── */}
+          {/* Comments */}
           {activeTab === 'comments' && (
             <div>
               {/* Add Comment Form */}
-              {isLoggedIn ? (
+              {isLoggedIn && !hasCommented ? (
                 <div style={{
                   background: '#fdf2f8', borderRadius: '16px', padding: '20px',
                   marginBottom: '28px', border: '1px solid #fce7f3',
@@ -424,40 +365,32 @@ export default function RecipeDetail({ recipe }: RecipeDetailProps) {
                       boxSizing: 'border-box', background: 'white',
                     }}
                   />
-                  {commentError && (
-                    <p style={{ color: '#ef4444', fontSize: '0.82rem', margin: '6px 0 0' }}>{commentError}</p>
-                  )}
-                  <button
-                    onClick={handleSubmitComment}
-                    disabled={submittingComment}
-                    style={{
-                      marginTop: '12px', padding: '10px 28px', borderRadius: '999px',
-                      border: 'none', background: 'linear-gradient(135deg, #e8799a, #d4547a)',
-                      color: 'white', fontFamily: "'Nunito',sans-serif", fontWeight: 700,
-                      fontSize: '0.9rem', cursor: submittingComment ? 'not-allowed' : 'pointer',
-                      opacity: submittingComment ? 0.7 : 1,
-                    }}
-                  >
+                  {commentError && <p style={{ color: '#ef4444', fontSize: '0.82rem', margin: '6px 0 0' }}>{commentError}</p>}
+                  <button onClick={handleSubmitComment} disabled={submittingComment} style={{
+                    marginTop: '12px', padding: '10px 28px', borderRadius: '999px',
+                    border: 'none', background: 'linear-gradient(135deg, #e8799a, #d4547a)',
+                    color: 'white', fontFamily: "'Nunito',sans-serif", fontWeight: 700,
+                    fontSize: '0.9rem', cursor: submittingComment ? 'not-allowed' : 'pointer',
+                    opacity: submittingComment ? 0.7 : 1,
+                  }}>
                     {submittingComment ? 'Submitting...' : '✨ Submit Review'}
                   </button>
                 </div>
-              ) : (
+              ) : isLoggedIn && hasCommented ? (
                 <div style={{
-                  textAlign: 'center', padding: '20px', background: '#fdf2f8',
-                  borderRadius: '16px', marginBottom: '28px',
+                  padding: '14px 20px', background: '#dcfce7', borderRadius: '12px',
+                  marginBottom: '20px', color: '#166534', fontWeight: 600, fontSize: '0.88rem',
                 }}>
+                  ✅ You already reviewed this recipe
+                </div>
+              ) : (
+                <div style={{ textAlign: 'center', padding: '20px', background: '#fdf2f8', borderRadius: '16px', marginBottom: '28px' }}>
                   <p style={{ color: '#9ca3af', marginBottom: '12px' }}>Sign in to leave a review</p>
-                  <button
-                    onClick={() => navigate('/login')}
-                    style={{
-                      padding: '10px 28px', borderRadius: '999px', border: 'none',
-                      background: 'linear-gradient(135deg, #e8799a, #d4547a)',
-                      color: 'white', fontFamily: "'Nunito',sans-serif",
-                      fontWeight: 700, cursor: 'pointer',
-                    }}
-                  >
-                    Sign In
-                  </button>
+                  <button onClick={() => navigate('/login')} style={{
+                    padding: '10px 28px', borderRadius: '999px', border: 'none',
+                    background: 'linear-gradient(135deg, #e8799a, #d4547a)',
+                    color: 'white', fontFamily: "'Nunito',sans-serif", fontWeight: 700, cursor: 'pointer',
+                  }}>Sign In</button>
                 </div>
               )}
 
@@ -509,11 +442,10 @@ export default function RecipeDetail({ recipe }: RecipeDetailProps) {
               )}
             </div>
           )}
-
         </div>
       </div>
 
-      {/* ── Delete Confirm Modal ── */}
+      {/* Delete Modal */}
       {showDeleteConfirm && (
         <div style={{
           position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)',
@@ -526,35 +458,22 @@ export default function RecipeDetail({ recipe }: RecipeDetailProps) {
             boxShadow: '0 20px 60px rgba(0,0,0,0.25)',
           }}>
             <div style={{ fontSize: '52px', marginBottom: '16px' }}>🗑️</div>
-            <h3 style={{ fontFamily: "'Dancing Script',cursive", fontSize: '1.8rem', color: '#1f2937', marginBottom: '12px' }}>
-              Delete Recipe?
-            </h3>
+            <h3 style={{ fontFamily: "'Dancing Script',cursive", fontSize: '1.8rem', color: '#1f2937', marginBottom: '12px' }}>Delete Recipe?</h3>
             <p style={{ color: '#6b7280', marginBottom: '28px', lineHeight: 1.6 }}>
               Are you sure you want to delete <strong>"{recipe.name}"</strong>? This action cannot be undone.
             </p>
             <div style={{ display: 'flex', gap: '12px', justifyContent: 'center' }}>
-              <button
-                onClick={() => setShowDeleteConfirm(false)}
-                style={{
-                  padding: '12px 28px', borderRadius: '999px',
-                  border: '2px solid #e5e7eb', background: 'white',
-                  color: '#6b7280', fontFamily: "'Nunito',sans-serif",
-                  fontWeight: 700, cursor: 'pointer',
-                }}
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleDelete}
-                disabled={deletingRecipe}
-                style={{
-                  padding: '12px 28px', borderRadius: '999px', border: 'none',
-                  background: '#ef4444', color: 'white',
-                  fontFamily: "'Nunito',sans-serif", fontWeight: 700,
-                  cursor: deletingRecipe ? 'not-allowed' : 'pointer',
-                  opacity: deletingRecipe ? 0.7 : 1,
-                }}
-              >
+              <button onClick={() => setShowDeleteConfirm(false)} style={{
+                padding: '12px 28px', borderRadius: '999px', border: '2px solid #e5e7eb',
+                background: 'white', color: '#6b7280', fontFamily: "'Nunito',sans-serif",
+                fontWeight: 700, cursor: 'pointer',
+              }}>Cancel</button>
+              <button onClick={handleDelete} disabled={deletingRecipe} style={{
+                padding: '12px 28px', borderRadius: '999px', border: 'none',
+                background: '#ef4444', color: 'white', fontFamily: "'Nunito',sans-serif",
+                fontWeight: 700, cursor: deletingRecipe ? 'not-allowed' : 'pointer',
+                opacity: deletingRecipe ? 0.7 : 1,
+              }}>
                 {deletingRecipe ? 'Deleting...' : 'Yes, Delete'}
               </button>
             </div>
@@ -562,9 +481,7 @@ export default function RecipeDetail({ recipe }: RecipeDetailProps) {
         </div>
       )}
 
-      <style>{`
-        @keyframes spin { to { transform: rotate(360deg); } }
-      `}</style>
+      <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
     </div>
   );
 }
