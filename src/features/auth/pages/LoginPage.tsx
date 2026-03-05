@@ -171,6 +171,9 @@ function LoginPage() {
                   'Sign In'
                 )}
               </button>
+              <Link to="/forgot-password" style={{ color: '#d4547a', fontSize: '0.85rem' }}>
+                Forgot password?
+              </Link>
             </form>
 
             {/* Footer Links */}

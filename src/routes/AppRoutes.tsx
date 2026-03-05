@@ -24,6 +24,7 @@ import AdminDashboard from '../features/admin/pages/AdminDashboard.tsx';
 import SearchPage from '../features/search/pages/SearchPage.tsx';
 import SweetieChat from '../features/chat/SweetieChat.tsx';
 import IngredientManagePage from '../features/ingredient/pages/IngredientManagePage.tsx';
+import ForgotPassword from '../features/auth/components/ForgotPassword.tsx';
 
 function AppRoutes() {
   return (
@@ -36,7 +37,7 @@ function AppRoutes() {
           <Route path="/" element={<HomePage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
-
+          <Route path="/forgot-password" element={<ForgotPassword />} />
           {/* ✅ specific routes BEFORE dynamic :id routes */}
 
           {/* ניהול מתכונים - רק למנהל */}
