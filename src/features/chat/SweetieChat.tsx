@@ -41,7 +41,9 @@ export default function SweetieChat() {
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+    if (messages.length > 0 || loading) {
+      bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+    }
   }, [messages, loading]);
 
   const sendMessage = async (text?: string) => {
@@ -85,7 +87,8 @@ export default function SweetieChat() {
       <div style={{
         fontFamily: "'Nunito', sans-serif",
         maxWidth: 700, margin: "0 auto",
-        height: "100vh", display: "flex",
+        height: "calc(100vh - var(--nav-height, 70px))",
+        marginTop: "var(--nav-height, 70px)", display: "flex",
         flexDirection: "column", background: "#fdf2f8",
       }}>
 
@@ -128,7 +131,7 @@ export default function SweetieChat() {
           {/* ✅ Welcome screen - fixed */}
           {messages.length === 0 && (
             <div className="sweetie-msg" style={{ textAlign: "center", marginTop: "30px", padding: "16px 0 8px" }}>
-              <div style={{ display: "flex", justifyContent: "center", marginTop: "20px" }}>
+              <div style={{ display: "flex", justifyContent: "center", marginBottom: 10 }}>
                 <img style={{ width: 150 }} src={sweetyTip} alt="Sweety" />
               </div>
               <h2 style={{ fontFamily: "'Dancing Script', cursive", fontSize: "1.9rem", color: "#d4547a", marginBottom: 8 }}>

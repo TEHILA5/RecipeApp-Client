@@ -5,37 +5,37 @@
 import axiosInstance, { handleApiError } from './axiosConfig';
 import type { UserActionDto, BookCreateDto, CommentCreateDto, HistoryCreateDto } from '../features/recipe/types/userAction.types';
 
-// קבלת כל הפעולות של המשתמש
-export const getUserActions = async (): Promise<UserActionDto[]> => {
+// GET: api/UserAction/my-saved
+export const getMySavedRecipes = async (): Promise<UserActionDto[]> => {
   try {
-    const response = await axiosInstance.get<UserActionDto[]>('/useraction');
+    const response = await axiosInstance.get<UserActionDto[]>('/useraction/my-saved');
     return response.data;
   } catch (error) {
     throw new Error(handleApiError(error));
   }
 };
 
-// קבלת פעולות לפי סוג
-export const getUserActionsByType = async (type: 'Comment' | 'History' | 'Book'): Promise<UserActionDto[]> => {
+// GET: api/UserAction/my-history
+export const getMyHistory = async (): Promise<UserActionDto[]> => {
   try {
-    const response = await axiosInstance.get<UserActionDto[]>(`/useraction/type/${type}`);
+    const response = await axiosInstance.get<UserActionDto[]>('/useraction/my-history');
     return response.data;
   } catch (error) {
     throw new Error(handleApiError(error));
   }
 };
 
-// קבלת תגובות של מתכון
-export const getRecipeComments = async (recipeId: number): Promise<UserActionDto[]> => {
+// GET: api/UserAction/my-comments
+export const getMyComments = async (): Promise<UserActionDto[]> => {
   try {
-    const response = await axiosInstance.get<UserActionDto[]>(`/useraction/recipe/${recipeId}/comments`);
+    const response = await axiosInstance.get<UserActionDto[]>('/useraction/my-comments');
     return response.data;
   } catch (error) {
     throw new Error(handleApiError(error));
   }
 };
 
-// הוספת מועדף (Book)
+// POST: api/UserAction/book
 export const addBookmark = async (recipeId: number): Promise<UserActionDto> => {
   try {
     const dto: BookCreateDto = { recipeId };
@@ -46,16 +46,16 @@ export const addBookmark = async (recipeId: number): Promise<UserActionDto> => {
   }
 };
 
-// הסרת מועדף
+// DELETE: api/UserAction/book/recipe/{recipeId}
 export const removeBookmark = async (recipeId: number): Promise<void> => {
   try {
-    await axiosInstance.delete(`/useraction/book/${recipeId}`);
+    await axiosInstance.delete(`/useraction/book/recipe/${recipeId}`);
   } catch (error) {
     throw new Error(handleApiError(error));
   }
 };
 
-// הוספת תגובה + רייטינג
+// POST: api/UserAction/comment
 export const addComment = async (data: CommentCreateDto): Promise<UserActionDto> => {
   try {
     const response = await axiosInstance.post<UserActionDto>('/useraction/comment', data);
@@ -65,29 +65,28 @@ export const addComment = async (data: CommentCreateDto): Promise<UserActionDto>
   }
 };
 
-// הוספת היסטוריה
-export const addHistory = async (data: HistoryCreateDto): Promise<UserActionDto> => {
+// DELETE: api/UserAction/comment/recipe/{recipeId}
+export const removeComment = async (recipeId: number): Promise<void> => {
   try {
-    const response = await axiosInstance.post<UserActionDto>('/useraction/history', data);
-    return response.data;
+    await axiosInstance.delete(`/useraction/comment/recipe/${recipeId}`);
   } catch (error) {
     throw new Error(handleApiError(error));
   }
 };
 
-// מחיקת פעולה לפי ID
-export const deleteUserAction = async (id: number): Promise<void> => {
+// POST: api/UserAction/history
+export const addHistory = async (data: HistoryCreateDto): Promise<void> => {
   try {
-    await axiosInstance.delete(`/useraction/${id}`);
-  } catch (error) {
-    throw new Error(handleApiError(error));
+    await axiosInstance.post('/useraction/history', data);
+  } catch {
+    // היסטוריה - שגיאה שקטה, לא קריטי
   }
 };
 
-// העדפות משתמש (לאלגוריתם המלצות)
+// GET: api/UserAction/my-preferences
 export const getUserPreferences = async () => {
   try {
-    const response = await axiosInstance.get('/useraction/preferences');
+    const response = await axiosInstance.get('/useraction/my-preferences');
     return response.data;
   } catch (error) {
     throw new Error(handleApiError(error));
@@ -95,14 +94,14 @@ export const getUserPreferences = async () => {
 };
 
 export const userActionApi = {
-  getUserActions,
-  getUserActionsByType,
-  getRecipeComments,
+  getMySavedRecipes,
+  getMyHistory,
+  getMyComments,
   addBookmark,
   removeBookmark,
   addComment,
+  removeComment,
   addHistory,
-  deleteUserAction,
   getUserPreferences,
 };
 
