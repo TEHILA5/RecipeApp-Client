@@ -25,6 +25,7 @@ import SearchPage from '../features/search/pages/SearchPage.tsx';
 import SweetieChat from '../features/chat/SweetieChat.tsx';
 import IngredientManagePage from '../features/ingredient/pages/IngredientManagePage.tsx';
 import ForgotPassword from '../features/auth/components/ForgotPassword.tsx';
+import ConversionsPage from '../features/conversions/pages/ConversionsPage.tsx';
 
 function AppRoutes() {
   return (
@@ -38,6 +39,8 @@ function AppRoutes() {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/conversions" element={<ConversionsPage />} /> {/* ✅ ציבורי לכולם */}
+
           {/* ✅ specific routes BEFORE dynamic :id routes */}
 
           {/* ניהול מתכונים - רק למנהל */}
@@ -49,7 +52,8 @@ function AppRoutes() {
           } />
           <Route path="/admin/ingredients" element={
             <AdminRoute><IngredientManagePage /></AdminRoute>
-            } />
+          } />
+
           {/* ✅ מתכונים - פתוח לכולם, גם לא מחוברים */}
           <Route path="/recipes" element={<RecipeListPage />} />
           <Route path="/recipes/:id" element={<RecipeDetailPage />} />
