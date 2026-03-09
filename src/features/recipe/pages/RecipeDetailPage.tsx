@@ -1,26 +1,31 @@
 // ===============================================
 // RecipeDetailPage - Page wrapper
 // ===============================================
-import { useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
-import { fetchRecipeById, clearCurrentRecipe } from '../redux/recipeSlice';
+import { useGetRecipeByIdQuery, recipesApi } from '../redux/recipeSlice';
+import { useAppDispatch } from '../../../redux/hooks';
 import RecipeDetail from '../components/RecipeDetail';
 
 export default function RecipeDetailPage() {
   const { id } = useParams<{ id: string }>();
-  const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const { currentRecipe, loading, error } = useAppSelector((state) => state.recipes);
+  const dispatch = useAppDispatch();
 
-  useEffect(() => {
-    if (id) {
-      dispatch(fetchRecipeById(Number(id)));
-    }
-    return () => {
-      dispatch(clearCurrentRecipe());
-    };
-  }, [dispatch, id]);
+  const {
+    data: currentRecipe,
+    isLoading: loading,
+    error,
+    refetch,
+  } = useGetRecipeByIdQuery(Number(id), {
+    skip: !id,
+  });
+
+  // ✅ אחרי תגובה - מבטלים את כל ה-cache של המתכונים
+  // זה גורם ל-RTK Query לפנות לשרת מחדש ולקבל דירוגים מעודכנים
+  const handleCommentAdded = () => {
+    dispatch(recipesApi.util.invalidateTags(['Recipes', { type: 'Recipe', id: Number(id) }]));
+    refetch();
+  };
 
   if (loading) {
     return (
@@ -40,7 +45,7 @@ export default function RecipeDetailPage() {
     );
   }
 
-  if (error) {
+  if (error || !currentRecipe) {
     return (
       <div style={{
         minHeight: '60vh', display: 'flex', flexDirection: 'column',
@@ -51,7 +56,6 @@ export default function RecipeDetailPage() {
         <h2 style={{ fontFamily: "'Dancing Script',cursive", fontSize: '2rem', color: '#d4547a', marginBottom: '12px' }}>
           Recipe Not Found
         </h2>
-        <p style={{ color: '#6b7280', marginBottom: '24px' }}>{error}</p>
         <button
           onClick={() => navigate('/recipes')}
           style={{
@@ -67,11 +71,8 @@ export default function RecipeDetailPage() {
     );
   }
 
-  if (!currentRecipe) return null;
-
   return (
     <div style={{ minHeight: '100vh', background: 'var(--soft-pink, #fdf2f8)', paddingTop: 'var(--nav-height, 70px)' }}>
-      {/* Breadcrumb */}
       <div style={{ maxWidth: '900px', margin: '0 auto', padding: '16px 24px 0' }}>
         <nav style={{ fontSize: '0.85rem', color: '#9ca3af', fontFamily: "'Nunito',sans-serif" }}>
           <Link to="/" style={{ color: '#d4547a', textDecoration: 'none', fontWeight: 600 }}>Home</Link>
@@ -82,7 +83,7 @@ export default function RecipeDetailPage() {
         </nav>
       </div>
 
-      <RecipeDetail recipe={currentRecipe} />
+      <RecipeDetail recipe={currentRecipe} onCommentAdded={handleCommentAdded} />
     </div>
   );
 }

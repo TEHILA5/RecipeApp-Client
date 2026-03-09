@@ -1,10 +1,9 @@
 // ===============================================
 // Home Page
 // ===============================================
-import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { useAppSelector, useAppDispatch } from '../../../redux/hooks';
-import { fetchAllRecipes } from '../../recipe/redux/recipeSlice';
+import { useAppSelector } from '../../../redux/hooks';
+import { useGetRecipesQuery } from '../../recipe/redux/recipeSlice';
 import { type Recipe, LEVEL_LABELS, CATEGORY_EMOJIS } from '../../recipe/types/recipe.types';
 import logo from '../../../assets/images/logoo.png';
 import sweetyTip from '../../../assets/images/sweety-tip.png';
@@ -122,13 +121,10 @@ function RecipeSkeleton() {
 }
 
 export default function HomePage() {
-  const dispatch = useAppDispatch();
   const { isAuthenticated } = useAppSelector((state) => state.auth);
-  const { recipes, loading, error } = useAppSelector((state) => state.recipes);
 
-  useEffect(() => {
-    dispatch(fetchAllRecipes());
-  }, [dispatch]);
+  // ✅ RTK Query - מחליף את dispatch(fetchAllRecipes())
+  const { data: recipes = [], isLoading: loading, error } = useGetRecipesQuery();
 
   const popularRecipes = [...recipes]
     .sort((a, b) => (b.averageRating || 0) - (a.averageRating || 0))
@@ -197,7 +193,7 @@ export default function HomePage() {
         </div>
         {error && (
           <div style={{ textAlign: 'center', color: 'var(--deep-pink)', marginBottom: 24 }}>
-            Failed to load recipes: {error}
+            Failed to load recipes
           </div>
         )}
         <div className="recipes-grid">

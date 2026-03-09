@@ -1,7 +1,8 @@
 // ===============================================
 // Recipe Filters Component - All Categories
 // ===============================================
-import { useState } from 'react';
+import { useState, useRef } from 'react';
+import { useClickOutside } from '../../../shared/hooks/useClickOutside';
 import type { RecipeCategory, DifficultyLevel } from '../types/recipe.types';
 
 interface Filters {
@@ -67,8 +68,16 @@ const TIME_OPTIONS = [
 ];
 
 export default function RecipeFilters({ filters, onFilterChange, onClear }: RecipeFiltersProps) {
-  const [isExpanded, setIsExpanded] = useState(false);   // mobile toggle
+  const [isExpanded, setIsExpanded] = useState(false);
   const [showAllCategories, setShowAllCategories] = useState(false);
+
+  // ✅ useClickOutside - סגירת פאנל הקטגוריות בלחיצה מחוץ אליו
+  const categoriesPanelRef = useRef<HTMLDivElement>(null);
+  useClickOutside(
+    categoriesPanelRef,
+    () => setShowAllCategories(false),
+    showAllCategories // פעיל רק כשהפאנל פתוח
+  );
 
   const handleCategoryChange = (category: RecipeCategory) => {
     onFilterChange({ ...filters, category: filters.category === category ? null : category });
@@ -128,7 +137,8 @@ export default function RecipeFilters({ filters, onFilterChange, onClear }: Reci
       <div className={`filters-content ${isExpanded ? 'expanded' : ''}`}>
 
         {/* ── Category Filter ── */}
-        <div className="filter-group">
+        {/* ref מוצמד לכל פאנל הקטגוריות - useClickOutside יסגור בלחיצה מחוץ */}
+        <div className="filter-group" ref={categoriesPanelRef}>
           <h4 className="filter-title">Category</h4>
           <div className="filter-options">
             {/* Popular categories - always visible */}

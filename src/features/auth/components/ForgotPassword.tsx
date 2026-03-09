@@ -1,120 +1,103 @@
 // ===============================================
-// ForgotPassword - Sweet&Treat
+// ForgotPassword - Sweet&Treat | React Hook Form + MUI
 // ===============================================
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useForm } from 'react-hook-form';
+import { TextField, Button, Alert, CircularProgress } from '@mui/material';
 import axiosInstance, { handleApiError } from '../../../api/axiosConfig';
+import './ForgotPassword.css';
 
 type Step = 'email' | 'password' | 'success';
+
+interface EmailForm { email: string; }
+interface PasswordForm { newPassword: string; confirmPassword: string; }
 
 export default function ForgotPassword() {
   const navigate = useNavigate();
   const [step, setStep] = useState<Step>('email');
   const [email, setEmail] = useState('');
-  const [newPassword, setNewPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [serverError, setServerError] = useState('');
 
-  const inputStyle: React.CSSProperties = {
-    width: '100%', padding: '12px 16px',
-    border: '2px solid #fce7f3', borderRadius: '12px',
-    fontFamily: "'Nunito',sans-serif", fontSize: '0.92rem',
-    background: '#fdf2f8', outline: 'none',
-    boxSizing: 'border-box', color: '#1f2937',
-  };
+  // ── Step 1 form ──
+  const {
+    register: regEmail,
+    handleSubmit: handleEmail,
+    formState: { errors: emailErrors, isSubmitting: emailSubmitting },
+  } = useForm<EmailForm>();
 
-  const handleEmailSubmit = () => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!email.trim()) { setError('Please enter your email'); return; }
-    if (!emailRegex.test(email)) { setError('Please enter a valid email'); return; }
-    setError('');
+  // ── Step 2 form ──
+  const {
+    register: regPassword,
+    handleSubmit: handlePassword,
+    watch,
+    formState: { errors: passErrors, isSubmitting: passSubmitting },
+  } = useForm<PasswordForm>();
+
+  const passwordValue = watch('newPassword');
+
+  const onEmailSubmit = (data: EmailForm) => {
+    setEmail(data.email);
+    setServerError('');
     setStep('password');
   };
 
-  const handleReset = async () => {
-    if (!newPassword) { setError('Please enter a new password'); return; }
-    if (newPassword.length < 6) { setError('Password must be at least 6 characters'); return; }
-    if (newPassword !== confirmPassword) { setError('Passwords do not match'); return; }
-
-    setLoading(true);
-    setError('');
+  const onPasswordSubmit = async (data: PasswordForm) => {
+    setServerError('');
     try {
-      await axiosInstance.post('/user/reset-password', { email, newPassword });
+      await axiosInstance.post('/user/reset-password', {
+        email,
+        newPassword: data.newPassword,
+      });
       setStep('success');
-    } catch (err: unknown) {
-      setError(handleApiError(err));
-    } finally {
-      setLoading(false);
+    } catch (err) {
+      setServerError(handleApiError(err));
     }
   };
 
   return (
-    <div style={{
-      minHeight: '100vh', background: '#fdf2f8',
-      display: 'flex', alignItems: 'center', justifyContent: 'center',
-      fontFamily: "'Nunito',sans-serif", padding: '24px',
-    }}>
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Nunito:wght@400;600;700;800&display=swap');
-        .fp-input:focus { border-color: #d4547a !important; box-shadow: 0 0 0 3px rgba(212,84,122,0.12); }
-      `}</style>
-
-      <div style={{
-        background: 'white', borderRadius: '28px', padding: '48px 40px',
-        boxShadow: '0 8px 40px rgba(212,84,122,0.12)',
-        maxWidth: 440, width: '100%',
-      }}>
+    <div className="forgot-page">
+      <div className="forgot-card">
 
         {/* Step 1 — Email */}
         {step === 'email' && (
           <>
-            <div style={{ textAlign: 'center', marginBottom: '32px' }}>
-              <div style={{ fontSize: '52px', marginBottom: '12px' }}>🔑</div>
-              <h1 style={{ fontFamily: "'Dancing Script',cursive", fontSize: '2.2rem', color: '#1f2937', marginBottom: '8px' }}>
-                Reset <span style={{ color: '#d4547a' }}>Password</span>
-              </h1>
-              <p style={{ color: '#9ca3af', fontSize: '0.88rem', lineHeight: 1.6 }}>
-                Enter the email address linked to your account
-              </p>
-            </div>
+            <div className="forgot-icon">🔑</div>
+            <h1 className="forgot-title">Reset <span>Password</span></h1>
+            <p className="forgot-subtitle">
+              Enter the email address linked to your account
+            </p>
 
-            {error && (
-              <div style={{ padding: '12px 16px', borderRadius: '12px', marginBottom: '16px', background: '#fee2e2', color: '#991b1b', fontWeight: 600, fontSize: '0.85rem' }}>
-                ⚠️ {error}
-              </div>
-            )}
+            {serverError && <Alert severity="error" sx={{ mb: 2 }}>{serverError}</Alert>}
 
-            <div style={{ marginBottom: '20px' }}>
-              <label style={{ fontSize: '0.75rem', fontWeight: 700, color: '#9ca3af', letterSpacing: '0.07em', textTransform: 'uppercase', display: 'block', marginBottom: '8px' }}>
-                Email Address
-              </label>
-              <input
-                className="fp-input"
+            <form onSubmit={handleEmail(onEmailSubmit)} className="forgot-form" noValidate>
+              <TextField
+                label="Email Address"
                 type="email"
-                style={inputStyle}
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && handleEmailSubmit()}
+                fullWidth
                 placeholder="your@email.com"
                 autoFocus
+                error={!!emailErrors.email}
+                helperText={emailErrors.email?.message}
+                {...regEmail('email', {
+                  required: 'Email is required',
+                  pattern: { value: /\S+@\S+\.\S+/, message: 'Please enter a valid email' },
+                })}
               />
-            </div>
+              <Button
+                type="submit"
+                variant="contained"
+                fullWidth
+                size="large"
+                disabled={emailSubmitting}
+                startIcon={emailSubmitting ? <CircularProgress size={18} color="inherit" /> : null}
+              >
+                Continue →
+              </Button>
+            </form>
 
-            <button onClick={handleEmailSubmit} style={{
-              width: '100%', padding: '14px', borderRadius: '999px', border: 'none',
-              background: 'linear-gradient(135deg, #e8799a, #d4547a)',
-              color: 'white', fontFamily: "'Nunito',sans-serif",
-              fontWeight: 700, fontSize: '0.95rem', cursor: 'pointer',
-              boxShadow: '0 4px 16px rgba(212,84,122,0.3)', marginBottom: '16px',
-            }}>
-              Continue →
-            </button>
-
-            <div style={{ textAlign: 'center' }}>
-              <Link to="/login" style={{ color: '#d4547a', textDecoration: 'none', fontWeight: 700, fontSize: '0.85rem' }}>
-                ← Back to Login
-              </Link>
+            <div className="forgot-back">
+              <Link to="/login">← Back to Login</Link>
             </div>
           </>
         )}
@@ -122,71 +105,54 @@ export default function ForgotPassword() {
         {/* Step 2 — New Password */}
         {step === 'password' && (
           <>
-            <div style={{ textAlign: 'center', marginBottom: '32px' }}>
-              <div style={{ fontSize: '52px', marginBottom: '12px' }}>🔒</div>
-              <h1 style={{ fontFamily: "'Dancing Script',cursive", fontSize: '2.2rem', color: '#1f2937', marginBottom: '8px' }}>
-                New <span style={{ color: '#d4547a' }}>Password</span>
-              </h1>
-              <p style={{ color: '#9ca3af', fontSize: '0.88rem', lineHeight: 1.6 }}>
-                Choose a strong password for <strong>{email}</strong>
-              </p>
-            </div>
+            <div className="forgot-icon">🔒</div>
+            <h1 className="forgot-title">New <span>Password</span></h1>
+            <p className="forgot-subtitle">
+              Choose a strong password for <strong>{email}</strong>
+            </p>
 
-            {error && (
-              <div style={{ padding: '12px 16px', borderRadius: '12px', marginBottom: '16px', background: '#fee2e2', color: '#991b1b', fontWeight: 600, fontSize: '0.85rem' }}>
-                ⚠️ {error}
-              </div>
-            )}
+            {serverError && <Alert severity="error" sx={{ mb: 2 }}>{serverError}</Alert>}
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginBottom: '24px' }}>
-              <div>
-                <label style={{ fontSize: '0.75rem', fontWeight: 700, color: '#9ca3af', letterSpacing: '0.07em', textTransform: 'uppercase', display: 'block', marginBottom: '8px' }}>
-                  New Password
-                </label>
-                <input
-                  className="fp-input"
-                  type="password"
-                  style={inputStyle}
-                  value={newPassword}
-                  onChange={(e) => setNewPassword(e.target.value)}
-                  placeholder="At least 6 characters"
-                  autoFocus
-                />
-              </div>
-              <div>
-                <label style={{ fontSize: '0.75rem', fontWeight: 700, color: '#9ca3af', letterSpacing: '0.07em', textTransform: 'uppercase', display: 'block', marginBottom: '8px' }}>
-                  Confirm Password
-                </label>
-                <input
-                  className="fp-input"
-                  type="password"
-                  style={inputStyle}
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  onKeyDown={(e) => e.key === 'Enter' && handleReset()}
-                  placeholder="Repeat your password"
-                />
-              </div>
-            </div>
+            <form onSubmit={handlePassword(onPasswordSubmit)} className="forgot-form" noValidate>
+              <TextField
+                label="New Password"
+                type="password"
+                fullWidth
+                placeholder="At least 6 characters"
+                autoFocus
+                error={!!passErrors.newPassword}
+                helperText={passErrors.newPassword?.message}
+                {...regPassword('newPassword', {
+                  required: 'Password is required',
+                  minLength: { value: 6, message: 'At least 6 characters' },
+                })}
+              />
+              <TextField
+                label="Confirm Password"
+                type="password"
+                fullWidth
+                placeholder="Repeat your password"
+                error={!!passErrors.confirmPassword}
+                helperText={passErrors.confirmPassword?.message}
+                {...regPassword('confirmPassword', {
+                  required: 'Please confirm your password',
+                  validate: (val) => val === passwordValue || 'Passwords do not match',
+                })}
+              />
+              <Button
+                type="submit"
+                variant="contained"
+                fullWidth
+                size="large"
+                disabled={passSubmitting}
+                startIcon={passSubmitting ? <CircularProgress size={18} color="inherit" /> : null}
+              >
+                {passSubmitting ? 'Saving...' : '✨ Set New Password'}
+              </Button>
+            </form>
 
-            <button onClick={handleReset} disabled={loading} style={{
-              width: '100%', padding: '14px', borderRadius: '999px', border: 'none',
-              background: loading ? '#e5e7eb' : 'linear-gradient(135deg, #e8799a, #d4547a)',
-              color: loading ? '#9ca3af' : 'white', fontFamily: "'Nunito',sans-serif",
-              fontWeight: 700, fontSize: '0.95rem',
-              cursor: loading ? 'not-allowed' : 'pointer',
-              boxShadow: loading ? 'none' : '0 4px 16px rgba(212,84,122,0.3)',
-              marginBottom: '16px',
-            }}>
-              {loading ? 'Saving...' : '✨ Set New Password'}
-            </button>
-
-            <div style={{ textAlign: 'center' }}>
-              <button onClick={() => { setStep('email'); setError(''); }} style={{
-                background: 'none', border: 'none', color: '#d4547a',
-                fontFamily: "'Nunito',sans-serif", fontWeight: 700,
-                fontSize: '0.85rem', cursor: 'pointer',
-              }}>
+            <div className="forgot-back">
+              <button onClick={() => { setStep('email'); setServerError(''); }}>
                 ← Change Email
               </button>
             </div>
@@ -195,23 +161,21 @@ export default function ForgotPassword() {
 
         {/* Step 3 — Success */}
         {step === 'success' && (
-          <div style={{ textAlign: 'center' }}>
-            <div style={{ fontSize: '64px', marginBottom: '16px' }}>🎉</div>
-            <h1 style={{ fontFamily: "'Dancing Script',cursive", fontSize: '2.2rem', color: '#1f2937', marginBottom: '8px' }}>
-              Password <span style={{ color: '#d4547a' }}>Reset!</span>
-            </h1>
-            <p style={{ color: '#9ca3af', fontSize: '0.9rem', lineHeight: 1.6, marginBottom: '28px' }}>
-              Your password has been updated successfully. You can now log in with your new password.
+          <div className="forgot-success">
+            <div className="forgot-icon">🎉</div>
+            <h1 className="forgot-title">Password <span>Reset!</span></h1>
+            <p className="forgot-subtitle">
+              Your password has been updated successfully.
+              You can now log in with your new password.
             </p>
-            <button onClick={() => navigate('/login')} style={{
-              width: '100%', padding: '14px', borderRadius: '999px', border: 'none',
-              background: 'linear-gradient(135deg, #e8799a, #d4547a)',
-              color: 'white', fontFamily: "'Nunito',sans-serif",
-              fontWeight: 700, fontSize: '0.95rem', cursor: 'pointer',
-              boxShadow: '0 4px 16px rgba(212,84,122,0.3)',
-            }}>
+            <Button
+              variant="contained"
+              fullWidth
+              size="large"
+              onClick={() => navigate('/login')}
+            >
               Go to Login →
-            </button>
+            </Button>
           </div>
         )}
 

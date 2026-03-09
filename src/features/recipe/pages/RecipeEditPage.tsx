@@ -1,32 +1,29 @@
 // ===============================================
 // RecipeEditPage - עריכת מתכון קיים
 // ===============================================
-import { useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
-import { fetchRecipeById, updateExistingRecipe, clearCurrentRecipe } from '../redux/recipeSlice';
+import { useGetRecipeByIdQuery, useUpdateRecipeMutation } from '../redux/recipeSlice';
 import RecipeForm from '../components/RecipeForm';
 import type { RecipeCreateDto, RecipeUpdateDto } from '../types/recipe.types';
 
 export default function RecipeEditPage() {
   const { id } = useParams<{ id: string }>();
-  const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const { currentRecipe, loading, error } = useAppSelector((state) => state.recipes);
 
-  useEffect(() => {
-    if (id) {
-      dispatch(fetchRecipeById(Number(id)));
-    }
-    return () => {
-      dispatch(clearCurrentRecipe());
-    };
-  }, [dispatch, id]);
+  // RTK Query - טעינת המתכון לעריכה
+  const {
+    data: currentRecipe,
+    isLoading: loading,
+    error,
+  } = useGetRecipeByIdQuery(Number(id), { skip: !id });
+
+  // RTK Query - mutation לעדכון
+  const [updateRecipe, { isLoading: saving }] = useUpdateRecipeMutation();
 
   const handleSubmit = async (data: RecipeCreateDto | RecipeUpdateDto) => {
     if (!id) return;
     try {
-      await dispatch(updateExistingRecipe({ id: Number(id), data: data as RecipeUpdateDto })).unwrap();
+      await updateRecipe({ id: Number(id), data: data as RecipeUpdateDto }).unwrap();
       navigate(`/recipes/${id}`);
     } catch (err) {
       console.error('Failed to update recipe:', err);
@@ -77,7 +74,6 @@ export default function RecipeEditPage() {
     );
   }
 
-  // Map currentRecipe to form initial data
   const initialData = {
     name: currentRecipe.name,
     description: currentRecipe.description,
@@ -111,7 +107,6 @@ export default function RecipeEditPage() {
         marginBottom: '8px',
       }}>
         <div style={{ maxWidth: '760px', margin: '0 auto' }}>
-          {/* Breadcrumb */}
           <nav style={{ fontSize: '0.85rem', color: '#9ca3af', fontFamily: "'Nunito',sans-serif", marginBottom: '12px' }}>
             <Link to="/recipes" style={{ color: '#d4547a', textDecoration: 'none', fontWeight: 600 }}>Recipes</Link>
             <span style={{ margin: '0 8px' }}>›</span>
@@ -138,7 +133,7 @@ export default function RecipeEditPage() {
       <RecipeForm
         initialData={initialData}
         onSubmit={handleSubmit}
-        loading={loading}
+        loading={saving}
         submitLabel="Save Changes"
       />
     </div>

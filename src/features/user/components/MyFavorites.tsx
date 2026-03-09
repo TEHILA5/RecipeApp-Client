@@ -3,16 +3,16 @@
 // ===============================================
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { useAppSelector, useAppDispatch } from '../../../redux/hooks';
-import { fetchAllRecipes } from '../../recipe/redux/recipeSlice';
+import { useGetRecipesQuery } from '../../recipe/redux/recipeSlice';
 import { getMySavedRecipes, removeBookmark } from '../../../api/userActionApi';
 import { CATEGORY_EMOJIS, LEVEL_LABELS } from '../../recipe/types/recipe.types';
 import type { UserActionDto } from '../../recipe/types/userAction.types';
 import StarRating from '../../../shared/components/StarRating';
 
 export default function MyFavorites() {
-  const dispatch = useAppDispatch();
-  const { recipes } = useAppSelector((state) => state.recipes);
+  // ✅ RTK Query - מחליף את dispatch(fetchAllRecipes())
+  // רק קוראים את הקאש - לא עושים dispatch ידני
+  const { data: recipes = [] } = useGetRecipesQuery();
 
   const [saved, setSaved] = useState<UserActionDto[]>([]);
   const [loading, setLoading] = useState(true);
@@ -20,14 +20,11 @@ export default function MyFavorites() {
   const [removingId, setRemovingId] = useState<number | null>(null);
 
   useEffect(() => {
-    // טעינת כל המתכונים אם עוד לא נטענו (לצורך הפרטים)
-    if (recipes.length === 0) dispatch(fetchAllRecipes());
-
     getMySavedRecipes()
       .then((data) => setSaved(data))
       .catch(() => setError('Failed to load saved recipes'))
       .finally(() => setLoading(false));
-  }, [dispatch, recipes.length]);
+  }, []);
 
   const handleRemove = async (recipeId: number) => {
     setRemovingId(recipeId);
@@ -87,7 +84,7 @@ export default function MyFavorites() {
       gap: '20px',
     }}>
       {saved.map((item) => {
-        // שלוף את פרטי המתכון המלאים מה-Redux store
+        // ✅ שולף פרטים מהקאש של RTK Query - לא צריך dispatch
         const fullRecipe = recipes.find((r) => r.id === item.recipeId);
         const emoji = CATEGORY_EMOJIS[fullRecipe?.category as keyof typeof CATEGORY_EMOJIS] ?? '🍰';
         const levelLabel = LEVEL_LABELS[fullRecipe?.level as 1 | 2 | 3] ?? 'Easy';

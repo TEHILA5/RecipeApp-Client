@@ -1,86 +1,46 @@
 // ===============================================
 // Recipe List Page - Sweet&Treat
 // ===============================================
-import { useEffect, useState } from 'react';
-import { Link, useSearchParams } from 'react-router-dom';
-import { useAppSelector, useAppDispatch } from '../../../redux/hooks';
-import { fetchAllRecipes, searchByCategory } from '../redux/recipeSlice';
+import { useEffect } from 'react';
+import { useSearchParams, Link } from 'react-router-dom';
+import { useAppSelector } from '../../../redux/hooks';
+import { useRecipes } from '../hooks/useRecipes';
 import RecipeCard from '../components/RecipeCard';
 import RecipeFilters from '../components/RecipeFilters';
-import type { RecipeCategory, DifficultyLevel } from '../types/recipe.types';
+import type { RecipeCategory } from '../types/recipe.types';
 import './RecipeListPage.css';
 
 type SortOption = 'newest' | 'rating' | 'time' | 'name';
 
 export default function RecipeListPage() {
-  const dispatch = useAppDispatch();
   const [searchParams, setSearchParams] = useSearchParams();
-  const { recipes, loading, error } = useAppSelector((state) => state.recipes);
   const { isAdmin } = useAppSelector((state) => state.auth);
 
-  // Filters from URL or state
-  const [filters, setFilters] = useState({
-    category: searchParams.get('category') as RecipeCategory | null,
-    level: null as DifficultyLevel | null,
-    maxTime: null as number | null,
-  });
-  const [sortBy, setSortBy] = useState<SortOption>('newest');
-  const [searchTerm, setSearchTerm] = useState('');
+  const {
+    recipes,
+    totalCount,
+    filters,
+    searchTerm,
+    sortBy,
+    isLoading,
+    error,
+    setSearchTerm,
+    setSortBy,
+    setFilters,
+    resetFilters,
+  } = useRecipes();
 
-  // Load recipes on mount
+  // סינון לפי קטגוריה מ-URL בטעינה ראשונה
   useEffect(() => {
-    const category = searchParams.get('category');
-    if (category) {
-      dispatch(searchByCategory(category));
-    } else if (recipes.length === 0) {
-      dispatch(fetchAllRecipes());
+    const categoryFromUrl = searchParams.get('category') as RecipeCategory | null;
+    if (categoryFromUrl && !filters.category) {
+      setFilters({ ...filters, category: categoryFromUrl });
     }
-  }, [dispatch, searchParams, recipes.length]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-  // Apply filters & search
-  const filteredRecipes = recipes.filter((recipe) => {
-    // Category filter
-    if (filters.category && recipe.category !== filters.category) {
-      return false;
-    }
-    // Level filter
-    if (filters.level && recipe.level !== filters.level) {
-      return false;
-    }
-    // Time filter
-    if (filters.maxTime && recipe.totalTime > filters.maxTime) {
-      return false;
-    }
-    // Search term
-    if (searchTerm) {
-      const term = searchTerm.toLowerCase();
-      return (
-        recipe.name.toLowerCase().includes(term) ||
-        recipe.description.toLowerCase().includes(term)
-      );
-    }
-    return true;
-  });
-
-  // Apply sorting
-  const sortedRecipes = [...filteredRecipes].sort((a, b) => {
-    switch (sortBy) {
-      case 'rating':
-        return (b.averageRating || 0) - (a.averageRating || 0);
-      case 'time':
-        return a.totalTime - b.totalTime;
-      case 'name':
-        return a.name.localeCompare(b.name);
-      case 'newest':
-      default:
-        return b.id - a.id; // assuming higher id = newer
-    }
-  });
-
-  // Handle filter change
   const handleFilterChange = (newFilters: typeof filters) => {
     setFilters(newFilters);
-    // Update URL if category changed
     if (newFilters.category) {
       setSearchParams({ category: newFilters.category });
     } else {
@@ -88,12 +48,15 @@ export default function RecipeListPage() {
     }
   };
 
-  // Clear all filters
   const handleClearFilters = () => {
-    setFilters({ category: null, level: null, maxTime: null });
-    setSearchTerm('');
+    resetFilters();
     setSearchParams({});
   };
+
+  // המרת error מ-unknown למחרוזת תצוגה
+  const errorMessage = error
+    ? (error as { status?: number; error?: string })?.error ?? 'Failed to load recipes'
+    : null;
 
   return (
     <div className="recipe-list-page">
@@ -105,7 +68,7 @@ export default function RecipeListPage() {
               All <span>Recipes</span>
             </h1>
             <p className="page-subtitle">
-              Discover {sortedRecipes.length} delicious dessert recipes
+              Discover {totalCount} delicious dessert recipes
             </p>
           </div>
           {isAdmin && (
@@ -159,7 +122,7 @@ export default function RecipeListPage() {
           {filters.category && (
             <span className="filter-pill">
               Category: {filters.category}
-              <button onClick={() => setFilters({ ...filters, category: null })}>×</button>
+              <button onClick={() => handleFilterChange({ ...filters, category: null })}>×</button>
             </span>
           )}
           {filters.level && (
@@ -187,14 +150,14 @@ export default function RecipeListPage() {
       )}
 
       {/* Error */}
-      {error && (
+      {errorMessage && (
         <div className="error-message">
-          <span>⚠️</span> Failed to load recipes: {error}
+          <span>⚠️</span> {errorMessage}
         </div>
       )}
 
       {/* Loading */}
-      {loading && (
+      {isLoading && (
         <div className="loading-state">
           <div className="spinner-large"></div>
           <p>Loading delicious recipes...</p>
@@ -202,16 +165,16 @@ export default function RecipeListPage() {
       )}
 
       {/* Recipes Grid */}
-      {!loading && sortedRecipes.length > 0 && (
+      {!isLoading && recipes.length > 0 && (
         <div className="recipes-grid">
-          {sortedRecipes.map((recipe) => (
+          {recipes.map((recipe) => (
             <RecipeCard key={recipe.id} recipe={recipe} />
           ))}
         </div>
       )}
 
       {/* No Results */}
-      {!loading && sortedRecipes.length === 0 && !error && (
+      {!isLoading && recipes.length === 0 && !error && (
         <div className="no-results">
           <div className="no-results-icon">🍰</div>
           <h3>No recipes found</h3>

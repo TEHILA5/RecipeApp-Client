@@ -3,26 +3,31 @@
 // ===============================================
 
 import { configureStore } from '@reduxjs/toolkit';
-import authReducer from '../features/auth/redux/authSlice.ts';
+import authReducer from '../features/auth/redux/authSlice';
 import ingredientReducer from '../features/ingredient/redux/ingredientSlice';
-import recipeReducer from '../features/recipe/redux/recipeSlice.ts';
-import uiReducer from '../redux/slices/uiSlice.ts';
+import recipePanelReducer, { recipesApi } from '../features/recipe/redux/recipeSlice';
+import uiReducer from '../redux/slices/uiSlice';
 
 export const store = configureStore({
   reducer: {
     auth: authReducer,
     ingredients: ingredientReducer,
-    recipes: recipeReducer,
+
+    // ✅ סטייט גלובלי לפילטרים/עמודים (לא קשור לשרת)
+    recipePanel: recipePanelReducer,
+
+    // ✅ RTK Query cache - חובה!
+    [recipesApi.reducerPath]: recipesApi.reducer,
+
     ui: uiReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: {
-        // התעלם מ-functions ב-Redux (למשל ב-modal)
         ignoredActions: ['ui/openModal'],
         ignoredPaths: ['ui.modal.onConfirm'],
       },
-    }),
+    }).concat(recipesApi.middleware), // ✅ חובה! בלי זה RTK Query לא עובד
 });
 
 export type RootState = ReturnType<typeof store.getState>;

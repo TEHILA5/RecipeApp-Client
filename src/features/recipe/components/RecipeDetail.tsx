@@ -3,22 +3,24 @@
 // ===============================================
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAppSelector, useAppDispatch } from '../../../redux/hooks';
-import { deleteExistingRecipe } from '../redux/recipeSlice';
-import { getMySavedRecipes, addBookmark, removeBookmark, addComment, addHistory, getMyComments, getRecipeComments } from '../../../api/userActionApi';
+import { useAppSelector } from '../../../redux/hooks';
+import { useDeleteRecipeMutation } from '../redux/recipeSlice';
+import { getMySavedRecipes, addBookmark, removeBookmark, addComment, addHistory, getRecipeComments } from '../../../api/userActionApi';
 import type { Recipe } from '../types/recipe.types';
 import type { UserActionDto, CommentCreateDto } from '../types/userAction.types';
 import { LEVEL_LABELS, CATEGORY_EMOJIS } from '../types/recipe.types';
 
 interface RecipeDetailProps {
   recipe: Recipe;
+  onCommentAdded?: () => void;
 }
 
-export default function RecipeDetail({ recipe }: RecipeDetailProps) {
-  const dispatch = useAppDispatch();
+export default function RecipeDetail({ recipe, onCommentAdded }: RecipeDetailProps) {
   const navigate = useNavigate();
   const { isAdmin, user } = useAppSelector((state) => state.auth);
   const isLoggedIn = !!user;
+
+  const [deleteRecipe] = useDeleteRecipeMutation();
 
   const [comments, setComments] = useState<UserActionDto[]>([]);
   const [isBookmarked, setIsBookmarked] = useState(false);
@@ -44,39 +46,30 @@ export default function RecipeDetail({ recipe }: RecipeDetailProps) {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [recipe.id, isLoggedIn]);
 
-  // ✅ טעינת תגובות - endpoint ציבורי לכולם
   const loadComments = async () => {
     setLoadingComments(true);
     try {
       const recipeComments = await getRecipeComments(recipe.id);
       setComments(recipeComments);
-      // בדוק אם המשתמש הנוכחי כבר הגיב
       if (isLoggedIn) {
         setHasCommented(recipeComments.some(c => c.userName === user?.name));
       }
-    } catch {
-      // fail silently
-    } finally {
+    } catch { /* empty */ } finally {
       setLoadingComments(false);
     }
   };
 
-  // ✅ בדיקת bookmark - דרך my-saved
   const checkBookmarkStatus = async () => {
     try {
       const saved = await getMySavedRecipes();
       setIsBookmarked(saved.some((a) => a.recipeId === recipe.id));
-    } catch {
-      // fail silently
-    }
+    } catch {/* empty */}
   };
 
   const recordHistory = async () => {
     try {
       await addHistory({ category: recipe.category });
-    } catch {
-      // fail silently
-    }
+    } catch {/* empty */}
   };
 
   const handleBookmark = async () => {
@@ -90,8 +83,7 @@ export default function RecipeDetail({ recipe }: RecipeDetailProps) {
         await addBookmark(recipe.id);
         setIsBookmarked(true);
       }
-    } catch {
-      // fail silently
+    } catch {/* empty */
     } finally {
       setBookmarkLoading(false);
     }
@@ -115,6 +107,10 @@ export default function RecipeDetail({ recipe }: RecipeDetailProps) {
       setComments(prev => [...prev, newComment]);
       setCommentForm({ content: '', rating: 5 });
       setHasCommented(true);
+
+      // ✅ מבקש מה-Page לבטל cache ולרענן את הדירוג מהשרת
+      onCommentAdded?.();
+
     } catch (err: unknown) {
       setCommentError(err instanceof Error ? err.message : 'Failed to submit comment');
     } finally {
@@ -125,7 +121,7 @@ export default function RecipeDetail({ recipe }: RecipeDetailProps) {
   const handleDelete = async () => {
     setDeletingRecipe(true);
     try {
-      await dispatch(deleteExistingRecipe(recipe.id)).unwrap();
+      await deleteRecipe(recipe.id).unwrap();
       navigate('/recipes');
     } catch {
       setDeletingRecipe(false);
@@ -270,7 +266,6 @@ export default function RecipeDetail({ recipe }: RecipeDetailProps) {
 
         <div style={{ padding: '28px' }}>
 
-          {/* Ingredients */}
           {activeTab === 'ingredients' && (
             <div>
               {!recipe.ingredients?.length ? (
@@ -314,7 +309,6 @@ export default function RecipeDetail({ recipe }: RecipeDetailProps) {
             </div>
           )}
 
-          {/* Instructions */}
           {activeTab === 'instructions' && (
             <div>
               {!recipe.instructions ? (
@@ -338,10 +332,8 @@ export default function RecipeDetail({ recipe }: RecipeDetailProps) {
             </div>
           )}
 
-          {/* Comments */}
           {activeTab === 'comments' && (
             <div>
-              {/* Add Comment Form */}
               {isLoggedIn && !hasCommented ? (
                 <div style={{
                   background: '#fdf2f8', borderRadius: '16px', padding: '20px',
@@ -394,7 +386,6 @@ export default function RecipeDetail({ recipe }: RecipeDetailProps) {
                 </div>
               )}
 
-              {/* Comments List */}
               {loadingComments ? (
                 <div style={{ textAlign: 'center', padding: '20px', color: '#9ca3af' }}>
                   <div style={{
@@ -445,7 +436,6 @@ export default function RecipeDetail({ recipe }: RecipeDetailProps) {
         </div>
       </div>
 
-      {/* Delete Modal */}
       {showDeleteConfirm && (
         <div style={{
           position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)',

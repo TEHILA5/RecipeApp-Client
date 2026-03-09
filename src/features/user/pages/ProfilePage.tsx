@@ -1,240 +1,345 @@
 // ===============================================
-// ProfilePage - Sweet&Treat
+// ProfilePage - פרופיל משתמש
 // ===============================================
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useForm } from 'react-hook-form';
+import { TextField, Alert } from '@mui/material';
 import { useAppSelector, useAppDispatch } from '../../../redux/hooks';
 import { logout } from '../../auth/redux/authSlice';
-import { useNavigate } from 'react-router-dom';
-import { getMe } from '../../../api/userApi';
-import type { UserDto } from '../../../api/userApi';
-import { getMySavedRecipes, getMyComments } from '../../../api/userActionApi';
-import type { UserActionDto } from '../../recipe/types/userAction.types';
+import { useGetRecipesQuery } from '../../recipe/redux/recipeSlice';
+import { updateMe, deleteMe } from '../../../api/userApi';
+import type { UpdateUserData } from '../../auth/types/auth.types';
 import ProfileCard from '../components/ProfileCard';
+
+interface ProfileFormData {
+  name: string;
+  phone: string;
+  email: string;
+}
 
 export default function ProfilePage() {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const { user: authUser } = useAppSelector((state) => state.auth);
+  const { user } = useAppSelector((s) => s.auth);
 
-  const [user, setUser] = useState<UserDto | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [savedCount, setSavedCount] = useState(0);
-  const [commentCount, setCommentCount] = useState(0);
-  const [comments, setComments] = useState<UserActionDto[]>([]);
-  const [showComments, setShowComments] = useState(false);
-  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  // ✅ RTK Query - קוראים את הקאש בלי dispatch
+  const { data: allRecipes = [] } = useGetRecipesQuery();
 
-  useEffect(() => {
-    Promise.all([
-      getMe(),
-      getMySavedRecipes().catch(() => []),
-      getMyComments().catch(() => []),
-    ]).then(([userData, saved, commentsData]) => {
-      setUser(userData);
-      setSavedCount(saved.length);
-      setCommentCount((commentsData as UserActionDto[]).length);
-      setComments(commentsData as UserActionDto[]);
-    }).finally(() => setLoading(false));
-  }, []);
+  const [activeTab, setActiveTab] = useState<'info' | 'stats' | 'danger'>('info');
+  const [saving, setSaving] = useState(false);
+  const [saveSuccess, setSaveSuccess] = useState(false);
+  const [saveError, setSaveError] = useState('');
+  const [deleteConfirm, setDeleteConfirm] = useState(false);
+  const [deleting, setDeleting] = useState(false);
 
-  const handleLogout = () => {
-    dispatch(logout());
-    navigate('/login');
+  const { register, handleSubmit, formState: { errors } } = useForm<ProfileFormData>({
+    defaultValues: {
+      name: user?.name ?? '',
+      phone: user?.phone ?? '',
+      email: user?.email ?? '',
+    },
+  });
+
+  const onSave = async (data: ProfileFormData) => {
+    setSaving(true);
+    setSaveError('');
+    setSaveSuccess(false);
+    try {
+      const changed: UpdateUserData = {};
+      if (data.name !== user?.name) changed.name = data.name;
+      if (data.phone !== user?.phone) changed.phone = data.phone;
+      if (data.email !== user?.email) changed.email = data.email;
+
+      if (Object.keys(changed).length > 0) {
+        await updateMe(changed);
+      }
+      setSaveSuccess(true);
+      setTimeout(() => setSaveSuccess(false), 3000);
+    } catch (err: unknown) {
+      setSaveError(err instanceof Error ? err.message : 'Failed to save changes');
+    } finally {
+      setSaving(false);
+    }
   };
 
-  if (loading) {
-    return (
-      <div style={{ minHeight: '100vh', background: '#fdf2f8', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <div style={{
-          width: 44, height: 44, border: '3px solid #fce7f3',
-          borderTopColor: '#d4547a', borderRadius: '50%',
-          animation: 'spin 0.8s linear infinite',
-        }} />
-        <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
-      </div>
-    );
-  }
+  const handleDeleteAccount = async () => {
+    setDeleting(true);
+    try {
+      await deleteMe();
+      dispatch(logout());
+      navigate('/');
+    } catch (err: unknown) {
+      setSaveError(err instanceof Error ? err.message : 'Failed to delete account');
+      setDeleting(false);
+      setDeleteConfirm(false);
+    }
+  };
+
+  const stats = {
+    totalRecipes: allRecipes.length,
+    topCategory: allRecipes.length > 0
+      ? Object.entries(
+          allRecipes.reduce((acc, r) => {
+            acc[r.category] = (acc[r.category] ?? 0) + 1;
+            return acc;
+          }, {} as Record<string, number>)
+        ).sort(([, a], [, b]) => b - a)[0]?.[0] ?? '—'
+      : '—',
+  };
 
   if (!user) return null;
 
-  const stats = [
-    { icon: '🔖', label: 'Saved Recipes', value: savedCount, link: '/my-recipes' },
-    { icon: '⭐', label: 'Reviews Written', value: commentCount, link: 'comments' },
-  ];
-
   return (
-    <div style={{ minHeight: '100vh', background: '#fdf2f8', paddingTop: 'var(--nav-height, 70px)', fontFamily: "'Nunito',sans-serif" }}>
+    <div style={{
+      minHeight: '100vh', background: '#fdf2f8',
+      paddingTop: 'var(--nav-height, 70px)',
+      fontFamily: "'Nunito', sans-serif",
+    }}>
 
       {/* Header */}
       <div style={{
-        background: 'linear-gradient(135deg, rgba(232,121,154,0.08), rgba(232,196,154,0.05))',
-        padding: '48px 64px 40px',
+        background: 'linear-gradient(135deg, rgba(232,121,154,0.08), rgba(232,196,154,0.08))',
+        padding: '48px 24px 0',
         borderBottom: '2px solid rgba(232,121,154,0.1)',
       }}>
-        <div style={{ maxWidth: '800px', margin: '0 auto' }}>
-          <div style={{ fontSize: '0.8rem', fontWeight: 700, color: '#d4547a', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '8px' }}>
-            ✦ My Account
+        <div style={{ maxWidth: '860px', margin: '0 auto' }}>
+          <ProfileCard user={user} />
+
+          {/* Tabs */}
+          <div style={{ display: 'flex', gap: '4px', marginTop: '24px' }}>
+            {([
+              { key: 'info', label: '👤 My Info' },
+              { key: 'stats', label: '📊 Stats' },
+              { key: 'danger', label: '⚠️ Account' },
+            ] as { key: typeof activeTab; label: string }[]).map(({ key, label }) => (
+              <button
+                key={key}
+                onClick={() => setActiveTab(key)}
+                style={{
+                  padding: '12px 24px', borderRadius: '12px 12px 0 0',
+                  border: 'none', cursor: 'pointer',
+                  fontFamily: "'Nunito',sans-serif", fontWeight: 700, fontSize: '0.88rem',
+                  background: activeTab === key ? 'white' : 'transparent',
+                  color: activeTab === key ? '#d4547a' : '#9ca3af',
+                  borderBottom: activeTab === key ? '2px solid white' : '2px solid transparent',
+                  marginBottom: '-2px',
+                }}
+              >
+                {label}
+              </button>
+            ))}
           </div>
-          <h1 style={{
-            fontFamily: "'Dancing Script',cursive",
-            fontSize: 'clamp(2rem, 3.5vw, 3rem)',
-            color: '#1f2937', lineHeight: 1.1,
-          }}>
-            Hello, <span style={{ color: '#d4547a' }}>{authUser?.name || user.name}</span> 👋
-          </h1>
         </div>
       </div>
 
-      <div style={{ maxWidth: '800px', margin: '0 auto', padding: '32px 24px', display: 'flex', flexDirection: 'column', gap: '24px' }}>
+      {/* Content */}
+      <div style={{ maxWidth: '860px', margin: '0 auto', padding: '32px 24px' }}>
 
-        {/* Stats row */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '16px' }}>
-          {stats.map((stat) => (
-            <div key={stat.label} onClick={() => { if (stat.link === 'comments') setShowComments(s => !s); else if (stat.link) navigate(stat.link); }} style={{ textDecoration: 'none' }}>
-              <div style={{
-                background: 'white', borderRadius: '20px', padding: '24px',
-                boxShadow: '0 4px 20px rgba(212,84,122,0.07)',
-                display: 'flex', alignItems: 'center', gap: '16px',
-                transition: 'all 0.2s', cursor: stat.link ? 'pointer' : 'default', background: stat.link === 'comments' && showComments ? '#fdf2f8' : 'white',
-              }}
-                onMouseEnter={(e) => { if (stat.link) e.currentTarget.style.transform = 'translateY(-3px)'; }}
-                onMouseLeave={(e) => { e.currentTarget.style.transform = 'none'; }}
-              >
-                <div style={{
-                  width: 52, height: 52, borderRadius: '16px',
-                  background: 'linear-gradient(135deg, rgba(232,121,154,0.12), rgba(212,84,122,0.08))',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.6rem',
-                }}>
-                  {stat.icon}
-                </div>
-                <div>
-                  <div style={{ fontSize: '1.6rem', fontWeight: 800, color: '#1f2937', lineHeight: 1 }}>
-                    {stat.value}
-                  </div>
-                  <div style={{ fontSize: '0.8rem', color: '#9ca3af', fontWeight: 600, marginTop: '2px' }}>
-                    {stat.label}
-                  </div>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
+        {/* ── Info Tab ── */}
+        {activeTab === 'info' && (
+          <div style={{
+            background: 'white', borderRadius: '20px', padding: '32px',
+            boxShadow: '0 4px 20px rgba(212,84,122,0.07)',
+          }}>
+            <h2 style={{ fontFamily: "'Dancing Script',cursive", fontSize: '1.8rem', color: '#d4547a', marginBottom: '24px' }}>
+              Edit Profile ✏️
+            </h2>
 
-        {/* My Reviews */}
-        {showComments && (
-          <div style={{ background: 'white', borderRadius: '24px', padding: '28px', boxShadow: '0 4px 24px rgba(212,84,122,0.08)' }}>
-            <h3 style={{ fontFamily: "'Dancing Script',cursive", fontSize: '1.4rem', color: '#1f2937', marginBottom: '20px' }}>
-              ⭐ My Reviews
-            </h3>
-            {comments.length === 0 ? (
-              <p style={{ color: '#9ca3af', textAlign: 'center', padding: '20px 0' }}>You haven't written any reviews yet.</p>
-            ) : (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-                {comments.map((comment) => (
-                  <div key={comment.id} style={{
-                    padding: '16px 20px', background: '#fdf2f8',
-                    borderRadius: '16px', border: '1px solid #fce7f3',
-                  }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px' }}>
-                      <a href={`/recipes/${comment.recipeId}`} style={{
-                        fontFamily: "'Dancing Script',cursive", fontSize: '1.1rem',
-                        color: '#d4547a', textDecoration: 'none', fontWeight: 700,
-                      }}>
-                        🍰 {comment.recipeName || `Recipe #${comment.recipeId}`}
-                      </a>
-                      <span style={{ fontSize: '0.75rem', color: '#9ca3af', flexShrink: 0, marginLeft: '12px' }}>
-                        {new Date(comment.createdAt).toLocaleDateString()}
-                      </span>
-                    </div>
-                    {comment.rating !== undefined && (
-                      <div style={{ display: 'flex', gap: '2px', marginBottom: '6px' }}>
-                        {[1,2,3,4,5].map(s => (
-                          <span key={s} style={{ color: s <= comment.rating! ? '#f59e0b' : '#d1d5db', fontSize: '0.95rem' }}>★</span>
-                        ))}
-                      </div>
-                    )}
-                    <p style={{ margin: 0, color: '#4b5563', fontSize: '0.88rem', lineHeight: 1.6 }}>{comment.content}</p>
-                  </div>
-                ))}
-              </div>
+            {saveSuccess && (
+              <Alert severity="success" sx={{ mb: 2, borderRadius: '12px' }}>
+                ✅ Profile updated successfully!
+              </Alert>
             )}
+            {saveError && (
+              <Alert severity="error" sx={{ mb: 2, borderRadius: '12px' }}>
+                {saveError}
+              </Alert>
+            )}
+
+            <form onSubmit={handleSubmit(onSave)} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+              <TextField
+                label="Full Name"
+                fullWidth
+                error={!!errors.name}
+                helperText={errors.name?.message}
+                {...register('name', { required: 'Name is required', minLength: { value: 2, message: 'Min 2 chars' } })}
+              />
+              <TextField
+                label="Email"
+                type="email"
+                fullWidth
+                error={!!errors.email}
+                helperText={errors.email?.message}
+                {...register('email', {
+                  required: 'Email is required',
+                  pattern: { value: /\S+@\S+\.\S+/, message: 'Invalid email' },
+                })}
+              />
+              <TextField
+                label="Phone"
+                type="tel"
+                fullWidth
+                error={!!errors.phone}
+                helperText={errors.phone?.message}
+                {...register('phone', {
+                  required: 'Phone is required',
+                  pattern: { value: /^05\d{8}$/, message: 'Israeli format: 05XXXXXXXXX' },
+                })}
+              />
+
+              <button
+                type="submit"
+                disabled={saving}
+                style={{
+                  padding: '14px 32px', borderRadius: '999px', border: 'none',
+                  background: saving ? '#e5e7eb' : 'linear-gradient(135deg, #e8799a, #d4547a)',
+                  color: saving ? '#9ca3af' : 'white',
+                  fontFamily: "'Nunito',sans-serif", fontWeight: 700, fontSize: '1rem',
+                  cursor: saving ? 'not-allowed' : 'pointer',
+                  boxShadow: saving ? 'none' : '0 4px 14px rgba(212,84,122,0.3)',
+                  alignSelf: 'flex-start',
+                }}
+              >
+                {saving ? 'Saving...' : '💾 Save Changes'}
+              </button>
+            </form>
           </div>
         )}
 
-        {/* Profile card with edit */}
-        <ProfileCard user={user} />
+        {/* ── Stats Tab ── */}
+        {activeTab === 'stats' && (
+          <div style={{
+            background: 'white', borderRadius: '20px', padding: '32px',
+            boxShadow: '0 4px 20px rgba(212,84,122,0.07)',
+          }}>
+            <h2 style={{ fontFamily: "'Dancing Script',cursive", fontSize: '1.8rem', color: '#d4547a', marginBottom: '24px' }}>
+              Your Stats 📊
+            </h2>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: '16px' }}>
+              {[
+                { label: 'Total Recipes', value: stats.totalRecipes, emoji: '🍰' },
+                { label: 'Top Category', value: stats.topCategory, emoji: '🏆' },
+                { label: 'Member Since', value: user.createdAt ? new Date(user.createdAt).getFullYear() : '2024', emoji: '📅' },
+              ].map(({ label, value, emoji }) => (
+                <div key={label} style={{
+                  padding: '24px 20px', borderRadius: '16px',
+                  background: 'linear-gradient(135deg, #fdf2f8, #fff8f2)',
+                  border: '1px solid #fce7f3', textAlign: 'center',
+                }}>
+                  <div style={{ fontSize: '2rem', marginBottom: '8px' }}>{emoji}</div>
+                  <div style={{ fontFamily: "'Dancing Script',cursive", fontSize: '1.6rem', fontWeight: 700, color: '#d4547a' }}>
+                    {value}
+                  </div>
+                  <div style={{ fontSize: '0.82rem', color: '#9ca3af', fontWeight: 600, marginTop: '4px' }}>
+                    {label}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
-        {/* Danger zone */}
-        <div style={{
-          background: 'white', borderRadius: '24px', padding: '28px',
-          boxShadow: '0 4px 24px rgba(212,84,122,0.06)',
-          border: '1px solid #fce7f3',
-        }}>
-          <h3 style={{ fontFamily: "'Dancing Script',cursive", fontSize: '1.3rem', color: '#1f2937', marginBottom: '16px' }}>
-            Account Actions
-          </h3>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+        {/* ── Danger Zone ── */}
+        {activeTab === 'danger' && (
+          <div style={{
+            background: 'white', borderRadius: '20px', padding: '32px',
+            boxShadow: '0 4px 20px rgba(212,84,122,0.07)',
+          }}>
+            <h2 style={{ fontFamily: "'Dancing Script',cursive", fontSize: '1.8rem', color: '#d4547a', marginBottom: '24px' }}>
+              Account Settings ⚠️
+            </h2>
 
             {/* Logout */}
-            <button onClick={handleLogout} style={{
-              width: '100%', padding: '12px', borderRadius: '12px',
-              border: '2px solid #e5e7eb', background: 'white', color: '#6b7280',
-              fontFamily: "'Nunito',sans-serif", fontWeight: 700, fontSize: '0.9rem',
-              cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '10px',
-              transition: 'all 0.2s',
-            }}
-              onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#d4547a'; e.currentTarget.style.color = '#d4547a'; }}
-              onMouseLeave={(e) => { e.currentTarget.style.borderColor = '#e5e7eb'; e.currentTarget.style.color = '#6b7280'; }}
-            >
-              🚪 Sign Out
-            </button>
-
-            {/* Delete account */}
-            {!showDeleteConfirm ? (
-              <button onClick={() => setShowDeleteConfirm(true)} style={{
-                width: '100%', padding: '12px', borderRadius: '12px',
-                border: '2px solid #fee2e2', background: 'white', color: '#ef4444',
-                fontFamily: "'Nunito',sans-serif", fontWeight: 700, fontSize: '0.9rem',
-                cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '10px',
-                transition: 'all 0.2s',
-              }}
-                onMouseEnter={(e) => { e.currentTarget.style.background = '#fee2e2'; }}
-                onMouseLeave={(e) => { e.currentTarget.style.background = 'white'; }}
-              >
-                🗑️ Delete Account
-              </button>
-            ) : (
-              <div style={{ padding: '16px', background: '#fee2e2', borderRadius: '12px', border: '1px solid #fecaca' }}>
-                <p style={{ color: '#991b1b', fontWeight: 700, marginBottom: '12px', fontSize: '0.9rem' }}>
-                  ⚠️ Are you sure? This action cannot be undone.
-                </p>
-                <div style={{ display: 'flex', gap: '10px' }}>
-                  <button onClick={() => setShowDeleteConfirm(false)} style={{
-                    flex: 1, padding: '10px', borderRadius: '999px',
-                    border: '2px solid #e5e7eb', background: 'white', color: '#6b7280',
-                    fontFamily: "'Nunito',sans-serif", fontWeight: 700, cursor: 'pointer', fontSize: '0.85rem',
-                  }}>
-                    Cancel
-                  </button>
-                  <button onClick={async () => {
-                    const { deleteMe } = await import('../../../api/userApi');
-                    await deleteMe();
-                    dispatch(logout());
-                    navigate('/');
-                  }} style={{
-                    flex: 1, padding: '10px', borderRadius: '999px', border: 'none',
-                    background: '#ef4444', color: 'white',
-                    fontFamily: "'Nunito',sans-serif", fontWeight: 700, cursor: 'pointer', fontSize: '0.85rem',
-                  }}>
-                    Yes, Delete
-                  </button>
-                </div>
+            <div style={{
+              padding: '20px 24px', borderRadius: '16px', border: '1px solid #e5e7eb',
+              marginBottom: '16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+            }}>
+              <div>
+                <p style={{ fontWeight: 700, color: '#1f2937', marginBottom: '4px' }}>Sign Out</p>
+                <p style={{ fontSize: '0.85rem', color: '#9ca3af' }}>Sign out from this device</p>
               </div>
-            )}
+              <button
+                onClick={() => { dispatch(logout()); navigate('/login'); }}
+                style={{
+                  padding: '10px 24px', borderRadius: '999px',
+                  border: '2px solid #e5e7eb', background: 'white',
+                  color: '#6b7280', fontFamily: "'Nunito',sans-serif",
+                  fontWeight: 700, cursor: 'pointer',
+                }}
+              >
+                Sign Out
+              </button>
+            </div>
+
+            {/* Delete Account */}
+            <div style={{
+              padding: '20px 24px', borderRadius: '16px', border: '1px solid #fee2e2',
+              background: '#fffafa', display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+            }}>
+              <div>
+                <p style={{ fontWeight: 700, color: '#991b1b', marginBottom: '4px' }}>Delete Account</p>
+                <p style={{ fontSize: '0.85rem', color: '#9ca3af' }}>Permanently delete your account. This cannot be undone.</p>
+              </div>
+              <button
+                onClick={() => setDeleteConfirm(true)}
+                style={{
+                  padding: '10px 24px', borderRadius: '999px', border: 'none',
+                  background: '#fee2e2', color: '#991b1b',
+                  fontFamily: "'Nunito',sans-serif", fontWeight: 700, cursor: 'pointer',
+                }}
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Delete Modal */}
+      {deleteConfirm && (
+        <div style={{
+          position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          zIndex: 9999, padding: '20px',
+        }}>
+          <div style={{
+            background: 'white', borderRadius: '24px', padding: '36px',
+            maxWidth: '400px', width: '100%', textAlign: 'center',
+          }}>
+            <div style={{ fontSize: '48px', marginBottom: '12px' }}>😢</div>
+            <h3 style={{ fontFamily: "'Dancing Script',cursive", fontSize: '1.8rem', color: '#1f2937', marginBottom: '12px' }}>
+              Delete Account?
+            </h3>
+            <p style={{ color: '#6b7280', marginBottom: '28px', lineHeight: 1.6 }}>
+              This will permanently delete your account and all your data. This cannot be undone.
+            </p>
+            <div style={{ display: 'flex', gap: '12px', justifyContent: 'center' }}>
+              <button
+                onClick={() => setDeleteConfirm(false)}
+                style={{
+                  padding: '12px 28px', borderRadius: '999px', border: '2px solid #e5e7eb',
+                  background: 'white', color: '#6b7280', fontFamily: "'Nunito',sans-serif", fontWeight: 700, cursor: 'pointer',
+                }}
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleDeleteAccount}
+                disabled={deleting}
+                style={{
+                  padding: '12px 28px', borderRadius: '999px', border: 'none',
+                  background: '#ef4444', color: 'white', fontFamily: "'Nunito',sans-serif",
+                  fontWeight: 700, cursor: deleting ? 'not-allowed' : 'pointer',
+                  opacity: deleting ? 0.7 : 1,
+                }}
+              >
+                {deleting ? 'Deleting...' : 'Yes, Delete'}
+              </button>
+            </div>
           </div>
         </div>
-
-      </div>
+      )}
     </div>
   );
 }

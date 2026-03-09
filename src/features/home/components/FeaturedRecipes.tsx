@@ -1,10 +1,9 @@
 // ===============================================
 // FeaturedRecipes - מתכונים מומלצים מהשרת
 // ===============================================
-import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { useAppSelector, useAppDispatch } from '../../../redux/hooks';
-import { fetchRecommendedRecipes } from '../../recipe/redux/recipeSlice';
+import { useAppSelector } from '../../../redux/hooks';
+import { useGetRecommendedRecipesQuery } from '../../recipe/redux/recipeSlice';
 import { type Recipe, LEVEL_LABELS, CATEGORY_EMOJIS } from '../../recipe/types/recipe.types';
 import StarRating from '../../../shared/components/StarRating';
 
@@ -77,13 +76,16 @@ function Skeleton() {
 }
 
 export default function FeaturedRecipes() {
-  const dispatch = useAppDispatch();
-  const { recommendedRecipes, loading, error } = useAppSelector((state) => state.recipes);
   const { isAuthenticated } = useAppSelector((state) => state.auth);
 
-  useEffect(() => {
-    if (isAuthenticated) dispatch(fetchRecommendedRecipes());
-  }, [isAuthenticated, dispatch]);
+  // ✅ RTK Query - מחליף את dispatch(fetchRecommendedRecipes())
+  const {
+    data: recommendedRecipes = [],
+    isLoading: loading,
+    error,
+  } = useGetRecommendedRecipesQuery(undefined, {
+    skip: !isAuthenticated, // לא טוען אם לא מחובר
+  });
 
   if (!isAuthenticated) return null;
 

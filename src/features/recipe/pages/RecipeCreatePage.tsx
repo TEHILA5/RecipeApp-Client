@@ -2,19 +2,19 @@
 // RecipeCreatePage - יצירת מתכון חדש
 // ===============================================
 import { useNavigate } from 'react-router-dom';
-import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
-import { createNewRecipe } from '../redux/recipeSlice';
+import { useCreateRecipeMutation } from '../redux/recipeSlice';
 import RecipeForm from '../components/RecipeForm';
-import type { RecipeCreateDto } from '../types/recipe.types';
+import type { RecipeCreateDto, RecipeUpdateDto } from '../types/recipe.types';
 
 export default function RecipeCreatePage() {
-  const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const { loading } = useAppSelector((state) => state.recipes);
 
-  const handleSubmit = async (data: RecipeCreateDto) => {
+  // RTK Query - mutation ליצירה
+  const [createRecipe, { isLoading: loading }] = useCreateRecipeMutation();
+
+  const handleSubmit = async (data: RecipeCreateDto | RecipeUpdateDto) => {
     try {
-      const result = await dispatch(createNewRecipe(data)).unwrap();
+      const result = await createRecipe(data as RecipeCreateDto).unwrap();
       navigate(`/recipes/${result.id}`);
     } catch (error) {
       console.error('Failed to create recipe:', error);
@@ -49,7 +49,7 @@ export default function RecipeCreatePage() {
       </div>
 
       <RecipeForm
-        onSubmit={handleSubmit as (data: RecipeCreateDto | import('../types/recipe.types').RecipeUpdateDto) => Promise<void>}
+        onSubmit={handleSubmit}
         loading={loading}
         submitLabel="Create Recipe"
       />
