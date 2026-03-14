@@ -1,33 +1,14 @@
 // ===============================================
 // RecipeDetailPage - Page wrapper
 // ===============================================
-import { useParams, Link, useNavigate } from 'react-router-dom';
-import { useGetRecipeByIdQuery, recipesApi } from '../redux/recipeSlice';
-import { useAppDispatch } from '../../../redux/hooks';
+import { Link } from 'react-router-dom';
+import { useRecipeDetail } from '../hooks/useRecipeDetail';
 import RecipeDetail from '../components/RecipeDetail';
 
 export default function RecipeDetailPage() {
-  const { id } = useParams<{ id: string }>();
-  const navigate = useNavigate();
-  const dispatch = useAppDispatch();
+  const { recipe, isLoading, error, handleCommentAdded, navigate } = useRecipeDetail();
 
-  const {
-    data: currentRecipe,
-    isLoading: loading,
-    error,
-    refetch,
-  } = useGetRecipeByIdQuery(Number(id), {
-    skip: !id,
-  });
-
-  // ✅ אחרי תגובה - מבטלים את כל ה-cache של המתכונים
-  // זה גורם ל-RTK Query לפנות לשרת מחדש ולקבל דירוגים מעודכנים
-  const handleCommentAdded = () => {
-    dispatch(recipesApi.util.invalidateTags(['Recipes', { type: 'Recipe', id: Number(id) }]));
-    refetch();
-  };
-
-  if (loading) {
+  if (isLoading) {
     return (
       <div style={{
         minHeight: '60vh', display: 'flex', flexDirection: 'column',
@@ -45,7 +26,7 @@ export default function RecipeDetailPage() {
     );
   }
 
-  if (error || !currentRecipe) {
+  if (error || !recipe) {
     return (
       <div style={{
         minHeight: '60vh', display: 'flex', flexDirection: 'column',
@@ -56,15 +37,11 @@ export default function RecipeDetailPage() {
         <h2 style={{ fontFamily: "'Dancing Script',cursive", fontSize: '2rem', color: '#d4547a', marginBottom: '12px' }}>
           Recipe Not Found
         </h2>
-        <button
-          onClick={() => navigate('/recipes')}
-          style={{
-            padding: '12px 32px', borderRadius: '999px', border: 'none',
-            background: 'linear-gradient(135deg, #e8799a, #d4547a)',
-            color: 'white', fontFamily: "'Nunito',sans-serif",
-            fontWeight: 700, cursor: 'pointer', fontSize: '0.95rem',
-          }}
-        >
+        <button onClick={() => navigate('/recipes')} style={{
+          padding: '12px 32px', borderRadius: '999px', border: 'none',
+          background: 'linear-gradient(135deg, #e8799a, #d4547a)',
+          color: 'white', fontFamily: "'Nunito',sans-serif", fontWeight: 700, cursor: 'pointer',
+        }}>
           ← Back to Recipes
         </button>
       </div>
@@ -79,11 +56,10 @@ export default function RecipeDetailPage() {
           <span style={{ margin: '0 8px' }}>›</span>
           <Link to="/recipes" style={{ color: '#d4547a', textDecoration: 'none', fontWeight: 600 }}>Recipes</Link>
           <span style={{ margin: '0 8px' }}>›</span>
-          <span>{currentRecipe.name}</span>
+          <span>{recipe.name}</span>
         </nav>
       </div>
-
-      <RecipeDetail recipe={currentRecipe} onCommentAdded={handleCommentAdded} />
+      <RecipeDetail recipe={recipe} onCommentAdded={handleCommentAdded} />
     </div>
   );
 }
