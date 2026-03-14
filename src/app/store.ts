@@ -9,6 +9,7 @@ import recipePanelReducer, { recipesApi } from '../features/recipe/redux/recipeS
 import uiReducer from '../redux/slices/uiSlice';
 import adminReducer from '../features/admin/redux/adminSlice';
 import userReducer from '../features/user/redux/userSlice';
+import searchReducer from '../features/search/redux/searchSlice';
 
 export const store = configureStore({
   reducer: {
@@ -28,6 +29,9 @@ export const store = configureStore({
 
     // ✅ נתוני משתמש - saved recipes + comments
     user: userReducer,
+
+    // ✅ state של חיפוש
+    search: searchReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
