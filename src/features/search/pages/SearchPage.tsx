@@ -162,7 +162,8 @@ export default function SearchPage() {
     };
 
     run();
-  }, [ingredientResults, ingredientList, loadingIng, allConversions, allRecipesForAlt, mode]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ingredientResults, ingredientList, loadingIng, mode]);
 
   const loading = loadingAll || loadingCat || loadingIng;
 
