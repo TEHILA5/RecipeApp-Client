@@ -1,32 +1,99 @@
 // ===============================================
-// User Slice - UI state for profile/favorites
+// User Slice - ניהול נתוני משתמש ב-Redux
 // ===============================================
-import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { getMySavedRecipes, getMyComments } from '../../../api/userActionApi';
+import type { UserActionDto } from '../../recipe/types/userAction.types';
 
-type ProfileTab = 'info' | 'stats' | 'danger';
+interface UserState {
+  savedRecipes: UserActionDto[];
+  loadingSaved: boolean;
+  savedError: string | null;
 
-interface UserUIState {
-  activeProfileTab: ProfileTab;
-  favoritesCount: number;
+  myComments: UserActionDto[];
+  loadingComments: boolean;
+  commentsError: string | null;
 }
 
-const initialState: UserUIState = {
-  activeProfileTab: 'info',
-  favoritesCount: 0,
+const initialState: UserState = {
+  savedRecipes: [],
+  loadingSaved: false,
+  savedError: null,
+
+  myComments: [],
+  loadingComments: false,
+  commentsError: null,
 };
+
+// ── Thunks ──
+
+export const fetchSavedRecipes = createAsyncThunk(
+  'user/fetchSavedRecipes',
+  async (_, { rejectWithValue }) => {
+    try {
+      return await getMySavedRecipes();
+    } catch (err: unknown) {
+      return rejectWithValue(err instanceof Error ? err.message : 'Failed to load saved recipes');
+    }
+  }
+);
+
+export const fetchMyComments = createAsyncThunk(
+  'user/fetchMyComments',
+  async (_, { rejectWithValue }) => {
+    try {
+      return await getMyComments();
+    } catch (err: unknown) {
+      return rejectWithValue(err instanceof Error ? err.message : 'Failed to load comments');
+    }
+  }
+);
+
+// ── Slice ──
 
 const userSlice = createSlice({
   name: 'user',
   initialState,
   reducers: {
-    setActiveProfileTab: (state, action: PayloadAction<ProfileTab>) => {
-      state.activeProfileTab = action.payload;
+    removeSavedRecipe: (state, action) => {
+      state.savedRecipes = state.savedRecipes.filter((s) => s.recipeId !== action.payload);
     },
-    setFavoritesCount: (state, action: PayloadAction<number>) => {
-      state.favoritesCount = action.payload;
+    addSavedRecipe: (state, action) => {
+      state.savedRecipes.push(action.payload);
     },
+  },
+  extraReducers: (builder) => {
+    // fetchSavedRecipes
+    builder
+      .addCase(fetchSavedRecipes.pending, (state) => {
+        state.loadingSaved = true;
+        state.savedError = null;
+      })
+      .addCase(fetchSavedRecipes.fulfilled, (state, action) => {
+        state.loadingSaved = false;
+        state.savedRecipes = action.payload;
+      })
+      .addCase(fetchSavedRecipes.rejected, (state, action) => {
+        state.loadingSaved = false;
+        state.savedError = action.payload as string;
+      });
+
+    // fetchMyComments
+    builder
+      .addCase(fetchMyComments.pending, (state) => {
+        state.loadingComments = true;
+        state.commentsError = null;
+      })
+      .addCase(fetchMyComments.fulfilled, (state, action) => {
+        state.loadingComments = false;
+        state.myComments = action.payload;
+      })
+      .addCase(fetchMyComments.rejected, (state, action) => {
+        state.loadingComments = false;
+        state.commentsError = action.payload as string;
+      });
   },
 });
 
-export const { setActiveProfileTab, setFavoritesCount } = userSlice.actions;
+export const { removeSavedRecipe, addSavedRecipe } = userSlice.actions;
 export default userSlice.reducer;

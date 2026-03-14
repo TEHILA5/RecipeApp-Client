@@ -7,19 +7,27 @@ import authReducer from '../features/auth/redux/authSlice';
 import ingredientReducer from '../features/ingredient/redux/ingredientSlice';
 import recipePanelReducer, { recipesApi } from '../features/recipe/redux/recipeSlice';
 import uiReducer from '../redux/slices/uiSlice';
+import adminReducer from '../features/admin/redux/adminSlice';
+import userReducer from '../features/user/redux/userSlice';
 
 export const store = configureStore({
   reducer: {
     auth: authReducer,
     ingredients: ingredientReducer,
 
-    // ✅ סטייט גלובלי לפילטרים/עמודים (לא קשור לשרת)
+    // ✅ סטייט גלובלי לפילטרים/עמודים
     recipePanel: recipePanelReducer,
 
-    // ✅ RTK Query cache - חובה!
+    // ✅ RTK Query cache
     [recipesApi.reducerPath]: recipesApi.reducer,
 
     ui: uiReducer,
+
+    // ✅ נתוני Admin - conversions + users
+    admin: adminReducer,
+
+    // ✅ נתוני משתמש - saved recipes + comments
+    user: userReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
@@ -27,7 +35,7 @@ export const store = configureStore({
         ignoredActions: ['ui/openModal'],
         ignoredPaths: ['ui.modal.onConfirm'],
       },
-    }).concat(recipesApi.middleware), // ✅ חובה! בלי זה RTK Query לא עובד
+    }).concat(recipesApi.middleware),
 });
 
 export type RootState = ReturnType<typeof store.getState>;

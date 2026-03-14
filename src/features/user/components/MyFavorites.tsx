@@ -4,33 +4,33 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useGetRecipesQuery } from '../../recipe/redux/recipeSlice';
-import { getMySavedRecipes, removeBookmark } from '../../../api/userActionApi';
+import { removeBookmark } from '../../../api/userActionApi';
 import { CATEGORY_EMOJIS, LEVEL_LABELS } from '../../recipe/types/recipe.types';
-import type { UserActionDto } from '../../recipe/types/userAction.types';
 import StarRating from '../../../shared/components/StarRating';
+import { useAppSelector, useAppDispatch } from '../../../redux/hooks';
+import { fetchSavedRecipes, removeSavedRecipe } from '../redux/userSlice';
 
 export default function MyFavorites() {
-  // ✅ RTK Query - מחליף את dispatch(fetchAllRecipes())
-  // רק קוראים את הקאש - לא עושים dispatch ידני
-  const { data: recipes = [] } = useGetRecipesQuery();
+  const dispatch = useAppDispatch();
 
-  const [saved, setSaved] = useState<UserActionDto[]>([]);
-  const [loading, setLoading] = useState(true);
+  // ✅ saved recipes מגיעים מ-Redux userSlice
+  const saved = useAppSelector((s) => s.user.savedRecipes);
+  const loading = useAppSelector((s) => s.user.loadingSaved);
+
+  const { data: recipes = [] } = useGetRecipesQuery();
   const [error, setError] = useState('');
   const [removingId, setRemovingId] = useState<number | null>(null);
 
   useEffect(() => {
-    getMySavedRecipes()
-      .then((data) => setSaved(data))
-      .catch(() => setError('Failed to load saved recipes'))
-      .finally(() => setLoading(false));
-  }, []);
+    // ✅ dispatch ל-userSlice במקום axios ישיר
+    dispatch(fetchSavedRecipes());
+  }, [dispatch]);
 
   const handleRemove = async (recipeId: number) => {
     setRemovingId(recipeId);
     try {
       await removeBookmark(recipeId);
-      setSaved((prev) => prev.filter((s) => s.recipeId !== recipeId));
+      dispatch(removeSavedRecipe(recipeId)); // ✅ מעדכן את Redux
     } catch {
       setError('Failed to remove recipe');
     } finally {
@@ -84,7 +84,6 @@ export default function MyFavorites() {
       gap: '20px',
     }}>
       {saved.map((item) => {
-        // ✅ שולף פרטים מהקאש של RTK Query - לא צריך dispatch
         const fullRecipe = recipes.find((r) => r.id === item.recipeId);
         const emoji = CATEGORY_EMOJIS[fullRecipe?.category as keyof typeof CATEGORY_EMOJIS] ?? '🍰';
         const levelLabel = LEVEL_LABELS[fullRecipe?.level as 1 | 2 | 3] ?? 'Easy';
@@ -97,7 +96,6 @@ export default function MyFavorites() {
             opacity: removing ? 0.5 : 1, transition: 'all 0.3s',
           }}>
             <Link to={`/recipes/${item.recipeId}`} style={{ textDecoration: 'none', display: 'block' }}>
-              {/* Image */}
               <div style={{ position: 'relative', aspectRatio: '4/3', overflow: 'hidden' }}>
                 {fullRecipe?.arrImage || item.recipeImageUrl ? (
                   <img
@@ -121,13 +119,9 @@ export default function MyFavorites() {
                 </div>
               </div>
 
-              {/* Body */}
               <div style={{ padding: '16px 18px 10px' }}>
                 <div style={{ marginBottom: '8px' }}>
-                  <StarRating
-                    rating={fullRecipe?.averageRating}
-                    showCount={fullRecipe?.commentCount}
-                  />
+                  <StarRating rating={fullRecipe?.averageRating} showCount={fullRecipe?.commentCount} />
                 </div>
                 <h3 style={{
                   fontFamily: "'Dancing Script',cursive", fontSize: '1.3rem',
@@ -150,7 +144,6 @@ export default function MyFavorites() {
               </div>
             </Link>
 
-            {/* Remove button */}
             <div style={{ padding: '0 18px 16px' }}>
               <button
                 onClick={() => handleRemove(item.recipeId!)}

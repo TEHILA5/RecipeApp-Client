@@ -3,16 +3,21 @@
 // ===============================================
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { useGetRecipesQuery, useDeleteRecipeMutation } from '../../recipe/redux/recipeSlice';
-import { useAppSelector } from '../../../redux/hooks';
-import { CATEGORY_EMOJIS } from '../../recipe/types/recipe.types';
-import {
-  getAllConversions,
-  type ConversionDto,
-} from '../../../api/conversionApi';
+import { useGetRecipesQuery } from '../../recipe/redux/recipeSlice';
+import StatsCard from '../components/StatsCard';
+import UserManagement from '../components/UserManagement';
+import RecipeModeration from '../components/RecipeModeration';
+import { useAppSelector, useAppDispatch } from '../../../redux/hooks';
+import { type ConversionDto } from '../../../api/conversionApi';
 import axiosInstance from '../../../api/axiosConfig';
+import {
+  fetchConversions,
+  deleteConversionThunk,
+  addConversion,
+  updateConversionInState,
+} from '../redux/adminSlice';
 
-type ActiveTab = 'overview' | 'recipes' | 'ingredients' | 'conversions';
+type ActiveTab = 'overview' | 'recipes' | 'ingredients' | 'conversions' | 'users';
 
 // ── Conversion API helpers (Admin only) ──
 const createConversion = async (data: {
@@ -23,10 +28,6 @@ const createConversion = async (data: {
 }): Promise<ConversionDto> => {
   const res = await axiosInstance.post<ConversionDto>('/conversion', data);
   return res.data;
-};
-
-const deleteConversion = async (id: number): Promise<void> => {
-  await axiosInstance.delete(`/conversion/${id}`);
 };
 
 const updateConversion = async (
@@ -48,17 +49,16 @@ const fetchAllIngredients = async (): Promise<IngredientOption[]> => {
 
 export default function AdminDashboard() {
   const { user } = useAppSelector((s) => s.auth);
+  const dispatch = useAppDispatch();
 
-  const { data: recipes = [], isLoading: loadingRecipes } = useGetRecipesQuery();
-  const [deleteRecipe, { isLoading: deleting }] = useDeleteRecipeMutation();
+  // ✅ conversions מגיעים מ-Redux adminSlice
+  const conversions = useAppSelector((s) => s.admin.conversions);
+  const loadingConversions = useAppSelector((s) => s.admin.loadingConversions);
+
+  const { data: recipes = [] } = useGetRecipesQuery();
 
   const [activeTab, setActiveTab] = useState<ActiveTab>('overview');
-  const [deletingId, setDeletingId] = useState<number | null>(null);
-  const [recipeSearch, setRecipeSearch] = useState('');
 
-  // ── Conversions state ──
-  const [conversions, setConversions] = useState<ConversionDto[]>([]);
-  const [loadingConversions, setLoadingConversions] = useState(false);
   const [convSearch, setConvSearch] = useState('');
   const [convError, setConvError] = useState('');
   const [deletingConvId, setDeletingConvId] = useState<number | null>(null);
@@ -76,22 +76,13 @@ export default function AdminDashboard() {
   const [ing2Options, setIng2Options] = useState<IngredientOption[]>([]);
   const [savingConv, setSavingConv] = useState(false);
 
-  const loadConversions = async () => {
-    setLoadingConversions(true);
-    try {
-      const data = await getAllConversions();
-      setConversions(data);
-    } catch { setConvError('Failed to load conversions'); }
-    finally { setLoadingConversions(false); }
-  };
-
   useEffect(() => {
     if (activeTab === 'conversions') {
-      loadConversions();
-      // ✅ טעינת כל המרכיבים פעם אחת לצורך autocomplete
+      // ✅ dispatch ל-adminSlice במקום axios ישיר
+      dispatch(fetchConversions());
       fetchAllIngredients().then(setAllIngredients);
     }
-  }, [activeTab]);
+  }, [activeTab, dispatch]);
 
   // ✅ סינון client-side - ללא קריאות API נוספות
   useEffect(() => {
@@ -106,19 +97,13 @@ export default function AdminDashboard() {
     setIng2Options(allIngredients.filter((i) => i.name.toLowerCase().includes(q)).slice(0, 8));
   }, [form.ingredient2Query, allIngredients]);
 
-  const handleDeleteRecipe = async (id: number) => {
-    if (!confirm('Are you sure you want to delete this recipe?')) return;
-    setDeletingId(id);
-    try { await deleteRecipe(id).unwrap(); }
-    finally { setDeletingId(null); }
-  };
 
   const handleDeleteConversion = async (id: number) => {
     if (!confirm('Delete this conversion?')) return;
     setDeletingConvId(id);
     try {
-      await deleteConversion(id);
-      setConversions((prev) => prev.filter((c) => c.id !== id));
+      // ✅ dispatch ל-adminSlice
+      await dispatch(deleteConversionThunk(id)).unwrap();
     } catch { setConvError('Failed to delete'); }
     finally { setDeletingConvId(null); }
   };
@@ -142,7 +127,7 @@ export default function AdminDashboard() {
         conversionRatio: ratio,
         isBidirectional: form.isBidirectional,
       });
-      setConversions((prev) => [...prev, created]);
+      dispatch(addConversion(created)); // ✅ מעדכן את Redux
       setShowAddForm(false);
       setForm({ ingredient1Query: '', ingredient1Id: 0, ingredient1Name: '', ingredient2Query: '', ingredient2Id: 0, ingredient2Name: '', conversionRatio: '', isBidirectional: true });
     } catch (err: unknown) {
@@ -158,16 +143,12 @@ export default function AdminDashboard() {
         conversionRatio: editingConv.conversionRatio ?? undefined,
         isBidirectional: editingConv.isBidirectional ?? undefined,
       });
-      setConversions((prev) => prev.map((c) => c.id === updated.id ? updated : c));
+      dispatch(updateConversionInState(updated)); // ✅ מעדכן את Redux
       setEditingConv(null);
     } catch { setConvError('Failed to update'); }
     finally { setSavingConv(false); }
   };
 
-  const filteredRecipes = recipes.filter((r) =>
-    r.name.toLowerCase().includes(recipeSearch.toLowerCase()) ||
-    r.category.toLowerCase().includes(recipeSearch.toLowerCase())
-  );
 
   const filteredConversions = conversions.filter((c) =>
     c.ingredient1Name?.toLowerCase().includes(convSearch.toLowerCase()) ||
@@ -212,6 +193,7 @@ export default function AdminDashboard() {
             <button onClick={() => setActiveTab('recipes')} style={tabBtn('recipes')}>🍰 Recipes</button>
             <button onClick={() => setActiveTab('ingredients')} style={tabBtn('ingredients')}>🧂 Ingredients</button>
             <button onClick={() => setActiveTab('conversions')} style={tabBtn('conversions')}>🔄 Conversions</button>
+            <button onClick={() => setActiveTab('users')} style={tabBtn('users')}>👤 Users</button>
           </div>
         </div>
       </div>
@@ -223,18 +205,10 @@ export default function AdminDashboard() {
         {activeTab === 'overview' && (
           <div>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: '16px', marginBottom: '32px' }}>
-              {[
-                { label: 'Total Recipes', value: stats.totalRecipes, emoji: '🍰', color: '#d4547a' },
-                { label: 'Top Category', value: stats.topCategory, emoji: '🏆', color: '#c4894a' },
-                { label: 'Avg Rating', value: stats.avgRating, emoji: '⭐', color: '#f59e0b' },
-                { label: 'Conversions', value: conversions.length || '—', emoji: '🔄', color: '#7c3aed' },
-              ].map(({ label, value, emoji, color }) => (
-                <div key={label} style={{ padding: '24px', borderRadius: '20px', background: 'white', boxShadow: '0 4px 20px rgba(212,84,122,0.07)' }}>
-                  <div style={{ fontSize: '2rem', marginBottom: '12px' }}>{emoji}</div>
-                  <div style={{ fontFamily: "'Dancing Script',cursive", fontSize: '2rem', fontWeight: 700, color }}>{value}</div>
-                  <div style={{ fontSize: '0.82rem', color: '#9ca3af', fontWeight: 600, marginTop: '4px' }}>{label}</div>
-                </div>
-              ))}
+              <StatsCard emoji="🍰" value={stats.totalRecipes} label="Total Recipes" color="#d4547a" />
+              <StatsCard emoji="🏆" value={stats.topCategory} label="Top Category" color="#c4894a" />
+              <StatsCard emoji="⭐" value={stats.avgRating} label="Avg Rating" color="#f59e0b" />
+              <StatsCard emoji="🔄" value={conversions.length || '—'} label="Conversions" color="#7c3aed" />
             </div>
 
             <div style={{ background: 'white', borderRadius: '20px', padding: '28px', boxShadow: '0 4px 20px rgba(212,84,122,0.07)' }}>
@@ -255,77 +229,7 @@ export default function AdminDashboard() {
         )}
 
         {/* ── Recipes Tab ── */}
-        {activeTab === 'recipes' && (
-          <div style={{ background: 'white', borderRadius: '20px', boxShadow: '0 4px 20px rgba(212,84,122,0.07)', overflow: 'hidden' }}>
-            <div style={{ padding: '20px 24px', borderBottom: '1px solid #fce7f3', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px' }}>
-              <h3 style={{ fontFamily: "'Dancing Script',cursive", fontSize: '1.5rem', color: '#d4547a' }}>All Recipes ({recipes.length})</h3>
-              <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
-                <div style={{ position: 'relative' }}>
-                  <input type="text" value={recipeSearch} onChange={(e) => setRecipeSearch(e.target.value)} placeholder="Search recipes..."
-                    style={{ padding: '9px 36px 9px 14px', border: '2px solid #fce7f3', borderRadius: '999px', fontFamily: "'Nunito',sans-serif", fontSize: '0.85rem', outline: 'none', width: '220px' }} />
-                  <span style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none' }}>🔍</span>
-                </div>
-                <Link to="/recipes/create" style={{ padding: '9px 20px', borderRadius: '999px', textDecoration: 'none', background: 'linear-gradient(135deg, #e8799a, #d4547a)', color: 'white', fontFamily: "'Nunito',sans-serif", fontWeight: 700, fontSize: '0.85rem', whiteSpace: 'nowrap' }}>
-                  ➕ Add Recipe
-                </Link>
-              </div>
-            </div>
-
-            {loadingRecipes ? (
-              <div style={{ textAlign: 'center', padding: '60px', color: '#9ca3af' }}>
-                <div style={{ width: '36px', height: '36px', border: '3px solid #fce7f3', borderTopColor: '#d4547a', borderRadius: '50%', animation: 'spin 0.8s linear infinite', margin: '0 auto 12px' }} />
-                <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
-              </div>
-            ) : (
-              <div style={{ overflowX: 'auto' }}>
-                <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                  <thead>
-                    <tr style={{ background: '#fdf2f8' }}>
-                      {['Recipe', 'Category', 'Rating', 'Time', 'Actions'].map((h) => (
-                        <th key={h} style={{ padding: '12px 16px', textAlign: 'left', fontSize: '0.78rem', fontWeight: 700, color: '#9ca3af', letterSpacing: '0.08em', textTransform: 'uppercase' }}>{h}</th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {filteredRecipes.map((recipe, idx) => {
-                      const emoji = CATEGORY_EMOJIS[recipe.category] ?? '🍰';
-                      const isDeleting = deletingId === recipe.id && deleting;
-                      return (
-                        <tr key={recipe.id} style={{ borderTop: '1px solid #fce7f3', background: idx % 2 === 0 ? 'white' : '#fffbfd', opacity: isDeleting ? 0.5 : 1, transition: 'opacity 0.2s' }}>
-                          <td style={{ padding: '14px 16px' }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                              <div style={{ width: '40px', height: '40px', borderRadius: '10px', overflow: 'hidden', background: 'linear-gradient(135deg, #f9e4ec, #e8c49a)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                                {recipe.arrImage ? <img src={recipe.arrImage} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : <span style={{ fontSize: '1.2rem' }}>{emoji}</span>}
-                              </div>
-                              <div>
-                                <div style={{ fontWeight: 700, color: '#1f2937', fontSize: '0.9rem' }}>{recipe.name}</div>
-                                <div style={{ fontSize: '0.75rem', color: '#9ca3af' }}>ID: {recipe.id}</div>
-                              </div>
-                            </div>
-                          </td>
-                          <td style={{ padding: '14px 16px' }}>
-                            <span style={{ padding: '4px 12px', borderRadius: '999px', fontSize: '0.78rem', fontWeight: 700, background: '#fce7f3', color: '#d4547a' }}>{emoji} {recipe.category}</span>
-                          </td>
-                          <td style={{ padding: '14px 16px', fontSize: '0.85rem', color: '#f59e0b', fontWeight: 700 }}>⭐ {recipe.averageRating?.toFixed(1) ?? '—'}</td>
-                          <td style={{ padding: '14px 16px', fontSize: '0.85rem', color: '#6b7280' }}>⏱️ {recipe.totalTime}m</td>
-                          <td style={{ padding: '14px 16px' }}>
-                            <div style={{ display: 'flex', gap: '8px' }}>
-                              <Link to={`/recipes/${recipe.id}/edit`} style={{ padding: '6px 16px', borderRadius: '999px', border: '2px solid #fce7f3', background: 'white', color: '#d4547a', textDecoration: 'none', fontFamily: "'Nunito',sans-serif", fontWeight: 700, fontSize: '0.78rem' }}>✏️ Edit</Link>
-                              <button onClick={() => handleDeleteRecipe(recipe.id)} disabled={isDeleting} style={{ padding: '6px 16px', borderRadius: '999px', border: 'none', background: '#fee2e2', color: '#991b1b', fontFamily: "'Nunito',sans-serif", fontWeight: 700, fontSize: '0.78rem', cursor: isDeleting ? 'not-allowed' : 'pointer' }}>
-                                {isDeleting ? '...' : '🗑️ Delete'}
-                              </button>
-                            </div>
-                          </td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
-                {filteredRecipes.length === 0 && <div style={{ textAlign: 'center', padding: '40px', color: '#9ca3af' }}>No recipes match your search</div>}
-              </div>
-            )}
-          </div>
-        )}
+        {activeTab === 'recipes' && <RecipeModeration />}
 
         {/* ── Ingredients Tab ── */}
         {activeTab === 'ingredients' && (
@@ -337,6 +241,9 @@ export default function AdminDashboard() {
             </Link>
           </div>
         )}
+
+        {/* ── Users Tab ── */}
+        {activeTab === 'users' && <UserManagement />}
 
         {/* ── Conversions Tab ── */}
         {activeTab === 'conversions' && (
