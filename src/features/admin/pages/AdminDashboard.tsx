@@ -10,6 +10,7 @@ import RecipeModeration from '../components/RecipeModeration';
 import { useAppSelector, useAppDispatch } from '../../../redux/hooks';
 import { type ConversionDto } from '../../../api/conversionApi';
 import axiosInstance from '../../../api/axiosConfig';
+import { getErrorMessage } from '../../../shared/utils/helpers';
 import {
   fetchConversions,
   deleteConversionThunk,
@@ -131,7 +132,7 @@ export default function AdminDashboard() {
       setShowAddForm(false);
       setForm({ ingredient1Query: '', ingredient1Id: 0, ingredient1Name: '', ingredient2Query: '', ingredient2Id: 0, ingredient2Name: '', conversionRatio: '', isBidirectional: true });
     } catch (err: unknown) {
-      setConvError(err instanceof Error ? err.message : 'Failed to create conversion');
+      setConvError(getErrorMessage(err));
     } finally { setSavingConv(false); }
   };
 

@@ -3,7 +3,9 @@
 // ===============================================
 import { Link } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
-import { TextField, Button, Alert, CircularProgress } from '@mui/material';
+import { Button, Alert, CircularProgress } from '@mui/material';
+import FormInput from '../../../shared/components/FormInput';
+import { validationRules } from '../../../shared/utils/validation';
 
 interface RegisterFormData {
   name: string;
@@ -40,28 +42,22 @@ export default function RegisterForm({ onSubmit, loading, error }: RegisterFormP
       )}
 
       <form onSubmit={handleSubmit(onSubmit)} className="login-form" noValidate>
-        <TextField
-          label="Full Name" type="text" fullWidth
+        <FormInput
+          label="Full Name" type="text"
           autoComplete="name" placeholder="John Doe"
           error={!!errors.name} helperText={errors.name?.message}
-          {...register('name', {
-            required: 'Name is required',
-            minLength: { value: 2, message: 'Name must be at least 2 characters' },
-          })}
+          {...register('name', validationRules.name)}
         />
 
-        <TextField
-          label="Email Address" type="email" fullWidth
+        <FormInput
+          label="Email Address" type="email"
           autoComplete="email" placeholder="you@example.com"
           error={!!errors.email} helperText={errors.email?.message}
-          {...register('email', {
-            required: 'Email is required',
-            pattern: { value: /\S+@\S+\.\S+/, message: 'Email is invalid' },
-          })}
+          {...register('email', validationRules.email)}
         />
 
-        <TextField
-          label="Phone Number" type="tel" fullWidth
+        <FormInput
+          label="Phone Number" type="tel"
           autoComplete="tel" placeholder="050-1234567"
           error={!!errors.phone} helperText={errors.phone?.message}
           {...register('phone', {
@@ -74,24 +70,18 @@ export default function RegisterForm({ onSubmit, loading, error }: RegisterFormP
           })}
         />
 
-        <TextField
-          label="Password" type="password" fullWidth
+        <FormInput
+          label="Password" type="password"
           autoComplete="new-password" placeholder="••••••••"
           error={!!errors.password} helperText={errors.password?.message}
-          {...register('password', {
-            required: 'Password is required',
-            minLength: { value: 6, message: 'Password must be at least 6 characters' },
-          })}
+          {...register('password', validationRules.password)}
         />
 
-        <TextField
-          label="Confirm Password" type="password" fullWidth
+        <FormInput
+          label="Confirm Password" type="password"
           autoComplete="new-password" placeholder="••••••••"
           error={!!errors.confirmPassword} helperText={errors.confirmPassword?.message}
-          {...register('confirmPassword', {
-            required: 'Please confirm your password',
-            validate: (val) => val === passwordValue || 'Passwords do not match',
-          })}
+          {...register('confirmPassword', validationRules.confirmPassword(passwordValue))}
         />
 
         <Button

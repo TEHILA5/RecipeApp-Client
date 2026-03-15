@@ -9,7 +9,8 @@ import { getMySavedRecipes, addBookmark, removeBookmark, addComment, addHistory,
 import type { Recipe } from '../types/recipe.types';
 import type { UserActionDto, CommentCreateDto } from '../types/userAction.types';
 import { LEVEL_LABELS, CATEGORY_EMOJIS } from '../types/recipe.types';
-import IngredientList from './IngredientList';
+import IngredientList from './IngredientList';  
+import Modal from '../../../shared/components/UI/Modal';
 
 interface RecipeDetailProps {
   recipe: Recipe;
@@ -92,7 +93,7 @@ export default function RecipeDetail({ recipe, onCommentAdded }: RecipeDetailPro
       }
     } catch (err: unknown) {
       setCommentError(err instanceof Error ? err.message : 'Failed to update bookmark status');
-    }finally {
+    } finally {
       setBookmarkLoading(false);
     }
   };
@@ -405,40 +406,18 @@ export default function RecipeDetail({ recipe, onCommentAdded }: RecipeDetailPro
         </div>
       </div>
 
-      {showDeleteConfirm && (
-        <div style={{
-          position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)',
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          zIndex: 9999, padding: '20px',
-        }}>
-          <div style={{
-            background: 'white', borderRadius: '24px', padding: '36px',
-            maxWidth: '420px', width: '100%', textAlign: 'center',
-            boxShadow: '0 20px 60px rgba(0,0,0,0.25)',
-          }}>
-            <div style={{ fontSize: '52px', marginBottom: '16px' }}>🗑️</div>
-            <h3 style={{ fontFamily: "'Dancing Script',cursive", fontSize: '1.8rem', color: '#1f2937', marginBottom: '12px' }}>Delete Recipe?</h3>
-            <p style={{ color: '#6b7280', marginBottom: '28px', lineHeight: 1.6 }}>
-              Are you sure you want to delete <strong>"{recipe.name}"</strong>? This action cannot be undone.
-            </p>
-            <div style={{ display: 'flex', gap: '12px', justifyContent: 'center' }}>
-              <button onClick={() => setShowDeleteConfirm(false)} style={{
-                padding: '12px 28px', borderRadius: '999px', border: '2px solid #e5e7eb',
-                background: 'white', color: '#6b7280', fontFamily: "'Nunito',sans-serif",
-                fontWeight: 700, cursor: 'pointer',
-              }}>Cancel</button>
-              <button onClick={handleDelete} disabled={deletingRecipe} style={{
-                padding: '12px 28px', borderRadius: '999px', border: 'none',
-                background: '#ef4444', color: 'white', fontFamily: "'Nunito',sans-serif",
-                fontWeight: 700, cursor: deletingRecipe ? 'not-allowed' : 'pointer',
-                opacity: deletingRecipe ? 0.7 : 1,
-              }}>
-                {deletingRecipe ? 'Deleting...' : 'Yes, Delete'}
-              </button>
-            </div>
-          </div>
+      {/* ✅ Modal במקום div ידני */}
+      <Modal isOpen={showDeleteConfirm} onClose={() => setShowDeleteConfirm(false)} title="🗑️ Delete Recipe?">
+        <p style={{ color: '#6b7280', marginBottom: '28px', lineHeight: 1.6, textAlign: 'center' }}>
+          Are you sure you want to delete <strong>"{recipe.name}"</strong>? This action cannot be undone.
+        </p>
+        <div style={{ display: 'flex', gap: '12px', justifyContent: 'center' }}>
+          <button onClick={() => setShowDeleteConfirm(false)} style={{ padding: '12px 28px', borderRadius: '999px', border: '2px solid #e5e7eb', background: 'white', color: '#6b7280', fontFamily: "'Nunito',sans-serif", fontWeight: 700, cursor: 'pointer' }}>Cancel</button>
+          <button onClick={handleDelete} disabled={deletingRecipe} style={{ padding: '12px 28px', borderRadius: '999px', border: 'none', background: '#ef4444', color: 'white', fontFamily: "'Nunito',sans-serif", fontWeight: 700, cursor: deletingRecipe ? 'not-allowed' : 'pointer', opacity: deletingRecipe ? 0.7 : 1 }}>
+            {deletingRecipe ? 'Deleting...' : 'Yes, Delete'}
+          </button>
         </div>
-      )}
+      </Modal>
 
       <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
     </div>

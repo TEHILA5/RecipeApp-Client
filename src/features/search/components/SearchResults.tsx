@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 import { type Recipe, CATEGORY_EMOJIS, LEVEL_LABELS } from '../../recipe/types/recipe.types';
 import { type ConversionDto } from '../../../api/conversionApi';
 import StarRating from '../../../shared/components/StarRating';
+import Button from '../../../shared/components/UI/Button';
 
 type SearchMode = 'name' | 'category' | 'ingredients';
 
@@ -115,9 +116,7 @@ export default function SearchResults({
               {alternativeResults.length > 0 ? '✨ But we found recipes using ingredient alternatives!' : 'Try different ingredients'}
             </p>
             {alternativeResults.length > 0 && (
-              <button onClick={() => onTabChange('alternatives')} style={{ padding: '10px 24px', borderRadius: '999px', border: 'none', background: 'linear-gradient(135deg, #e8c49a, #c4894a)', color: 'white', fontFamily: "'Nunito',sans-serif", fontWeight: 700, cursor: 'pointer' }}>
-                🔄 See Alternatives
-              </button>
+              <Button onClick={() => onTabChange('alternatives')} style={{ background: 'linear-gradient(135deg, #e8c49a, #c4894a)' }}>🔄 See Alternatives</Button>
             )}
           </div>
         ) : (

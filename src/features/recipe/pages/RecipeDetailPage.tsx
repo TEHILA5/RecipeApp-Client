@@ -2,29 +2,14 @@
 // RecipeDetailPage - Page wrapper
 // ===============================================
 import { Link } from 'react-router-dom';
+import Loading from '../../../shared/components/UI/Loading';
 import { useRecipeDetail } from '../hooks/useRecipeDetail';
 import RecipeDetail from '../components/RecipeDetail';
 
 export default function RecipeDetailPage() {
   const { recipe, isLoading, error, handleCommentAdded, navigate } = useRecipeDetail();
 
-  if (isLoading) {
-    return (
-      <div style={{
-        minHeight: '60vh', display: 'flex', flexDirection: 'column',
-        alignItems: 'center', justifyContent: 'center',
-        fontFamily: "'Nunito',sans-serif", color: '#9ca3af',
-      }}>
-        <div style={{
-          width: '50px', height: '50px', border: '4px solid #fce7f3',
-          borderTopColor: '#d4547a', borderRadius: '50%',
-          animation: 'spin 0.8s linear infinite', marginBottom: '16px',
-        }} />
-        <p>Loading recipe...</p>
-        <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
-      </div>
-    );
-  }
+  if (isLoading) return <Loading message="Loading recipe..." size="lg" fullPage />;
 
   if (error || !recipe) {
     return (

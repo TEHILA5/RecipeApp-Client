@@ -6,6 +6,7 @@ import { useGetRecipesQuery } from '../../recipe/redux/recipeSlice';
 import { useUserProfile } from '../hooks/useUserProfile';
 import ProfileCard from '../components/ProfileCard';
 import EditProfile from '../components/EditProfile';
+import Modal from '../../../shared/components/UI/Modal';
 
 type ActiveTab = 'info' | 'stats' | 'danger';
 
@@ -133,25 +134,18 @@ export default function ProfilePage() {
       </div>
 
       {/* Delete Modal */}
-      {deleteConfirm && (
-        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 9999, padding: '20px' }}>
-          <div style={{ background: 'white', borderRadius: '24px', padding: '36px', maxWidth: '400px', width: '100%', textAlign: 'center' }}>
-            <div style={{ fontSize: '48px', marginBottom: '12px' }}>😢</div>
-            <h3 style={{ fontFamily: "'Dancing Script',cursive", fontSize: '1.8rem', color: '#1f2937', marginBottom: '12px' }}>Delete Account?</h3>
-            <p style={{ color: '#6b7280', marginBottom: '28px', lineHeight: 1.6 }}>
-              This will permanently delete your account and all your data. This cannot be undone.
-            </p>
-            <div style={{ display: 'flex', gap: '12px', justifyContent: 'center' }}>
-              <button onClick={() => setDeleteConfirm(false)} style={{ padding: '12px 28px', borderRadius: '999px', border: '2px solid #e5e7eb', background: 'white', color: '#6b7280', fontFamily: "'Nunito',sans-serif", fontWeight: 700, cursor: 'pointer' }}>
-                Cancel
-              </button>
-              <button onClick={handleDeleteAccount} disabled={deleting} style={{ padding: '12px 28px', borderRadius: '999px', border: 'none', background: '#ef4444', color: 'white', fontFamily: "'Nunito',sans-serif", fontWeight: 700, cursor: deleting ? 'not-allowed' : 'pointer', opacity: deleting ? 0.7 : 1 }}>
-                {deleting ? 'Deleting...' : 'Yes, Delete'}
-              </button>
-            </div>
-          </div>
+      {/* ✅ Modal */}
+      <Modal isOpen={deleteConfirm} onClose={() => setDeleteConfirm(false)} title="😢 Delete Account?">
+        <p style={{ color: '#6b7280', marginBottom: '28px', lineHeight: 1.6, textAlign: 'center' }}>
+          This will permanently delete your account and all your data. This cannot be undone.
+        </p>
+        <div style={{ display: 'flex', gap: '12px', justifyContent: 'center' }}>
+          <button onClick={() => setDeleteConfirm(false)} style={{ padding: '12px 28px', borderRadius: '999px', border: '2px solid #e5e7eb', background: 'white', color: '#6b7280', fontFamily: "'Nunito',sans-serif", fontWeight: 700, cursor: 'pointer' }}>Cancel</button>
+          <button onClick={handleDeleteAccount} disabled={deleting} style={{ padding: '12px 28px', borderRadius: '999px', border: 'none', background: '#ef4444', color: 'white', fontFamily: "'Nunito',sans-serif", fontWeight: 700, cursor: deleting ? 'not-allowed' : 'pointer', opacity: deleting ? 0.7 : 1 }}>
+            {deleting ? 'Deleting...' : 'Yes, Delete'}
+          </button>
         </div>
-      )}
+      </Modal>
     </div>
   );
 }

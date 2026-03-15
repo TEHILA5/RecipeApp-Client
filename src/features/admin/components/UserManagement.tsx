@@ -4,6 +4,9 @@
 import { useState, useEffect } from 'react';
 import axiosInstance from '../../../api/axiosConfig';
 import { useAppSelector, useAppDispatch } from '../../../redux/hooks';
+import Loading from '../../../shared/components/UI/Loading';
+import { formatShortDate } from '../../../shared/utils/formatting';
+import ErrorMessage from '../../../shared/components/UI/ErrorMessage';
 import {
   fetchAllUsers,
   deleteUserThunk,
@@ -72,13 +75,7 @@ export default function UserManagement() {
     u.email?.toLowerCase().includes(search.toLowerCase())
   );
 
-  if (loading) return (
-    <div style={{ textAlign: 'center', padding: '60px', color: '#9ca3af' }}>
-      <div style={{ width: '36px', height: '36px', border: '3px solid #fce7f3', borderTopColor: '#d4547a', borderRadius: '50%', animation: 'spin 0.8s linear infinite', margin: '0 auto 12px' }} />
-      <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
-      Loading users...
-    </div>
-  );
+  if (loading) return <Loading message="Loading users..." size="md" />;
 
   return (
     <div style={{ background: 'white', borderRadius: '20px', boxShadow: '0 4px 20px rgba(212,84,122,0.07)', overflow: 'hidden' }}>
@@ -95,11 +92,7 @@ export default function UserManagement() {
         </div>
       </div>
 
-      {error && (
-        <div style={{ margin: '16px 24px', padding: '12px 16px', background: '#fee2e2', borderRadius: '12px', color: '#991b1b', fontSize: '0.85rem', fontWeight: 600 }}>
-          ⚠️ {error}
-        </div>
-      )}
+      {error && <ErrorMessage message={error} style={{ margin: '16px 24px' }} />}
 
       {/* Table */}
       <div style={{ overflowX: 'auto' }}>
@@ -158,7 +151,7 @@ export default function UserManagement() {
 
                   {/* Joined */}
                   <td style={{ padding: '14px 16px', fontSize: '0.82rem', color: '#9ca3af' }}>
-                    {user.createdAt ? new Date(user.createdAt).toLocaleDateString() : '—'}
+                    {formatShortDate(user.createdAt)}
                   </td>
 
                   {/* Actions */}

@@ -8,6 +8,8 @@ import { removeBookmark } from '../../../api/userActionApi';
 import { CATEGORY_EMOJIS, LEVEL_LABELS } from '../../recipe/types/recipe.types';
 import StarRating from '../../../shared/components/StarRating';
 import { useAppSelector, useAppDispatch } from '../../../redux/hooks';
+import Loading from '../../../shared/components/UI/Loading';
+import ErrorMessage from '../../../shared/components/UI/ErrorMessage';
 import { fetchSavedRecipes, removeSavedRecipe } from '../redux/userSlice';
 
 export default function MyFavorites() {
@@ -38,24 +40,9 @@ export default function MyFavorites() {
     }
   };
 
-  if (loading) {
-    return (
-      <div style={{ textAlign: 'center', padding: '60px', color: '#9ca3af' }}>
-        <div style={{
-          width: 40, height: 40, border: '3px solid #fce7f3',
-          borderTopColor: '#d4547a', borderRadius: '50%',
-          animation: 'spin 0.8s linear infinite', margin: '0 auto 12px',
-        }} />
-        <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
-      </div>
-    );
-  }
+  if (loading) return <Loading size="md" />;
 
-  if (error) return (
-    <div style={{ padding: '20px', background: '#fee2e2', borderRadius: '12px', color: '#991b1b', textAlign: 'center' }}>
-      ⚠️ {error}
-    </div>
-  );
+  if (error) return <ErrorMessage message={error} />;
 
   if (saved.length === 0) return (
     <div style={{ textAlign: 'center', padding: '60px 20px' }}>

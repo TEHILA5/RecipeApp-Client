@@ -3,6 +3,7 @@
 // ===============================================
 import { useState, useEffect, useMemo } from 'react';
 import { getAllConversions, type ConversionDto } from '../../../api/conversionApi';
+import Loading from '../../../shared/components/UI/Loading';
 
 export default function ConversionsPage() {
   const [conversions, setConversions] = useState<ConversionDto[]>([]);
@@ -166,11 +167,7 @@ export default function ConversionsPage() {
           </div>
 
           {loading ? (
-            <div style={{ textAlign: 'center', padding: '60px', color: '#9ca3af' }}>
-              <div style={{ width: '36px', height: '36px', border: '3px solid #ede9fe', borderTopColor: '#7c3aed', borderRadius: '50%', animation: 'spin 0.8s linear infinite', margin: '0 auto 12px' }} />
-              <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
-              Loading...
-            </div>
+            <Loading message="Loading..." color="#7c3aed" />
           ) : filtered.length === 0 ? (
             <div style={{ textAlign: 'center', padding: '60px', color: '#9ca3af' }}>
               <div style={{ fontSize: '48px', marginBottom: '12px' }}>🔄</div>

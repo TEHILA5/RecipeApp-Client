@@ -3,7 +3,9 @@
 // ===============================================
 import { Link } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
-import { TextField, Button, Alert, CircularProgress } from '@mui/material';
+import { Button, Alert, CircularProgress } from '@mui/material';
+import FormInput from '../../../shared/components/FormInput';
+import { validationRules } from '../../../shared/utils/validation';
 
 interface LoginFormData {
   email: string;
@@ -36,24 +38,18 @@ export default function LoginForm({ onSubmit, loading, error }: LoginFormProps) 
       )}
 
       <form onSubmit={handleSubmit(onSubmit)} className="login-form" noValidate>
-        <TextField
-          label="Email Address" type="email" fullWidth
+        <FormInput
+          label="Email Address" type="email"
           autoComplete="email" placeholder="you@example.com"
           error={!!errors.email} helperText={errors.email?.message}
-          {...register('email', {
-            required: 'Email is required',
-            pattern: { value: /\S+@\S+\.\S+/, message: 'Email is invalid' },
-          })}
+          {...register('email', validationRules.email)}
         />
 
-        <TextField
-          label="Password" type="password" fullWidth
+        <FormInput
+          label="Password" type="password"
           autoComplete="current-password" placeholder="••••••••"
           error={!!errors.password} helperText={errors.password?.message}
-          {...register('password', {
-            required: 'Password is required',
-            minLength: { value: 6, message: 'Password must be at least 6 characters' },
-          })}
+          {...register('password', validationRules.password)}
         />
 
         <div className="forgot-link">
