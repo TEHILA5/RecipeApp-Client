@@ -51,7 +51,7 @@ export default function Header() {
         } : undefined}>
           <li><Link to="/" onClick={closeMenu}>Home</Link></li>
           <li><Link to="/recipes" onClick={closeMenu}>Recipes</Link></li>
-          <li><Link to="/conversions" onClick={closeMenu}>🔄 Conversions</Link></li>
+          <li><Link to="/conversions" onClick={closeMenu}>Conversions</Link></li>
           {isAuthenticated && (
             <>
               <li><Link to="/search" onClick={closeMenu}>Search</Link></li>

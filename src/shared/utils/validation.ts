@@ -1,7 +1,9 @@
 // ===============================================
 // Validation - חוקי ולידציה לטפסים
 // ===============================================
-import { EMAIL_REGEX, PHONE_REGEX, MIN_PASSWORD_LENGTH } from './constants';
+const EMAIL_REGEX = /\S+@\S+\.\S+/;
+const PHONE_REGEX = /^05\d{8}$/;
+const MIN_PASSWORD_LENGTH = 6;
 
 export const validationRules = {
   name: {

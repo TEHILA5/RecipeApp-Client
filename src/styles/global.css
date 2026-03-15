@@ -1,7 +1,8 @@
 /* ═══════════════════════════════════════════════
    Global Reset & Base Styles
    ═══════════════════════════════════════════════ */
-
+@import './reset.css';
+@import './variables.css';
 /* Reset MUI styles */
 * {
   margin: 0;

@@ -1,7 +1,7 @@
 // ===============================================
 // SearchBar - חיפוש לפי שם
 // ===============================================
-import Input from '../../UI/Input';
+import Input from '../../../shared/components/UI/Input';
 interface SearchBarProps {
   value: string;
   onChange: (val: string) => void;
