@@ -84,35 +84,53 @@ export default function SearchPage() {
 
       // ✅ משתמשים ב-ref ולא ב-state כדי למנוע dependency שמשתנה כל render
       const conversions = allConversionsRef.current;
+
+      // בניית מפה: לכל רכיב שחיפשנו -> רשימת חלופותיו
       const alternativeMap: Record<string, string[]> = {};
       for (const ing of ingredientList) {
         const alts = getAlternativesForIngredient(ing, conversions);
-        if (alts.length > 0) {
-          alternativeMap[ing] = alts.map((a) => a.alternativeName.toLowerCase());
-        }
-      }
-
-      if (Object.keys(alternativeMap).length === 0) {
-        setAlternativeResults([]);
-        setLoadingAlternatives(false);
-        return;
+        alternativeMap[ing] = alts.map((a) => a.alternativeName.toLowerCase());
       }
 
       const matched: { recipe: Recipe; matchedVia: { original: string; alternative: string }[] }[] = [];
+
       for (const recipe of allRecipesForAlt) {
         const recipeIngredients = recipe.ingredients?.map((i) =>
           (i.ingredientName ?? '').toLowerCase()
         ) ?? [];
+
         const matchedVia: { original: string; alternative: string }[] = [];
-        for (const [original, alternatives] of Object.entries(alternativeMap)) {
+        let allIngredientsMatched = true; // חייב כל רכיב להיות מכוסה
+
+        for (const ing of ingredientList) {
+          const ingLower = ing.toLowerCase();
+          const alternatives = alternativeMap[ing] ?? [];
+
+          // בדיקה ישירה
+          const directMatch = recipeIngredients.some((ri) => ri.includes(ingLower));
+          if (directMatch) continue;
+
+          // בדיקת חלופות
+          let foundViaAlternative = false;
           for (const alt of alternatives) {
             if (recipeIngredients.some((ri) => ri.includes(alt))) {
-              matchedVia.push({ original, alternative: alt });
+              matchedVia.push({ original: ing, alternative: alt });
+              foundViaAlternative = true;
               break;
             }
           }
+
+          if (!foundViaAlternative) {
+            // רכיב לא נמצא - פוסל את המתכון
+            allIngredientsMatched = false;
+            break;
+          }
         }
-        if (matchedVia.length > 0) matched.push({ recipe, matchedVia });
+
+        // מתכון נכנס רק אם כל הרכיבים מכוסים + לפחות חלופה אחת
+        if (allIngredientsMatched && matchedVia.length > 0) {
+          matched.push({ recipe, matchedVia });
+        }
       }
 
       setAlternativeResults(matched);

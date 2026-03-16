@@ -18,13 +18,12 @@ export default function RecipeCard({ recipe, badge }: RecipeCardProps) {
 
   return (
     <Link to={`/recipes/${recipe.id}`} className="recipe-card">
-      <div className="card-img-wrap">
+      <div className="card-img-wrap" style={{ aspectRatio: '4/3' }}>
         {/* ✅ ImageLazyLoad במקום <img> ישיר */}
         <ImageLazyLoad
           src={recipe.arrImage}
           alt={recipe.name}
           fallback={emoji}
-          className="card-img"
         />
         {badge && <div className="card-badge">{badge}</div>}
       </div>

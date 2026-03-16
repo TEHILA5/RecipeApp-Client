@@ -77,6 +77,7 @@ export default function RecipeEditPage() {
   const initialData = {
     name: currentRecipe.name,
     description: currentRecipe.description,
+    tags: currentRecipe.tags ?? [],
     category: currentRecipe.category,
     instructions: currentRecipe.instructions,
     arrImage: currentRecipe.arrImage ?? '',

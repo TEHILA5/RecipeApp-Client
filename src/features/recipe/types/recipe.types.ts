@@ -13,41 +13,16 @@ export type RecipeCategory =
 
 export type DifficultyLevel = 1 | 2 | 3;
 
-// ✅ C# enum int → string (לקריאת נתונים מהשרת)
 export const INT_TO_CATEGORY: Record<number, RecipeCategory> = {
-  0:  'Sweats',
-  1:  'Cakes',
-  2:  'Cupcakes',
-  3:  'Cheesecakes',
-  4:  'BundtCakes',
-  5:  'Brownies',
-  6:  'Cookies',
-  7:  'Bars',
-  8:  'IceCream',
-  9:  'Mousse',
-  10: 'Puddings',
-  11: 'Panna',
-  12: 'Tiramisu',
-  13: 'FrozenDesserts',
-  14: 'Pies',
-  15: 'Tarts',
-  16: 'Crumbles',
-  17: 'FruitSalads',
-  18: 'Pastries',
-  19: 'Donuts',
-  20: 'Churros',
-  21: 'Crepes',
-  22: 'Waffles',
-  23: 'NoBakeCakes',
-  24: 'Truffles',
-  25: 'EnergyBalls',
-  26: 'SoufleeAndCustard',
-  27: 'MilkDesserts',
-  28: 'JellyAndGelatin',
-  29: 'TraditionalDesserts',
+  0: 'Sweats', 1: 'Cakes', 2: 'Cupcakes', 3: 'Cheesecakes', 4: 'BundtCakes',
+  5: 'Brownies', 6: 'Cookies', 7: 'Bars', 8: 'IceCream', 9: 'Mousse',
+  10: 'Puddings', 11: 'Panna', 12: 'Tiramisu', 13: 'FrozenDesserts', 14: 'Pies',
+  15: 'Tarts', 16: 'Crumbles', 17: 'FruitSalads', 18: 'Pastries', 19: 'Donuts',
+  20: 'Churros', 21: 'Crepes', 22: 'Waffles', 23: 'NoBakeCakes', 24: 'Truffles',
+  25: 'EnergyBalls', 26: 'SoufleeAndCustard', 27: 'MilkDesserts',
+  28: 'JellyAndGelatin', 29: 'TraditionalDesserts',
 };
 
-// ✅ string → C# enum int (לשליחת נתונים לשרת)
 export const CATEGORY_TO_INT: Record<RecipeCategory, number> = {
   Sweats: 0, Cakes: 1, Cupcakes: 2, Cheesecakes: 3, BundtCakes: 4,
   Brownies: 5, Cookies: 6, Bars: 7, IceCream: 8, Mousse: 9,
@@ -58,23 +33,16 @@ export const CATEGORY_TO_INT: Record<RecipeCategory, number> = {
   JellyAndGelatin: 28, TraditionalDesserts: 29,
 };
 
-// ✅ IngredientImportance int → string
 export const INT_TO_IMPORTANCE: Record<number, 'Essential' | 'Recommended' | 'Optional'> = {
-  1: 'Essential',
-  2: 'Recommended',
-  3: 'Optional',
+  1: 'Essential', 2: 'Recommended', 3: 'Optional',
 };
 
 export const IMPORTANCE_TO_INT: Record<string, number> = {
-  Essential: 1,
-  Recommended: 2,
-  Optional: 3,
+  Essential: 1, Recommended: 2, Optional: 3,
 };
 
 export const LEVEL_LABELS: Record<DifficultyLevel, string> = {
-  1: 'Easy',
-  2: 'Medium',
-  3: 'Hard',
+  1: 'Easy', 2: 'Medium', 3: 'Hard',
 };
 
 export const CATEGORY_EMOJIS: Partial<Record<RecipeCategory, string>> = {
@@ -88,7 +56,6 @@ export const CATEGORY_EMOJIS: Partial<Record<RecipeCategory, string>> = {
   MilkDesserts: '🥛', JellyAndGelatin: '🟣', TraditionalDesserts: '🏺',
 };
 
-// ✅ ממיר recipe שמגיע מהשרת (category כ-int) ל-category כ-string
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export function normalizeRecipe(raw: any): Recipe {
   return {
@@ -96,6 +63,10 @@ export function normalizeRecipe(raw: any): Recipe {
     category: typeof raw.category === 'number'
       ? (INT_TO_CATEGORY[raw.category] ?? 'Sweats')
       : raw.category,
+    // ✅ tags - מגיע כ-JSON string מהשרת, ממיר למערך
+    tags: raw.tags
+      ? (typeof raw.tags === 'string' ? JSON.parse(raw.tags) : raw.tags)
+      : [],
     ingredients: raw.ingredients?.map((ing: any) => ({
       ...ing,
       importance: typeof ing.importance === 'number'
@@ -128,6 +99,7 @@ export interface Recipe {
   ingredients: RecipeIngredient[];
   averageRating?: number;
   commentCount?: number;
+  tags?: string[]; // ✅ תגיות חופשיות
 }
 
 export interface RecipeCreateDto {
@@ -146,6 +118,7 @@ export interface RecipeCreateDto {
     unit: string;
     importance?: string;
   }>;
+  tags?: string[]; // ✅
 }
 
 export interface RecipeUpdateDto {
@@ -164,6 +137,7 @@ export interface RecipeUpdateDto {
     unit: string;
     importance?: string;
   }>;
+  tags?: string[]; // ✅
 }
 
 export interface RecipeFilters {
