@@ -13,6 +13,14 @@ interface UserAdminDto {
   createdAt?: string;
 }
 
+export interface WeeklyCategoryStats {
+  week: string;
+  weekLabel: string;
+  category: string;
+  categoryName: string;
+  viewCount: number;
+}
+
 interface AdminState {
   conversions: ConversionDto[];
   loadingConversions: boolean;
@@ -20,6 +28,8 @@ interface AdminState {
   users: UserAdminDto[];
   loadingUsers: boolean;
   usersError: string | null;
+  weeklyStats: WeeklyCategoryStats[];
+  loadingWeeklyStats: boolean;
 }
 
 const initialState: AdminState = {
@@ -29,6 +39,8 @@ const initialState: AdminState = {
   users: [],
   loadingUsers: false,
   usersError: null,
+  weeklyStats: [],
+  loadingWeeklyStats: false,
 };
 
 // ── Thunks ──
@@ -77,6 +89,18 @@ export const deleteUserThunk = createAsyncThunk(
       return id;
     } catch (err: unknown) {
       return rejectWithValue(err instanceof Error ? err.message : 'Failed to delete');
+    }
+  }
+);
+
+export const fetchWeeklyStats = createAsyncThunk(
+  'admin/fetchWeeklyStats',
+  async (_, { rejectWithValue }) => {
+    try {
+      const res = await axiosInstance.get<WeeklyCategoryStats[]>('/userAction/stats/weekly-categories');
+      return res.data;
+    } catch (err: unknown) {
+      return rejectWithValue(err instanceof Error ? err.message : 'Failed to load stats');
     }
   }
 );
@@ -139,6 +163,19 @@ const adminSlice = createSlice({
     builder.addCase(deleteUserThunk.fulfilled, (state, action) => {
       state.users = state.users.filter((u) => u.id !== action.payload);
     });
+
+    // fetchWeeklyStats
+    builder
+      .addCase(fetchWeeklyStats.pending, (state) => {
+        state.loadingWeeklyStats = true;
+      })
+      .addCase(fetchWeeklyStats.fulfilled, (state, action) => {
+        state.loadingWeeklyStats = false;
+        state.weeklyStats = action.payload;
+      })
+      .addCase(fetchWeeklyStats.rejected, (state) => {
+        state.loadingWeeklyStats = false;
+      });
   },
 });
 
