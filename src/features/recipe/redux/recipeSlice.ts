@@ -22,6 +22,19 @@ const API_BASE_URL =
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   (import.meta as any).env?.VITE_API_BASE_URL || 'https://localhost:7244/api';
 
+// ── טיפוס לתוצאת החיפוש המתקדם ──
+export interface AdvancedSearchResult {
+  intent: {
+    category: string | null;
+    tags: string[];
+    difficultyLevel: number | null;
+    maxPrepTime: number | null;
+    keywords: string[];
+    originalText: string;
+  };
+  results: Recipe[];
+}
+
 export const recipesApi = createApi({
   reducerPath: 'recipesApi',
   baseQuery: fetchBaseQuery({
@@ -68,7 +81,7 @@ export const recipesApi = createApi({
       transformResponse: (raw: unknown[]) => raw.map(normalizeRecipe),
     }),
 
-    // ✅ חיפוש לפי תגיות - לחיפוש המתקדם
+    // ✅ חיפוש לפי תגיות
     searchByTags: builder.query<Recipe[], string[]>({
       query: (tags) => ({
         url: '/recipe/search-by-tags',
@@ -76,6 +89,20 @@ export const recipesApi = createApi({
         body: tags,
       }),
       transformResponse: (raw: unknown[]) => raw.map(normalizeRecipe),
+    }),
+
+    // ✅ חיפוש מתקדם — ניתוח טקסט חופשי + תוצאות
+    analyzeAndSearch: builder.query<AdvancedSearchResult, string>({
+      query: (text) => ({
+        url: '/search/advanced',
+        method: 'POST',
+        body: JSON.stringify(text),
+      }),
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      transformResponse: (raw: any) => ({
+        intent: raw.intent,
+        results: raw.results.map(normalizeRecipe),
+      }),
     }),
 
     createRecipe: builder.mutation<Recipe, RecipeCreateDto>({
@@ -146,7 +173,8 @@ export const {
   useGetRecommendedRecipesQuery,
   useGetRecipesByCategoryQuery,
   useSearchByIngredientsQuery,
-  useSearchByTagsQuery,        // ✅ חדש
+  useSearchByTagsQuery,
+  useAnalyzeAndSearchQuery,        // ✅ חדש
   useCreateRecipeMutation,
   useUpdateRecipeMutation,
   useDeleteRecipeMutation,
