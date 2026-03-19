@@ -1,12 +1,10 @@
-// ===============================================
-// RecipeForm - Shared Create & Edit Form
-// ===============================================
 import { useState, useEffect } from 'react';
 import type { RecipeCreateDto, RecipeUpdateDto, RecipeCategory, DifficultyLevel } from '../types/recipe.types';
 import * as ingredientApi from '../../../api/ingredientApi';
 import Modal from '../../../shared/components/UI/Modal';
 import Button from '../../../shared/components/UI/Button';
 import ErrorMessage from '../../../shared/components/UI/ErrorMessage';
+import './RecipeForm.css';
 
 interface IngredientOption { id: number; name: string; }
 
@@ -29,7 +27,7 @@ interface RecipeFormData {
   prepTime: number;
   totalTime: number;
   ingredients: FormIngredient[];
-  tags: string[]; // ✅
+  tags: string[];
 }
 
 interface RecipeFormProps {
@@ -49,7 +47,6 @@ const CATEGORIES: RecipeCategory[] = [
   'JellyAndGelatin', 'TraditionalDesserts',
 ];
 
-// ✅ תגיות מוצעות לבחירה מהירה
 const SUGGESTED_TAGS = [
   'chocolate', 'vanilla', 'fruit', 'frozen', 'no-bake',
   'quick', 'vegan', 'gluten-free', 'dairy-free', 'nut-free',
@@ -64,38 +61,27 @@ const defaultForm: RecipeFormData = {
   ingredients: [], tags: [],
 };
 
-const inputStyle: React.CSSProperties = {
-  width: '100%', padding: '12px 16px', borderRadius: '12px',
-  border: '2px solid #fce7f3', fontFamily: "'Nunito',sans-serif",
-  fontSize: '0.95rem', outline: 'none', boxSizing: 'border-box',
-  background: 'white', color: '#1f2937', transition: 'border-color 0.2s',
-};
-
-const labelStyle: React.CSSProperties = {
-  display: 'block', fontWeight: 700, color: '#6b7280',
-  fontSize: '0.8rem', letterSpacing: '0.07em',
-  textTransform: 'uppercase', marginBottom: '6px',
-};
+function SectionTitle({ icon, title }: { icon: string; title: string }) {
+  return (
+    <h3 className="rf-section-title">{icon} {title}</h3>
+  );
+}
 
 export default function RecipeForm({ initialData, onSubmit, loading = false, submitLabel = 'Save Recipe' }: RecipeFormProps) {
-  const [form, setForm] = useState<RecipeFormData>({
-    ...defaultForm, ...initialData, tags: initialData?.tags ?? [],
-  });
+  const [form, setForm] = useState<RecipeFormData>({ ...defaultForm, ...initialData, tags: initialData?.tags ?? [] });
   const [errors, setErrors] = useState<Partial<Record<keyof RecipeFormData, string>>>({});
   const [ingredientOptions, setIngredientOptions] = useState<IngredientOption[]>([]);
   const [showNewIngredientModal, setShowNewIngredientModal] = useState(false);
   const [newIngredientName, setNewIngredientName] = useState('');
   const [savingNewIngredient, setSavingNewIngredient] = useState(false);
   const [newIngredientError, setNewIngredientError] = useState('');
-  const [tagInput, setTagInput] = useState(''); // ✅
+  const [tagInput, setTagInput] = useState('');
   const [newIngredient, setNewIngredient] = useState<FormIngredient>({
     ingredientId: 0, ingredientName: '', quantity: 1, unit: 'g', importance: 'Essential',
   });
 
   useEffect(() => {
-    ingredientApi.getAllIngredients()
-      .then((data: IngredientOption[]) => setIngredientOptions(data))
-      .catch(() => {});
+    ingredientApi.getAllIngredients().then(setIngredientOptions).catch(() => {});
   }, []);
 
   const set = (field: keyof RecipeFormData, value: unknown) => {
@@ -103,7 +89,6 @@ export default function RecipeForm({ initialData, onSubmit, loading = false, sub
     setErrors((e) => ({ ...e, [field]: undefined }));
   };
 
-  // ✅ הוספת תגית
   const handleAddTag = (tag: string) => {
     const normalized = tag.trim().toLowerCase();
     if (!normalized || form.tags.includes(normalized)) return;
@@ -111,21 +96,20 @@ export default function RecipeForm({ initialData, onSubmit, loading = false, sub
     setTagInput('');
   };
 
-  // ✅ הסרת תגית
   const handleRemoveTag = (tag: string) => {
     setForm((f) => ({ ...f, tags: f.tags.filter((t) => t !== tag) }));
   };
 
   const validate = (): boolean => {
-    const newErrors: Partial<Record<keyof RecipeFormData, string>> = {};
-    if (!form.name.trim()) newErrors.name = 'Name is required';
-    if (!form.description.trim()) newErrors.description = 'Description is required';
-    if (!form.instructions.trim()) newErrors.instructions = 'Instructions are required';
-    if (form.servings < 1) newErrors.servings = 'Must be at least 1';
-    if (form.prepTime < 1) newErrors.prepTime = 'Must be at least 1 minute';
-    if (form.totalTime < form.prepTime) newErrors.totalTime = 'Total time must be ≥ prep time';
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+    const errs: Partial<Record<keyof RecipeFormData, string>> = {};
+    if (!form.name.trim())         errs.name = 'Name is required';
+    if (!form.description.trim())  errs.description = 'Description is required';
+    if (!form.instructions.trim()) errs.instructions = 'Instructions are required';
+    if (form.servings < 1)         errs.servings = 'Must be at least 1';
+    if (form.prepTime < 1)         errs.prepTime = 'Must be at least 1 minute';
+    if (form.totalTime < form.prepTime) errs.totalTime = 'Total time must be ≥ prep time';
+    setErrors(errs);
+    return Object.keys(errs).length === 0;
   };
 
   const handleSubmit = async () => {
@@ -135,10 +119,9 @@ export default function RecipeForm({ initialData, onSubmit, loading = false, sub
       category: form.category, instructions: form.instructions.trim(),
       arrImage: form.arrImage.trim(), servings: form.servings,
       level: form.level, prepTime: form.prepTime, totalTime: form.totalTime,
-      tags: form.tags, // ✅
-      ingredients: form.ingredients.map((ing) => ({
-        ingredientId: ing.ingredientId, quantity: ing.quantity,
-        unit: ing.unit, importance: ing.importance,
+      tags: form.tags,
+      ingredients: form.ingredients.map(({ ingredientId, quantity, unit, importance }) => ({
+        ingredientId, quantity, unit, importance,
       })),
     };
     await onSubmit(dto);
@@ -169,47 +152,36 @@ export default function RecipeForm({ initialData, onSubmit, loading = false, sub
     } finally { setSavingNewIngredient(false); }
   };
 
-  const sectionStyle: React.CSSProperties = {
-    background: 'white', borderRadius: '20px', padding: '24px 28px',
-    boxShadow: '0 4px 20px rgba(212,84,122,0.07)', marginBottom: '20px',
-  };
-
-  const sectionTitle = (icon: string, title: string) => (
-    <h3 style={{ fontFamily: "'Dancing Script',cursive", fontSize: '1.4rem', color: '#d4547a', margin: '0 0 20px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-      {icon} {title}
-    </h3>
-  );
-
   return (
-    <div style={{ maxWidth: '760px', margin: '0 auto', fontFamily: "'Nunito',sans-serif" }}>
+    <div className="rf-wrap">
 
       {/* Basic Info */}
-      <div style={sectionStyle}>
-        {sectionTitle('📝', 'Basic Info')}
-        <div style={{ display: 'grid', gap: '16px' }}>
+      <div className="rf-section">
+        <SectionTitle icon="📝" title="Basic Info" />
+        <div className="rf-grid">
           <div>
-            <label style={labelStyle}>Recipe Name *</label>
-            <input style={{ ...inputStyle, borderColor: errors.name ? '#ef4444' : '#fce7f3' }}
+            <label className="rf-label">Recipe Name *</label>
+            <input className={`rf-input ${errors.name ? 'rf-input--error' : ''}`}
               value={form.name} onChange={(e) => set('name', e.target.value)} placeholder="e.g. Chocolate Lava Cake" />
-            {errors.name && <p style={{ color: '#ef4444', fontSize: '0.8rem', margin: '4px 0 0' }}>{errors.name}</p>}
+            {errors.name && <p className="rf-field-error">{errors.name}</p>}
           </div>
           <div>
-            <label style={labelStyle}>Description *</label>
-            <textarea style={{ ...inputStyle, borderColor: errors.description ? '#ef4444' : '#fce7f3', resize: 'vertical' }}
+            <label className="rf-label">Description *</label>
+            <textarea className={`rf-input rf-textarea ${errors.description ? 'rf-input--error' : ''}`}
               value={form.description} onChange={(e) => set('description', e.target.value)}
               rows={3} placeholder="A short, enticing description..." />
-            {errors.description && <p style={{ color: '#ef4444', fontSize: '0.8rem', margin: '4px 0 0' }}>{errors.description}</p>}
+            {errors.description && <p className="rf-field-error">{errors.description}</p>}
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+          <div className="rf-grid-2">
             <div>
-              <label style={labelStyle}>Category *</label>
-              <select style={inputStyle} value={form.category} onChange={(e) => set('category', e.target.value as RecipeCategory)}>
+              <label className="rf-label">Category *</label>
+              <select className="rf-input" value={form.category} onChange={(e) => set('category', e.target.value as RecipeCategory)}>
                 {CATEGORIES.map((cat) => <option key={cat} value={cat}>{cat}</option>)}
               </select>
             </div>
             <div>
-              <label style={labelStyle}>Difficulty *</label>
-              <select style={inputStyle} value={form.level} onChange={(e) => set('level', Number(e.target.value) as DifficultyLevel)}>
+              <label className="rf-label">Difficulty *</label>
+              <select className="rf-input" value={form.level} onChange={(e) => set('level', Number(e.target.value) as DifficultyLevel)}>
                 <option value={1}>Easy</option>
                 <option value={2}>Medium</option>
                 <option value={3}>Hard</option>
@@ -217,127 +189,117 @@ export default function RecipeForm({ initialData, onSubmit, loading = false, sub
             </div>
           </div>
           <div>
-            <label style={labelStyle}>Image URL</label>
-            <input style={inputStyle} value={form.arrImage} onChange={(e) => set('arrImage', e.target.value)} placeholder="https://example.com/image.jpg" />
+            <label className="rf-label">Image URL</label>
+            <input className="rf-input" value={form.arrImage} onChange={(e) => set('arrImage', e.target.value)} placeholder="https://example.com/image.jpg" />
           </div>
         </div>
       </div>
 
-      {/* ✅ Tags */}
-      <div style={sectionStyle}>
-        {sectionTitle('🏷️', 'Tags')}
-        <p style={{ fontSize: '0.82rem', color: '#9ca3af', margin: '-12px 0 16px' }}>
-          Add tags to help with smart search — e.g. "frozen", "chocolate", "quick"
-        </p>
+      {/* Tags */}
+      <div className="rf-section">
+        <SectionTitle icon="🏷️" title="Tags" />
+        <p className="rf-hint">Add tags to help with smart search — e.g. "frozen", "chocolate", "quick"</p>
 
         {form.tags.length > 0 && (
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '16px' }}>
+          <div className="rf-tags">
             {form.tags.map((tag) => (
-              <span key={tag} style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '5px 12px', borderRadius: '999px', background: '#fce7f3', color: '#d4547a', fontWeight: 700, fontSize: '0.82rem' }}>
+              <span key={tag} className="rf-tag">
                 #{tag}
-                <button onClick={() => handleRemoveTag(tag)}
-                  style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#d4547a', fontSize: '1rem', lineHeight: 1, padding: 0 }}>×</button>
+                <button className="rf-tag-remove" onClick={() => handleRemoveTag(tag)}>×</button>
               </span>
             ))}
           </div>
         )}
 
-        <div style={{ display: 'flex', gap: '10px', marginBottom: '14px' }}>
-          <input type="text" value={tagInput}
+        <div className="rf-tag-input-row">
+          <input
+            type="text" value={tagInput}
             onChange={(e) => setTagInput(e.target.value)}
             onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleAddTag(tagInput); } }}
             placeholder="Type a tag and press Enter..."
-            style={{ ...inputStyle, flex: 1 }}
-            onFocus={(e) => (e.currentTarget.style.borderColor = '#d4547a')}
-            onBlur={(e) => (e.currentTarget.style.borderColor = '#fce7f3')}
+            className="rf-input rf-tag-input"
           />
-          <Button variant="outline" size="sm" onClick={() => handleAddTag(tagInput)} disabled={!tagInput.trim()}>
-            + Add
-          </Button>
+          <Button variant="outline" size="sm" onClick={() => handleAddTag(tagInput)} disabled={!tagInput.trim()}>+ Add</Button>
         </div>
 
         <div>
-          <p style={{ fontSize: '0.75rem', color: '#9ca3af', fontWeight: 700, marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
-            Quick add:
-          </p>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+          <p className="rf-quick-label">Quick add:</p>
+          <div className="rf-suggested-tags">
             {SUGGESTED_TAGS.filter((t) => !form.tags.includes(t)).map((tag) => (
-              <button key={tag} onClick={() => handleAddTag(tag)}
-                style={{ padding: '4px 12px', borderRadius: '999px', cursor: 'pointer', border: '1.5px solid #fce7f3', background: 'white', color: '#9ca3af', fontSize: '0.78rem', fontWeight: 600, fontFamily: "'Nunito',sans-serif", transition: 'all 0.15s' }}
-                onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.borderColor = '#d4547a'; (e.currentTarget as HTMLButtonElement).style.color = '#d4547a'; }}
-                onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.borderColor = '#fce7f3'; (e.currentTarget as HTMLButtonElement).style.color = '#9ca3af'; }}
-              >
-                #{tag}
-              </button>
+              <button key={tag} className="rf-suggested-tag" onClick={() => handleAddTag(tag)}>#{tag}</button>
             ))}
           </div>
         </div>
       </div>
 
       {/* Time & Servings */}
-      <div style={sectionStyle}>
-        {sectionTitle('⏱️', 'Time & Servings')}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px' }}>
+      <div className="rf-section">
+        <SectionTitle icon="⏱️" title="Time & Servings" />
+        <div className="rf-grid-3">
           {[
             { label: 'Prep Time (min) *', field: 'prepTime' as const, error: errors.prepTime },
             { label: 'Total Time (min) *', field: 'totalTime' as const, error: errors.totalTime },
-            { label: 'Servings *', field: 'servings' as const, error: errors.servings },
+            { label: 'Servings *',         field: 'servings' as const,  error: errors.servings },
           ].map(({ label, field, error }) => (
             <div key={field}>
-              <label style={labelStyle}>{label}</label>
-              <input type="number" min={1}
-                style={{ ...inputStyle, borderColor: error ? '#ef4444' : '#fce7f3' }}
-                value={form[field] as number}
-                onChange={(e) => set(field, Number(e.target.value))} />
-              {error && <p style={{ color: '#ef4444', fontSize: '0.8rem', margin: '4px 0 0' }}>{error}</p>}
+              <label className="rf-label">{label}</label>
+              <input type="number" min={1} className={`rf-input ${error ? 'rf-input--error' : ''}`}
+                value={form[field] as number} onChange={(e) => set(field, Number(e.target.value))} />
+              {error && <p className="rf-field-error">{error}</p>}
             </div>
           ))}
         </div>
       </div>
 
       {/* Ingredients */}
-      <div style={sectionStyle}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-          {sectionTitle('🧂', 'Ingredients')}
+      <div className="rf-section">
+        <div className="rf-section-header">
+          <SectionTitle icon="🧂" title="Ingredients" />
           <Button variant="outline" size="sm" onClick={() => { setShowNewIngredientModal(true); setNewIngredientError(''); setNewIngredientName(''); }}>
             ➕ New Ingredient
           </Button>
         </div>
+
         {form.ingredients.length > 0 && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '20px' }}>
+          <div className="rf-ing-list">
             {form.ingredients.map((ing, i) => (
-              <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '10px 16px', background: '#fdf2f8', borderRadius: '12px', border: '1px solid #fce7f3' }}>
-                <span style={{ flex: 1, fontWeight: 600, color: '#1f2937' }}>{ing.ingredientName}</span>
-                <span style={{ color: '#d4547a', fontWeight: 700 }}>{ing.quantity} {ing.unit}</span>
-                <span style={{ fontSize: '0.72rem', color: '#9ca3af' }}>{ing.importance}</span>
-                <button onClick={() => handleRemoveIngredient(i)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#ef4444', fontSize: '1.1rem' }}>×</button>
+              <div key={i} className="rf-ing-item">
+                <span className="rf-ing-name">{ing.ingredientName}</span>
+                <span className="rf-ing-qty">{ing.quantity} {ing.unit}</span>
+                <span className="rf-ing-importance">{ing.importance}</span>
+                <button className="rf-ing-remove" onClick={() => handleRemoveIngredient(i)}>×</button>
               </div>
             ))}
           </div>
         )}
-        <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1.2fr auto', gap: '10px', alignItems: 'end' }}>
+
+        <div className="rf-ing-add">
           <div>
-            <label style={labelStyle}>Ingredient</label>
-            <select style={inputStyle} value={newIngredient.ingredientId}
-              onChange={(e) => { const id = Number(e.target.value); const found = ingredientOptions.find((o) => o.id === id); setNewIngredient((n) => ({ ...n, ingredientId: id, ingredientName: found?.name ?? '' })); }}>
+            <label className="rf-label">Ingredient</label>
+            <select className="rf-input" value={newIngredient.ingredientId}
+              onChange={(e) => {
+                const id = Number(e.target.value);
+                const found = ingredientOptions.find((o) => o.id === id);
+                setNewIngredient((n) => ({ ...n, ingredientId: id, ingredientName: found?.name ?? '' }));
+              }}>
               <option value={0}>Select...</option>
               {ingredientOptions.map((o) => <option key={o.id} value={o.id}>{o.name}</option>)}
             </select>
           </div>
           <div>
-            <label style={labelStyle}>Quantity</label>
-            <input type="number" min={0} step={0.1} style={inputStyle} value={newIngredient.quantity}
+            <label className="rf-label">Quantity</label>
+            <input type="number" min={0} step={0.1} className="rf-input" value={newIngredient.quantity}
               onChange={(e) => setNewIngredient((n) => ({ ...n, quantity: Number(e.target.value) }))} />
           </div>
           <div>
-            <label style={labelStyle}>Unit</label>
-            <select style={inputStyle} value={newIngredient.unit} onChange={(e) => setNewIngredient((n) => ({ ...n, unit: e.target.value }))}>
+            <label className="rf-label">Unit</label>
+            <select className="rf-input" value={newIngredient.unit} onChange={(e) => setNewIngredient((n) => ({ ...n, unit: e.target.value }))}>
               {UNITS.map((u) => <option key={u} value={u}>{u}</option>)}
             </select>
           </div>
           <div>
-            <label style={labelStyle}>Importance</label>
-            <select style={inputStyle} value={newIngredient.importance} onChange={(e) => setNewIngredient((n) => ({ ...n, importance: e.target.value as FormIngredient['importance'] }))}>
+            <label className="rf-label">Importance</label>
+            <select className="rf-input" value={newIngredient.importance} onChange={(e) => setNewIngredient((n) => ({ ...n, importance: e.target.value as FormIngredient['importance'] }))}>
               <option value="Essential">Essential</option>
               <option value="Recommended">Recommended</option>
               <option value="Optional">Optional</option>
@@ -348,32 +310,32 @@ export default function RecipeForm({ initialData, onSubmit, loading = false, sub
       </div>
 
       {/* Instructions */}
-      <div style={sectionStyle}>
-        {sectionTitle('📋', 'Instructions')}
-        <label style={labelStyle}>Step-by-step instructions *</label>
-        <p style={{ fontSize: '0.8rem', color: '#9ca3af', margin: '0 0 8px' }}>Write each step on a new line</p>
-        <textarea style={{ ...inputStyle, borderColor: errors.instructions ? '#ef4444' : '#fce7f3', resize: 'vertical' }}
+      <div className="rf-section">
+        <SectionTitle icon="📋" title="Instructions" />
+        <label className="rf-label">Step-by-step instructions *</label>
+        <p className="rf-hint rf-hint--tight">Write each step on a new line</p>
+        <textarea
+          className={`rf-input rf-textarea ${errors.instructions ? 'rf-input--error' : ''}`}
           value={form.instructions} onChange={(e) => set('instructions', e.target.value)}
           rows={8} placeholder={`Step 1: Preheat oven to 180°C\nStep 2: Mix flour and sugar\nStep 3: ...`} />
-        {errors.instructions && <p style={{ color: '#ef4444', fontSize: '0.8rem', margin: '4px 0 0' }}>{errors.instructions}</p>}
+        {errors.instructions && <p className="rf-field-error">{errors.instructions}</p>}
       </div>
 
-      {/* Submit */}
-      <div style={{ display: 'flex', justifyContent: 'flex-end', paddingBottom: '40px' }}>
+      <div className="rf-submit-row">
         <Button onClick={handleSubmit} loading={loading} size="lg">✨ {submitLabel}</Button>
       </div>
 
-      {/* New Ingredient Modal */}
       <Modal isOpen={showNewIngredientModal} onClose={() => setShowNewIngredientModal(false)} title="🧂 Add New Ingredient">
-        <label style={{ fontSize: '0.85rem', fontWeight: 700, color: '#6b7280', display: 'block', marginBottom: '8px' }}>Ingredient Name *</label>
-        <input autoFocus type="text" value={newIngredientName}
+        <label className="rf-label">Ingredient Name *</label>
+        <input
+          autoFocus type="text" value={newIngredientName}
           onChange={(e) => { setNewIngredientName(e.target.value); setNewIngredientError(''); }}
           onKeyDown={(e) => e.key === 'Enter' && handleCreateNewIngredient()}
           placeholder="e.g. Vanilla Extract"
-          style={{ width: '100%', padding: '12px 16px', borderRadius: '12px', border: `2px solid ${newIngredientError ? '#ef4444' : '#fce7f3'}`, fontFamily: "'Nunito',sans-serif", fontSize: '0.95rem', boxSizing: 'border-box', outline: 'none' }}
+          className={`rf-input ${newIngredientError ? 'rf-input--error' : ''}`}
         />
         <ErrorMessage message={newIngredientError} style={{ marginTop: '8px' }} />
-        <div style={{ display: 'flex', gap: '12px', marginTop: '24px' }}>
+        <div className="rf-modal-actions">
           <Button variant="ghost" onClick={() => setShowNewIngredientModal(false)} fullWidth>Cancel</Button>
           <Button onClick={handleCreateNewIngredient} loading={savingNewIngredient} disabled={!newIngredientName.trim()} fullWidth>✨ Create</Button>
         </div>

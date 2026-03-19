@@ -1,6 +1,3 @@
-// ===============================================
-// Recipe Card Component
-// ===============================================
 import { Link } from 'react-router-dom';
 import type { Recipe } from '../types/recipe.types';
 import { LEVEL_LABELS, CATEGORY_EMOJIS } from '../types/recipe.types';
@@ -19,7 +16,7 @@ export default function RecipeCard({ recipe, badge }: RecipeCardProps) {
   return (
     <Link to={`/recipes/${recipe.id}`} className="recipe-card">
       <div className="card-img-wrap" style={{ aspectRatio: '4/3' }}>
-        {/* ✅ ImageLazyLoad במקום <img> ישיר */}
+        {}
         <ImageLazyLoad
           src={recipe.arrImage}
           alt={recipe.name}

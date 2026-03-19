@@ -1,0 +1,57 @@
+.rdp-page {
+  min-height: 100vh;
+  background: var(--soft-pink, #fdf2f8);
+  padding-top: var(--nav-height, 70px);
+}
+
+.rdp-breadcrumb-wrap {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 16px 24px 0;
+}
+
+.rdp-breadcrumb {
+  font-size: 0.85rem;
+  color: #9ca3af;
+  font-family: 'Nunito', sans-serif;
+}
+
+.rdp-crumb {
+  color: #d4547a;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.rdp-sep { margin: 0 8px; }
+
+/* Not found */
+.rdp-not-found {
+  min-height: 60vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Nunito', sans-serif;
+  padding: 40px 20px;
+  text-align: center;
+}
+
+.rdp-not-found-icon { font-size: 64px; margin-bottom: 16px; }
+
+.rdp-not-found-title {
+  font-family: 'Dancing Script', cursive;
+  font-size: 2rem;
+  color: #d4547a;
+  margin-bottom: 12px;
+}
+
+.rdp-back-btn {
+  padding: 12px 32px;
+  border-radius: 999px;
+  border: none;
+  background: linear-gradient(135deg, #e8799a, #d4547a);
+  color: white;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 700;
+  cursor: pointer;
+}

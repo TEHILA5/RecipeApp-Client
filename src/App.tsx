@@ -1,6 +1,3 @@
-// ===============================================
-// Main App Component - Sweet&Treat Theme
-// ===============================================
 import { useEffect } from 'react';
 import { BrowserRouter } from 'react-router-dom';
 import { Provider } from 'react-redux';
@@ -19,9 +16,7 @@ function App() {
 
     const loadingScreen = document.getElementById('loading-screen');
     if (loadingScreen) {
-      setTimeout(() => {
-        loadingScreen.classList.add('hidden');
-      }, 1800);
+      setTimeout(() => loadingScreen.classList.add('hidden'), 1800);
     }
   }, []);
 
@@ -31,7 +26,6 @@ function App() {
         <CssBaseline />
         <BrowserRouter>
           <AppRoutes />
-          {/* ✅ Toast גלובלי - נגיש מכל מקום דרך dispatch(addToast(...)) */}
           <Toast />
         </BrowserRouter>
       </ThemeProvider>

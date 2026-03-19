@@ -1,17 +1,15 @@
-// ===============================================
-// Search Slice - ניהול סטייט חיפוש ב-Redux
-// ===============================================
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
 import type { RecipeCategory } from '../../recipe/types/recipe.types';
 
 type SearchMode = 'name' | 'category' | 'ingredients';
+type ResultTab = 'results' | 'alternatives';
 
 interface SearchState {
   mode: SearchMode;
   nameInput: string;
   categoryInput: RecipeCategory | '';
   ingredientList: string[];
-  activeResultTab: 'results' | 'alternatives';
+  activeResultTab: ResultTab;
 }
 
 const initialState: SearchState = {
@@ -50,7 +48,7 @@ const searchSlice = createSlice({
     clearIngredients: (state) => {
       state.ingredientList = [];
     },
-    setActiveResultTab: (state, action: PayloadAction<'results' | 'alternatives'>) => {
+    setActiveResultTab: (state, action: PayloadAction<ResultTab>) => {
       state.activeResultTab = action.payload;
     },
     resetSearch: () => initialState,
@@ -58,14 +56,9 @@ const searchSlice = createSlice({
 });
 
 export const {
-  setMode,
-  setNameInput,
-  setCategoryInput,
-  addIngredient,
-  removeIngredient,
-  clearIngredients,
-  setActiveResultTab,
-  resetSearch,
+  setMode, setNameInput, setCategoryInput,
+  addIngredient, removeIngredient, clearIngredients,
+  setActiveResultTab, resetSearch,
 } = searchSlice.actions;
 
 export default searchSlice.reducer;

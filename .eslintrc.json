@@ -7,7 +7,6 @@
   "plugins": ["@typescript-eslint"],
   "root": true,
   "rules": {
-    // ✅ התר משתנים לא בשימוש (שמתחילים ב-_)
     "@typescript-eslint/no-unused-vars": [
       "warn",
       {
@@ -16,20 +15,10 @@
         "caughtErrorsIgnorePattern": "^_"
       }
     ],
-    
-    // ✅ התר any - לפעמים צריך אותו
     "@typescript-eslint/no-explicit-any": "off",
-    
-    // ✅ התר require
     "@typescript-eslint/no-var-requires": "off",
-    
-    // ✅ התר empty interfaces (לעתיד)
     "@typescript-eslint/no-empty-interface": "off",
-    
-    // ✅ התר non-null assertions
     "@typescript-eslint/no-non-null-assertion": "warn",
-    
-    // אזהרות (לא שגיאות):
     "no-console": "off",
     "prefer-const": "warn",
     "no-debugger": "warn"

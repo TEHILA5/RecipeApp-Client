@@ -1,6 +1,3 @@
-// ===============================================
-// useRecipeSearch - Custom hook for search logic
-// ===============================================
 import { useState } from 'react';
 import { useAppDispatch } from '../../../redux/hooks';
 import { setSearchTerm, setSelectedCategory } from '../redux/recipeSlice';
@@ -25,20 +22,10 @@ export function useRecipeSearch() {
 
   const debouncedName = useDebounce(nameInput, 400);
 
-  const { data: allRecipes = [], isLoading: loadingAll } = useGetRecipesQuery(undefined, {
-    skip: mode !== 'name',
-  });
-  const { data: categoryResults = [], isLoading: loadingCat } = useGetRecipesByCategoryQuery(
-    categoryInput as string,
-    { skip: mode !== 'category' || !categoryInput }
-  );
-  const { data: ingredientResults = [], isLoading: loadingIng } = useSearchByIngredientsQuery(
-    ingredientList,
-    { skip: mode !== 'ingredients' || ingredientList.length === 0 }
-  );
-  const { data: allRecipesForAlt = [] } = useGetRecipesQuery(undefined, {
-    skip: mode !== 'ingredients',
-  });
+  const { data: allRecipes = [], isLoading: loadingAll } = useGetRecipesQuery(undefined, { skip: mode !== 'name' });
+  const { data: categoryResults = [], isLoading: loadingCat } = useGetRecipesByCategoryQuery(categoryInput as string, { skip: mode !== 'category' || !categoryInput });
+  const { data: ingredientResults = [], isLoading: loadingIng } = useSearchByIngredientsQuery(ingredientList, { skip: mode !== 'ingredients' || ingredientList.length === 0 });
+  const { data: allRecipesForAlt = [] } = useGetRecipesQuery(undefined, { skip: mode !== 'ingredients' });
 
   const nameResults: Recipe[] = debouncedName
     ? allRecipes.filter((r) =>
@@ -48,18 +35,17 @@ export function useRecipeSearch() {
     : [];
 
   const results: Recipe[] =
-    mode === 'name' ? nameResults :
-    mode === 'category' ? categoryResults :
+    mode === 'name'        ? nameResults :
+    mode === 'category'    ? categoryResults :
     ingredientResults;
 
   const isLoading = loadingAll || loadingCat || loadingIng;
 
   const hasSearched =
-    (mode === 'name' && debouncedName.length > 0) ||
-    (mode === 'category' && !!categoryInput) ||
+    (mode === 'name'        && debouncedName.length > 0) ||
+    (mode === 'category'    && !!categoryInput) ||
     (mode === 'ingredients' && ingredientList.length > 0);
 
-  // איפוס בעת מעבר בין modes
   const setMode = (newMode: SearchMode) => {
     setModeState(newMode);
     setNameInput('');

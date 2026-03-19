@@ -1,6 +1,3 @@
-// ===============================================
-// LoginForm - טופס התחברות
-// ===============================================
 import { Link } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { Button, Alert, CircularProgress } from '@mui/material';
@@ -39,16 +36,22 @@ export default function LoginForm({ onSubmit, loading, error }: LoginFormProps) 
 
       <form onSubmit={handleSubmit(onSubmit)} className="login-form" noValidate>
         <FormInput
-          label="Email Address" type="email"
-          autoComplete="email" placeholder="you@example.com"
-          error={!!errors.email} helperText={errors.email?.message}
+          label="Email Address"
+          type="email"
+          autoComplete="email"
+          placeholder="you@example.com"
+          error={!!errors.email}
+          helperText={errors.email?.message}
           {...register('email', validationRules.email)}
         />
 
         <FormInput
-          label="Password" type="password"
-          autoComplete="current-password" placeholder="••••••••"
-          error={!!errors.password} helperText={errors.password?.message}
+          label="Password"
+          type="password"
+          autoComplete="current-password"
+          placeholder="••••••••"
+          error={!!errors.password}
+          helperText={errors.password?.message}
           {...register('password', validationRules.password)}
         />
 
@@ -57,8 +60,11 @@ export default function LoginForm({ onSubmit, loading, error }: LoginFormProps) 
         </div>
 
         <Button
-          type="submit" variant="contained" fullWidth
-          disabled={loading} size="large"
+          type="submit"
+          variant="contained"
+          fullWidth
+          disabled={loading}
+          size="large"
           startIcon={loading ? <CircularProgress size={18} color="inherit" /> : null}
         >
           {loading ? 'Signing in...' : 'Sign In'}

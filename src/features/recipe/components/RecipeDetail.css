@@ -1,0 +1,397 @@
+.rd-wrap {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 32px 24px;
+  font-family: 'Nunito', sans-serif;
+}
+
+/* ── Hero card ── */
+.rd-hero {
+  border-radius: 28px;
+  overflow: hidden;
+  box-shadow: 0 8px 40px rgba(212, 84, 122, 0.15);
+  margin-bottom: 32px;
+  background: white;
+}
+
+.rd-img-wrap {
+  position: relative;
+  aspect-ratio: 16/7;
+  background: linear-gradient(135deg, #f9e4ec, #e8c49a);
+  overflow: hidden;
+}
+
+.rd-img { width: 100%; height: 100%; object-fit: cover; }
+
+.rd-img-emoji {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 100px;
+}
+
+.rd-img-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0,0,0,0.55) 0%, transparent 60%);
+}
+
+/* Admin buttons */
+.rd-admin-btns {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  display: flex;
+  gap: 8px;
+}
+
+.rd-btn-edit,
+.rd-btn-delete-hero {
+  padding: 8px 20px;
+  border-radius: 999px;
+  border: none;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 700;
+  font-size: 0.85rem;
+  cursor: pointer;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
+}
+
+.rd-btn-edit { background: rgba(255,255,255,0.95); color: #d4547a; }
+.rd-btn-delete-hero { background: rgba(239,68,68,0.9); color: white; }
+
+/* Bookmark */
+.rd-bookmark {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255,255,255,0.9);
+  color: #d4547a;
+  font-size: 1.3rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.15);
+  transition: all 0.2s;
+}
+
+.rd-bookmark--active { background: #d4547a; color: white; }
+
+/* Image footer */
+.rd-img-footer {
+  position: absolute;
+  bottom: 24px;
+  left: 28px;
+  right: 28px;
+}
+
+.rd-category-badge {
+  display: inline-block;
+  padding: 4px 14px;
+  border-radius: 999px;
+  background: rgba(212, 84, 122, 0.85);
+  color: white;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.rd-title {
+  font-family: 'Dancing Script', cursive;
+  font-size: clamp(1.8rem, 4vw, 2.8rem);
+  color: white;
+  margin: 0;
+  line-height: 1.1;
+  text-shadow: 0 2px 12px rgba(0,0,0,0.4);
+}
+
+/* Meta bar */
+.rd-meta-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  padding: 20px 28px;
+  border-bottom: 1px dashed rgba(212,84,122,0.2);
+  align-items: center;
+}
+
+.rd-meta-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #6b7280;
+}
+
+.rd-meta-item strong { color: #1f2937; }
+
+.rd-level-badge {
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 999px;
+}
+
+.rd-rating-wrap {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: auto;
+}
+
+.rd-rating-num { font-size: 0.85rem; font-weight: 700; color: #f59e0b; }
+.rd-rating-count { font-size: 0.78rem; color: #9ca3af; }
+
+.rd-desc {
+  padding: 20px 28px 24px;
+  color: #6b7280;
+  line-height: 1.7;
+  font-size: 0.95rem;
+}
+
+/* ── Stars ── */
+.rd-stars { display: flex; gap: 4px; }
+
+.rd-star { font-size: 1rem; cursor: default; transition: color 0.15s; }
+.rd-star--interactive { font-size: 1.6rem; cursor: pointer; }
+
+/* ── Tabs ── */
+.rd-tabs-wrap {
+  background: white;
+  border-radius: 24px;
+  box-shadow: 0 4px 20px rgba(212, 84, 122, 0.08);
+  overflow: hidden;
+}
+
+.rd-tabs {
+  display: flex;
+  border-bottom: 2px solid #fce7f3;
+}
+
+.rd-tab {
+  flex: 1;
+  padding: 16px;
+  border: none;
+  cursor: pointer;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 700;
+  font-size: 0.9rem;
+  background: #fdf2f8;
+  color: #9ca3af;
+  border-bottom: 3px solid transparent;
+  margin-bottom: -2px;
+  transition: all 0.2s;
+  text-transform: capitalize;
+}
+
+.rd-tab--active { background: white; color: #d4547a; border-bottom-color: #d4547a; }
+
+.rd-tab-content { padding: 28px; }
+
+/* ── Instructions ── */
+.rd-empty { color: #9ca3af; text-align: center; }
+
+.rd-steps { display: flex; flex-direction: column; }
+
+.rd-step {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 20px;
+  align-items: flex-start;
+}
+
+.rd-step-num {
+  min-width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #e8799a, #d4547a);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 0.85rem;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.rd-step-text { margin: 0; line-height: 1.75; color: #374151; font-size: 0.95rem; }
+
+/* ── Comments ── */
+.rd-review-form {
+  background: #fdf2f8;
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 28px;
+  border: 1px solid #fce7f3;
+}
+
+.rd-review-title {
+  margin: 0 0 12px;
+  color: #d4547a;
+  font-family: 'Dancing Script', cursive;
+  font-size: 1.3rem;
+}
+
+.rd-review-stars { margin-bottom: 12px; }
+
+.rd-textarea {
+  width: 100%;
+  padding: 12px 16px;
+  border-radius: 12px;
+  border: 2px solid #fce7f3;
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.9rem;
+  resize: vertical;
+  outline: none;
+  box-sizing: border-box;
+  background: white;
+}
+
+.rd-comment-error { color: #ef4444; font-size: 0.82rem; margin: 6px 0 0; }
+
+.rd-submit-btn {
+  margin-top: 12px;
+  padding: 10px 28px;
+  border-radius: 999px;
+  border: none;
+  background: linear-gradient(135deg, #e8799a, #d4547a);
+  color: white;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 700;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.rd-submit-btn--busy { cursor: not-allowed; opacity: 0.7; }
+
+.rd-already-reviewed {
+  padding: 14px 20px;
+  background: #dcfce7;
+  border-radius: 12px;
+  margin-bottom: 20px;
+  color: #166534;
+  font-weight: 600;
+  font-size: 0.88rem;
+}
+
+.rd-sign-in-prompt {
+  text-align: center;
+  padding: 20px;
+  background: #fdf2f8;
+  border-radius: 16px;
+  margin-bottom: 28px;
+}
+
+.rd-sign-in-prompt p { color: #9ca3af; margin-bottom: 12px; }
+
+.rd-sign-in-btn {
+  padding: 10px 28px;
+  border-radius: 999px;
+  border: none;
+  background: linear-gradient(135deg, #e8799a, #d4547a);
+  color: white;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.rd-comments-loading {
+  text-align: center;
+  padding: 20px;
+  color: #9ca3af;
+}
+
+.rd-spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid #fce7f3;
+  border-top-color: #d4547a;
+  border-radius: 50%;
+  animation: rd-spin 0.8s linear infinite;
+  margin: 0 auto 8px;
+}
+
+@keyframes rd-spin { to { transform: rotate(360deg); } }
+
+.rd-no-comments { text-align: center; padding: 40px 20px; color: #9ca3af; }
+.rd-no-comments-icon { font-size: 48px; margin-bottom: 12px; }
+
+.rd-comments-list { display: flex; flex-direction: column; gap: 16px; }
+
+.rd-comment {
+  padding: 16px 20px;
+  background: #fffbfd;
+  border-radius: 16px;
+  border: 1px solid #fce7f3;
+}
+
+.rd-comment-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.rd-comment-user { display: flex; align-items: center; gap: 10px; }
+
+.rd-comment-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #e8799a, #d4547a);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 800;
+  font-size: 0.85rem;
+}
+
+.rd-comment-name { margin: 0; font-weight: 700; color: #1f2937; font-size: 0.9rem; }
+.rd-comment-date { font-size: 0.75rem; color: #9ca3af; }
+.rd-comment-text { margin: 0; color: #4b5563; line-height: 1.6; font-size: 0.9rem; }
+
+/* ── Modal ── */
+.rd-modal-text {
+  color: #6b7280;
+  margin-bottom: 28px;
+  line-height: 1.6;
+  text-align: center;
+}
+
+.rd-modal-actions { display: flex; gap: 12px; justify-content: center; }
+
+.rd-modal-cancel {
+  padding: 12px 28px;
+  border-radius: 999px;
+  border: 2px solid #e5e7eb;
+  background: white;
+  color: #6b7280;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.rd-modal-confirm {
+  padding: 12px 28px;
+  border-radius: 999px;
+  border: none;
+  background: #ef4444;
+  color: white;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.rd-modal-confirm--busy { cursor: not-allowed; opacity: 0.7; }

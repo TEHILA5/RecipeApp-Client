@@ -1,6 +1,3 @@
-// ===============================================
-// Hero - Hero section + Sweety Tip Bar
-// ===============================================
 import { Link } from 'react-router-dom';
 import { useAppSelector } from '../../../redux/hooks';
 import logo from '../../../assets/images/logoo.png';
@@ -8,11 +5,10 @@ import sweetyTip from '../../../assets/images/sweety-tip.png';
 import starsImg from '../../../assets/images/stars.png';
 
 export default function Hero() {
-  const { isAuthenticated } = useAppSelector((state) => state.auth);
+  const { isAuthenticated } = useAppSelector((s) => s.auth);
 
   return (
     <>
-      {/* ── Hero ── */}
       <section className="hero">
         <div className="hero-left">
           <div className="hero-eyebrow">✿ Welcome to Sweet&Treat ✿</div>
@@ -39,12 +35,11 @@ export default function Hero() {
           </div>
         </div>
         <div className="hero-right">
-          <div className="hero-deco-blob"></div>
+          <div className="hero-deco-blob" />
           <img src={logo} alt="Recipe Book" className="hero-book" />
         </div>
       </section>
 
-      {/* ── Sweety Tip Bar ── */}
       <section className="tip-bar">
         <img src={sweetyTip} alt="Sweety" className="sweety" />
         <div className="tip-content">

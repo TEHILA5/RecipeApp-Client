@@ -1,6 +1,3 @@
-// ===============================================
-// RecipeDetail Component - Sweet&Treat
-// ===============================================
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppSelector } from '../../../redux/hooks';
@@ -9,17 +6,35 @@ import { getMySavedRecipes, addBookmark, removeBookmark, addComment, addHistory,
 import type { Recipe } from '../types/recipe.types';
 import type { UserActionDto, CommentCreateDto } from '../types/userAction.types';
 import { LEVEL_LABELS, CATEGORY_EMOJIS } from '../types/recipe.types';
-import IngredientList from './IngredientList';  
+import IngredientList from './IngredientList';
 import Modal from '../../../shared/components/UI/Modal';
+import './RecipeDetail.css';
 
 interface RecipeDetailProps {
   recipe: Recipe;
   onCommentAdded?: () => void;
 }
 
+const LEVEL_COLORS: Record<number, string> = { 1: '#22c55e', 2: '#f59e0b', 3: '#ef4444' };
+
+function Stars({ rating, interactive = false, onChange }: { rating: number; interactive?: boolean; onChange?: (r: number) => void }) {
+  return (
+    <div className="rd-stars">
+      {[1, 2, 3, 4, 5].map((star) => (
+        <span
+          key={star}
+          onClick={() => interactive && onChange?.(star)}
+          className={`rd-star ${interactive ? 'rd-star--interactive' : ''}`}
+          style={{ color: star <= rating ? '#f59e0b' : '#d1d5db' }}
+        >★</span>
+      ))}
+    </div>
+  );
+}
+
 export default function RecipeDetail({ recipe, onCommentAdded }: RecipeDetailProps) {
   const navigate = useNavigate();
-  const { isAdmin, user } = useAppSelector((state) => state.auth);
+  const { isAdmin, user } = useAppSelector((s) => s.auth);
   const isLoggedIn = !!user;
 
   const [deleteRecipe] = useDeleteRecipeMutation();
@@ -51,11 +66,9 @@ export default function RecipeDetail({ recipe, onCommentAdded }: RecipeDetailPro
   const loadComments = async () => {
     setLoadingComments(true);
     try {
-      const recipeComments = await getRecipeComments(recipe.id);
-      setComments(recipeComments);
-      if (isLoggedIn) {
-        setHasCommented(recipeComments.some(c => c.userName === user?.name));
-      }
+      const data = await getRecipeComments(recipe.id);
+      setComments(data);
+      if (isLoggedIn) setHasCommented(data.some((c) => c.userName === user?.name));
     } catch (err: unknown) {
       setCommentError(err instanceof Error ? err.message : 'Failed to load comments');
     } finally {
@@ -73,9 +86,7 @@ export default function RecipeDetail({ recipe, onCommentAdded }: RecipeDetailPro
   };
 
   const recordHistory = async () => {
-    try {
-      await addHistory({ category: recipe.category });
-    } catch (err: unknown) {
+    try { await addHistory({ category: recipe.category }); } catch (err: unknown) {
       setCommentError(err instanceof Error ? err.message : 'Failed to record history');
     }
   };
@@ -84,42 +95,26 @@ export default function RecipeDetail({ recipe, onCommentAdded }: RecipeDetailPro
     if (!isLoggedIn) { navigate('/login'); return; }
     setBookmarkLoading(true);
     try {
-      if (isBookmarked) {
-        await removeBookmark(recipe.id);
-        setIsBookmarked(false);
-      } else {
-        await addBookmark(recipe.id);
-        setIsBookmarked(true);
-      }
+      if (isBookmarked) { await removeBookmark(recipe.id); setIsBookmarked(false); }
+      else              { await addBookmark(recipe.id);    setIsBookmarked(true); }
     } catch (err: unknown) {
       setCommentError(err instanceof Error ? err.message : 'Failed to update bookmark status');
-    } finally {
-      setBookmarkLoading(false);
     }
+    finally { setBookmarkLoading(false); }
   };
 
   const handleSubmitComment = async () => {
     if (!isLoggedIn) { navigate('/login'); return; }
-    if (!commentForm.content.trim()) {
-      setCommentError('Please write a comment');
-      return;
-    }
+    if (!commentForm.content.trim()) { setCommentError('Please write a comment'); return; }
     setCommentError('');
     setSubmittingComment(true);
     try {
-      const dto: CommentCreateDto = {
-        recipeId: recipe.id,
-        content: commentForm.content.trim(),
-        rating: commentForm.rating,
-      };
+      const dto: CommentCreateDto = { recipeId: recipe.id, content: commentForm.content.trim(), rating: commentForm.rating };
       const newComment = await addComment(dto);
-      setComments(prev => [...prev, newComment]);
+      setComments((prev) => [...prev, newComment]);
       setCommentForm({ content: '', rating: 5 });
       setHasCommented(true);
-
-      // ✅ מבקש מה-Page לבטל cache ולרענן את הדירוג מהשרת
       onCommentAdded?.();
-
     } catch (err: unknown) {
       setCommentError(err instanceof Error ? err.message : 'Failed to submit comment');
     } finally {
@@ -138,265 +133,138 @@ export default function RecipeDetail({ recipe, onCommentAdded }: RecipeDetailPro
     }
   };
 
-  const renderStars = (rating: number, interactive = false, onChange?: (r: number) => void) => (
-    <div style={{ display: 'flex', gap: '4px' }}>
-      {[1, 2, 3, 4, 5].map((star) => (
-        <span
-          key={star}
-          onClick={() => interactive && onChange?.(star)}
-          style={{
-            fontSize: interactive ? '1.6rem' : '1rem',
-            cursor: interactive ? 'pointer' : 'default',
-            color: star <= rating ? '#f59e0b' : '#d1d5db',
-            transition: 'color 0.15s',
-          }}
-        >★</span>
-      ))}
-    </div>
-  );
-
-  const levelColors: Record<number, string> = { 1: '#22c55e', 2: '#f59e0b', 3: '#ef4444' };
-
   return (
-    <div style={{ maxWidth: '900px', margin: '0 auto', padding: '32px 24px', fontFamily: "'Nunito', sans-serif" }}>
+    <div className="rd-wrap">
 
       {/* Hero */}
-      <div style={{
-        borderRadius: '28px', overflow: 'hidden',
-        boxShadow: '0 8px 40px rgba(212,84,122,0.15)',
-        marginBottom: '32px', position: 'relative', background: 'white',
-      }}>
-        <div style={{ position: 'relative', aspectRatio: '16/7', background: 'linear-gradient(135deg,#f9e4ec,#e8c49a)', overflow: 'hidden' }}>
-          {recipe.arrImage ? (
-            <img src={recipe.arrImage} alt={recipe.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-          ) : (
-            <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '100px' }}>
-              {emoji}
-            </div>
-          )}
-          <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.55) 0%, transparent 60%)' }} />
+      <div className="rd-hero">
+        <div className="rd-img-wrap">
+          {recipe.arrImage
+            ? <img src={recipe.arrImage} alt={recipe.name} className="rd-img" />
+            : <div className="rd-img-emoji">{emoji}</div>}
+          <div className="rd-img-overlay" />
 
           {isAdmin && (
-            <div style={{ position: 'absolute', top: '16px', right: '16px', display: 'flex', gap: '8px' }}>
-              <button onClick={() => navigate(`/recipes/${recipe.id}/edit`)} style={{
-                padding: '8px 20px', borderRadius: '999px', border: 'none',
-                background: 'rgba(255,255,255,0.95)', color: '#d4547a',
-                fontFamily: "'Nunito',sans-serif", fontWeight: 700, fontSize: '0.85rem',
-                cursor: 'pointer', boxShadow: '0 2px 12px rgba(0,0,0,0.15)',
-              }}>✏️ Edit</button>
-              <button onClick={() => setShowDeleteConfirm(true)} style={{
-                padding: '8px 20px', borderRadius: '999px', border: 'none',
-                background: 'rgba(239,68,68,0.9)', color: 'white',
-                fontFamily: "'Nunito',sans-serif", fontWeight: 700, fontSize: '0.85rem',
-                cursor: 'pointer', boxShadow: '0 2px 12px rgba(0,0,0,0.15)',
-              }}>🗑️ Delete</button>
+            <div className="rd-admin-btns">
+              <button onClick={() => navigate(`/recipes/${recipe.id}/edit`)} className="rd-btn-edit">✏️ Edit</button>
+              <button onClick={() => setShowDeleteConfirm(true)} className="rd-btn-delete-hero">🗑️ Delete</button>
             </div>
           )}
 
-          <button onClick={handleBookmark} disabled={bookmarkLoading} style={{
-            position: 'absolute', top: '16px', left: '16px',
-            width: '44px', height: '44px', borderRadius: '50%', border: 'none',
-            background: isBookmarked ? '#d4547a' : 'rgba(255,255,255,0.9)',
-            color: isBookmarked ? 'white' : '#d4547a',
-            fontSize: '1.3rem', cursor: 'pointer',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            boxShadow: '0 2px 12px rgba(0,0,0,0.15)', transition: 'all 0.2s',
-          }}>
+          <button onClick={handleBookmark} disabled={bookmarkLoading} className={`rd-bookmark ${isBookmarked ? 'rd-bookmark--active' : ''}`}>
             {isBookmarked ? '🔖' : '🤍'}
           </button>
 
-          <div style={{ position: 'absolute', bottom: '24px', left: '28px', right: '28px' }}>
-            <span style={{
-              display: 'inline-block', padding: '4px 14px', borderRadius: '999px',
-              background: 'rgba(212,84,122,0.85)', color: 'white',
-              fontSize: '0.75rem', fontWeight: 700, letterSpacing: '0.08em',
-              textTransform: 'uppercase', marginBottom: '8px',
-            }}>{recipe.category}</span>
-            <h1 style={{
-              fontFamily: "'Dancing Script', cursive",
-              fontSize: 'clamp(1.8rem, 4vw, 2.8rem)',
-              color: 'white', margin: 0, lineHeight: 1.1,
-              textShadow: '0 2px 12px rgba(0,0,0,0.4)',
-            }}>{recipe.name}</h1>
+          <div className="rd-img-footer">
+            <span className="rd-category-badge">{recipe.category}</span>
+            <h1 className="rd-title">{recipe.name}</h1>
           </div>
         </div>
 
-        {/* Meta Bar */}
-        <div style={{
-          display: 'flex', flexWrap: 'wrap', gap: '24px',
-          padding: '20px 28px', borderBottom: '1px dashed rgba(212,84,122,0.2)', alignItems: 'center',
-        }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <span>⏱️</span><span style={{ fontSize: '0.85rem', fontWeight: 600, color: '#6b7280' }}>Prep: <strong style={{ color: '#1f2937' }}>{recipe.prepTime}m</strong></span>
-          </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <span>⏰</span><span style={{ fontSize: '0.85rem', fontWeight: 600, color: '#6b7280' }}>Total: <strong style={{ color: '#1f2937' }}>{recipe.totalTime}m</strong></span>
-          </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <span>🍽️</span><span style={{ fontSize: '0.85rem', fontWeight: 600, color: '#6b7280' }}>Servings: <strong style={{ color: '#1f2937' }}>{recipe.servings}</strong></span>
-          </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <span style={{ fontSize: '0.75rem', fontWeight: 700, padding: '3px 10px', borderRadius: '999px', background: levelColors[recipe.level] + '22', color: levelColors[recipe.level] }}>
+        <div className="rd-meta-bar">
+          <div className="rd-meta-item"><span>⏱️</span> Prep: <strong>{recipe.prepTime}m</strong></div>
+          <div className="rd-meta-item"><span>⏰</span> Total: <strong>{recipe.totalTime}m</strong></div>
+          <div className="rd-meta-item"><span>🍽️</span> Servings: <strong>{recipe.servings}</strong></div>
+          <div className="rd-meta-item">
+            <span className="rd-level-badge" style={{ background: LEVEL_COLORS[recipe.level] + '22', color: LEVEL_COLORS[recipe.level] }}>
               👨‍🍳 {levelLabel}
             </span>
           </div>
           {recipe.averageRating !== undefined && recipe.averageRating > 0 && (
-            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginLeft: 'auto' }}>
-              {renderStars(Math.round(recipe.averageRating))}
-              <span style={{ fontSize: '0.85rem', fontWeight: 700, color: '#f59e0b' }}>{recipe.averageRating.toFixed(1)}</span>
-              <span style={{ fontSize: '0.78rem', color: '#9ca3af' }}>({recipe.commentCount ?? 0})</span>
+            <div className="rd-rating-wrap">
+              <Stars rating={Math.round(recipe.averageRating)} />
+              <span className="rd-rating-num">{recipe.averageRating.toFixed(1)}</span>
+              <span className="rd-rating-count">({recipe.commentCount ?? 0})</span>
             </div>
           )}
         </div>
 
-        <div style={{ padding: '20px 28px 24px' }}>
-          <p style={{ margin: 0, color: '#6b7280', lineHeight: 1.7, fontSize: '0.95rem' }}>{recipe.description}</p>
-        </div>
+        <div className="rd-desc">{recipe.description}</div>
       </div>
 
       {/* Tabs */}
-      <div style={{ background: 'white', borderRadius: '24px', boxShadow: '0 4px 20px rgba(212,84,122,0.08)', overflow: 'hidden' }}>
-        <div style={{ display: 'flex', borderBottom: '2px solid #fce7f3' }}>
+      <div className="rd-tabs-wrap">
+        <div className="rd-tabs">
           {(['ingredients', 'instructions', 'comments'] as const).map((tab) => (
-            <button key={tab} onClick={() => setActiveTab(tab)} style={{
-              flex: 1, padding: '16px', border: 'none', cursor: 'pointer',
-              fontFamily: "'Nunito',sans-serif", fontWeight: 700, fontSize: '0.9rem',
-              background: activeTab === tab ? 'white' : '#fdf2f8',
-              color: activeTab === tab ? '#d4547a' : '#9ca3af',
-              borderBottom: activeTab === tab ? '3px solid #d4547a' : '3px solid transparent',
-              marginBottom: '-2px', transition: 'all 0.2s', textTransform: 'capitalize',
-            }}>
-              {tab === 'ingredients' && `🧂 Ingredients (${recipe.ingredients?.length ?? 0})`}
+            <button key={tab} onClick={() => setActiveTab(tab)} className={`rd-tab ${activeTab === tab ? 'rd-tab--active' : ''}`}>
+              {tab === 'ingredients'  && `🧂 Ingredients (${recipe.ingredients?.length ?? 0})`}
               {tab === 'instructions' && '📋 Instructions'}
-              {tab === 'comments' && `💬 Comments (${comments.length})`}
+              {tab === 'comments'     && `💬 Comments (${comments.length})`}
             </button>
           ))}
         </div>
 
-        <div style={{ padding: '28px' }}>
+        <div className="rd-tab-content">
 
-          {activeTab === 'ingredients' && (
-            <IngredientList ingredients={recipe.ingredients} />
-          )}
+          {activeTab === 'ingredients' && <IngredientList ingredients={recipe.ingredients} />}
 
           {activeTab === 'instructions' && (
-            <div>
-              {!recipe.instructions ? (
-                <p style={{ color: '#9ca3af', textAlign: 'center' }}>No instructions available.</p>
-              ) : (
-                <div>
+            !recipe.instructions
+              ? <p className="rd-empty">No instructions available.</p>
+              : <div className="rd-steps">
                   {recipe.instructions.split('\n').filter(Boolean).map((step, i) => (
-                    <div key={i} style={{ display: 'flex', gap: '16px', marginBottom: '20px', alignItems: 'flex-start' }}>
-                      <div style={{
-                        minWidth: '32px', height: '32px', borderRadius: '50%',
-                        background: 'linear-gradient(135deg, #e8799a, #d4547a)',
-                        color: 'white', display: 'flex', alignItems: 'center',
-                        justifyContent: 'center', fontWeight: 800, fontSize: '0.85rem',
-                        flexShrink: 0, marginTop: '2px',
-                      }}>{i + 1}</div>
-                      <p style={{ margin: 0, lineHeight: 1.75, color: '#374151', fontSize: '0.95rem' }}>{step}</p>
+                    <div key={i} className="rd-step">
+                      <div className="rd-step-num">{i + 1}</div>
+                      <p className="rd-step-text">{step}</p>
                     </div>
                   ))}
                 </div>
-              )}
-            </div>
           )}
 
           {activeTab === 'comments' && (
             <div>
               {isLoggedIn && !hasCommented ? (
-                <div style={{
-                  background: '#fdf2f8', borderRadius: '16px', padding: '20px',
-                  marginBottom: '28px', border: '1px solid #fce7f3',
-                }}>
-                  <h4 style={{ margin: '0 0 12px', color: '#d4547a', fontFamily: "'Dancing Script',cursive", fontSize: '1.3rem' }}>
-                    Leave a Review
-                  </h4>
-                  <div style={{ marginBottom: '12px' }}>
-                    {renderStars(commentForm.rating, true, (r) => setCommentForm((f) => ({ ...f, rating: r })))}
+                <div className="rd-review-form">
+                  <h4 className="rd-review-title">Leave a Review</h4>
+                  <div className="rd-review-stars">
+                    <Stars rating={commentForm.rating} interactive onChange={(r) => setCommentForm((f) => ({ ...f, rating: r }))} />
                   </div>
                   <textarea
                     value={commentForm.content}
                     onChange={(e) => setCommentForm((f) => ({ ...f, content: e.target.value }))}
                     placeholder="Share your experience with this recipe..."
                     rows={3}
-                    style={{
-                      width: '100%', padding: '12px 16px', borderRadius: '12px',
-                      border: '2px solid #fce7f3', fontFamily: "'Nunito',sans-serif",
-                      fontSize: '0.9rem', resize: 'vertical', outline: 'none',
-                      boxSizing: 'border-box', background: 'white',
-                    }}
+                    className="rd-textarea"
                   />
-                  {commentError && <p style={{ color: '#ef4444', fontSize: '0.82rem', margin: '6px 0 0' }}>{commentError}</p>}
-                  <button onClick={handleSubmitComment} disabled={submittingComment} style={{
-                    marginTop: '12px', padding: '10px 28px', borderRadius: '999px',
-                    border: 'none', background: 'linear-gradient(135deg, #e8799a, #d4547a)',
-                    color: 'white', fontFamily: "'Nunito',sans-serif", fontWeight: 700,
-                    fontSize: '0.9rem', cursor: submittingComment ? 'not-allowed' : 'pointer',
-                    opacity: submittingComment ? 0.7 : 1,
-                  }}>
+                  {commentError && <p className="rd-comment-error">{commentError}</p>}
+                  <button onClick={handleSubmitComment} disabled={submittingComment} className={`rd-submit-btn ${submittingComment ? 'rd-submit-btn--busy' : ''}`}>
                     {submittingComment ? 'Submitting...' : '✨ Submit Review'}
                   </button>
                 </div>
               ) : isLoggedIn && hasCommented ? (
-                <div style={{
-                  padding: '14px 20px', background: '#dcfce7', borderRadius: '12px',
-                  marginBottom: '20px', color: '#166534', fontWeight: 600, fontSize: '0.88rem',
-                }}>
-                  ✅ You already reviewed this recipe
-                </div>
+                <div className="rd-already-reviewed">✅ You already reviewed this recipe</div>
               ) : (
-                <div style={{ textAlign: 'center', padding: '20px', background: '#fdf2f8', borderRadius: '16px', marginBottom: '28px' }}>
-                  <p style={{ color: '#9ca3af', marginBottom: '12px' }}>Sign in to leave a review</p>
-                  <button onClick={() => navigate('/login')} style={{
-                    padding: '10px 28px', borderRadius: '999px', border: 'none',
-                    background: 'linear-gradient(135deg, #e8799a, #d4547a)',
-                    color: 'white', fontFamily: "'Nunito',sans-serif", fontWeight: 700, cursor: 'pointer',
-                  }}>Sign In</button>
+                <div className="rd-sign-in-prompt">
+                  <p>Sign in to leave a review</p>
+                  <button onClick={() => navigate('/login')} className="rd-sign-in-btn">Sign In</button>
                 </div>
               )}
 
               {loadingComments ? (
-                <div style={{ textAlign: 'center', padding: '20px', color: '#9ca3af' }}>
-                  <div style={{
-                    width: '32px', height: '32px', border: '3px solid #fce7f3',
-                    borderTopColor: '#d4547a', borderRadius: '50%',
-                    animation: 'spin 0.8s linear infinite', margin: '0 auto 8px',
-                  }} />
+                <div className="rd-comments-loading">
+                  <div className="rd-spinner" />
                   Loading comments...
                 </div>
               ) : comments.length === 0 ? (
-                <div style={{ textAlign: 'center', padding: '40px 20px', color: '#9ca3af' }}>
-                  <div style={{ fontSize: '48px', marginBottom: '12px' }}>💬</div>
+                <div className="rd-no-comments">
+                  <div className="rd-no-comments-icon">💬</div>
                   <p>No comments yet. Be the first to review!</p>
                 </div>
               ) : (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                <div className="rd-comments-list">
                   {comments.map((comment) => (
-                    <div key={comment.id} style={{
-                      padding: '16px 20px', background: '#fffbfd',
-                      borderRadius: '16px', border: '1px solid #fce7f3',
-                    }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                          <div style={{
-                            width: '34px', height: '34px', borderRadius: '50%',
-                            background: 'linear-gradient(135deg, #e8799a, #d4547a)',
-                            display: 'flex', alignItems: 'center', justifyContent: 'center',
-                            color: 'white', fontWeight: 800, fontSize: '0.85rem',
-                          }}>
-                            {comment.userName?.[0]?.toUpperCase() ?? '?'}
-                          </div>
+                    <div key={comment.id} className="rd-comment">
+                      <div className="rd-comment-header">
+                        <div className="rd-comment-user">
+                          <div className="rd-comment-avatar">{comment.userName?.[0]?.toUpperCase() ?? '?'}</div>
                           <div>
-                            <p style={{ margin: 0, fontWeight: 700, color: '#1f2937', fontSize: '0.9rem' }}>{comment.userName}</p>
-                            {comment.rating !== undefined && renderStars(comment.rating)}
+                            <p className="rd-comment-name">{comment.userName}</p>
+                            {comment.rating !== undefined && <Stars rating={comment.rating} />}
                           </div>
                         </div>
-                        <span style={{ fontSize: '0.75rem', color: '#9ca3af' }}>
-                          {new Date(comment.createdAt).toLocaleDateString()}
-                        </span>
+                        <span className="rd-comment-date">{new Date(comment.createdAt).toLocaleDateString()}</span>
                       </div>
-                      <p style={{ margin: 0, color: '#4b5563', lineHeight: 1.6, fontSize: '0.9rem' }}>{comment.content}</p>
+                      <p className="rd-comment-text">{comment.content}</p>
                     </div>
                   ))}
                 </div>
@@ -406,20 +274,17 @@ export default function RecipeDetail({ recipe, onCommentAdded }: RecipeDetailPro
         </div>
       </div>
 
-      {/* ✅ Modal במקום div ידני */}
       <Modal isOpen={showDeleteConfirm} onClose={() => setShowDeleteConfirm(false)} title="🗑️ Delete Recipe?">
-        <p style={{ color: '#6b7280', marginBottom: '28px', lineHeight: 1.6, textAlign: 'center' }}>
+        <p className="rd-modal-text">
           Are you sure you want to delete <strong>"{recipe.name}"</strong>? This action cannot be undone.
         </p>
-        <div style={{ display: 'flex', gap: '12px', justifyContent: 'center' }}>
-          <button onClick={() => setShowDeleteConfirm(false)} style={{ padding: '12px 28px', borderRadius: '999px', border: '2px solid #e5e7eb', background: 'white', color: '#6b7280', fontFamily: "'Nunito',sans-serif", fontWeight: 700, cursor: 'pointer' }}>Cancel</button>
-          <button onClick={handleDelete} disabled={deletingRecipe} style={{ padding: '12px 28px', borderRadius: '999px', border: 'none', background: '#ef4444', color: 'white', fontFamily: "'Nunito',sans-serif", fontWeight: 700, cursor: deletingRecipe ? 'not-allowed' : 'pointer', opacity: deletingRecipe ? 0.7 : 1 }}>
+        <div className="rd-modal-actions">
+          <button onClick={() => setShowDeleteConfirm(false)} className="rd-modal-cancel">Cancel</button>
+          <button onClick={handleDelete} disabled={deletingRecipe} className={`rd-modal-confirm ${deletingRecipe ? 'rd-modal-confirm--busy' : ''}`}>
             {deletingRecipe ? 'Deleting...' : 'Yes, Delete'}
           </button>
         </div>
       </Modal>
-
-      <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
     </div>
   );
 }

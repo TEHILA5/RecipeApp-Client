@@ -1,6 +1,3 @@
-// ===============================================
-// Login Page - Sweet&Treat
-// ===============================================
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
@@ -8,7 +5,7 @@ import { loginUser, clearError } from '../redux/authSlice';
 import LoginForm from '../components/LoginForm';
 import './LoginPage.css';
 
-function LoginPage() {
+export default function LoginPage() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const { loading, error, isAuthenticated } = useAppSelector((s) => s.auth);
@@ -20,8 +17,8 @@ function LoginPage() {
     try {
       await dispatch(loginUser(data)).unwrap();
       navigate('/');
-    } catch (err) {
-      console.error('Login failed:', err);
+    } catch {
+      // handled by redux error state
     }
   };
 
@@ -45,5 +42,3 @@ function LoginPage() {
     </div>
   );
 }
-
-export default LoginPage;

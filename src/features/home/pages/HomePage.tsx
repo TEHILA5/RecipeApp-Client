@@ -1,6 +1,3 @@
-// ===============================================
-// Home Page
-// ===============================================
 import { Link } from 'react-router-dom';
 import { useAppSelector } from '../../../redux/hooks';
 import { useGetRecipesQuery } from '../../recipe/redux/recipeSlice';
@@ -11,7 +8,6 @@ import CategoryGrid from '../components/CategoryGrid';
 import FeaturedRecipes from '../components/FeaturedRecipes';
 import './HomePage.css';
 
-// ── כרטיס מתכון ──
 function RecipeCard({ recipe, badge }: { recipe: Recipe; badge?: string }) {
   const emoji = CATEGORY_EMOJIS[recipe.category] ?? '🍰';
   const levelLabel = LEVEL_LABELS[recipe.level as 1 | 2 | 3] ?? 'Easy';
@@ -45,7 +41,6 @@ function RecipeCard({ recipe, badge }: { recipe: Recipe; badge?: string }) {
   );
 }
 
-// ── Featured Card ──
 function FeaturedCard({ recipe }: { recipe: Recipe }) {
   const emoji = CATEGORY_EMOJIS[recipe.category] ?? '🍰';
   const levelLabel = LEVEL_LABELS[recipe.level as 1 | 2 | 3] ?? 'Easy';
@@ -104,24 +99,23 @@ function RecipeSkeleton() {
 }
 
 export default function HomePage() {
-  const { isAuthenticated } = useAppSelector((state) => state.auth);
+  const { isAuthenticated } = useAppSelector((s) => s.auth);
   const { data: recipes = [], isLoading: loading, error } = useGetRecipesQuery();
 
-  const popularRecipes = [...recipes].sort((a, b) => (b.averageRating || 0) - (a.averageRating || 0)).slice(0, 3);
-  const featuredRecipe = [...recipes].sort((a, b) => (b.averageRating || 0) - (a.averageRating || 0))[0] ?? null;
+  const byRating = [...recipes].sort((a, b) => (b.averageRating || 0) - (a.averageRating || 0));
+  const popularRecipes = byRating.slice(0, 3);
+  const featuredRecipe = byRating[0] ?? null;
   const newestRecipes = [...recipes].sort((a, b) => b.id - a.id).slice(0, 3);
 
   return (
     <div className="home-page">
-
       <Hero />
 
-      {/* ── Popular Recipes ── */}
       <section className="section">
         <div className="section-header">
           <div className="section-eyebrow">✦ Most Loved</div>
           <h2 className="section-title">Popular <span>Recipes</span></h2>
-          <div className="section-divider"></div>
+          <div className="section-divider" />
         </div>
         {error && <div style={{ textAlign: 'center', color: 'var(--deep-pink)', marginBottom: 24 }}>Failed to load recipes</div>}
         <div className="recipes-grid">
@@ -145,13 +139,12 @@ export default function HomePage() {
         )}
       </section>
 
-      {/* ── Newest Recipes ── */}
       {newestRecipes.length > 0 && (
         <section className="section section-bg">
           <div className="section-header">
             <div className="section-eyebrow">✦ Fresh Bakes</div>
             <h2 className="section-title">Newest <span>Recipes</span></h2>
-            <div className="section-divider"></div>
+            <div className="section-divider" />
           </div>
           <div className="recipes-grid">
             {newestRecipes.map((recipe, i) => (
@@ -161,17 +154,15 @@ export default function HomePage() {
         </section>
       )}
 
-      {/* ── Recommended (מחובר בלבד) ── */}
       {isAuthenticated && <FeaturedRecipes />}
 
       <CategoryGrid />
 
-      {/* ── Featured Recipe ── */}
       <section className="section">
         <div className="section-header">
           <div className="section-eyebrow">✦ Recipe of the Month</div>
           <h2 className="section-title">Featured <span>Dessert</span></h2>
-          <div className="section-divider"></div>
+          <div className="section-divider" />
         </div>
         {loading ? (
           <div style={{ textAlign: 'center', padding: '60px', color: 'var(--mid)' }}>Loading...</div>
@@ -192,7 +183,6 @@ export default function HomePage() {
         )}
       </section>
 
-      {/* ── CTA ── */}
       {!isAuthenticated && (
         <section className="cta-section">
           <div className="cta-content">

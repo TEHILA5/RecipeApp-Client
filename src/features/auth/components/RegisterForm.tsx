@@ -1,6 +1,3 @@
-// ===============================================
-// RegisterForm - טופס הרשמה
-// ===============================================
 import { Link } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { Button, Alert, CircularProgress } from '@mui/material';
@@ -36,9 +33,7 @@ export default function RegisterForm({ onSubmit, loading, error }: RegisterFormP
       <p className="form-subtitle">Fill in your details to get started</p>
 
       {error && (
-        <Alert severity="error" sx={{ mb: 2, borderRadius: '12px' }}>
-          {error}
-        </Alert>
+        <Alert severity="error" sx={{ mb: 2, borderRadius: '12px' }}>{error}</Alert>
       )}
 
       <form onSubmit={handleSubmit(onSubmit)} className="login-form" noValidate>
@@ -48,42 +43,34 @@ export default function RegisterForm({ onSubmit, loading, error }: RegisterFormP
           error={!!errors.name} helperText={errors.name?.message}
           {...register('name', validationRules.name)}
         />
-
         <FormInput
           label="Email Address" type="email"
           autoComplete="email" placeholder="you@example.com"
           error={!!errors.email} helperText={errors.email?.message}
           {...register('email', validationRules.email)}
         />
-
         <FormInput
           label="Phone Number" type="tel"
           autoComplete="tel" placeholder="050-1234567"
           error={!!errors.phone} helperText={errors.phone?.message}
           {...register('phone', {
             required: 'Phone is required',
-            pattern: {
-              value: /^05\d{8}$/,
-              message: 'Phone must be Israeli format (05XXXXXXXXX)',
-            },
+            pattern: { value: /^05\d{8}$/, message: 'Phone must be Israeli format (05XXXXXXXXX)' },
             setValueAs: (v: string) => v.replace(/[-\s]/g, ''),
           })}
         />
-
         <FormInput
           label="Password" type="password"
           autoComplete="new-password" placeholder="••••••••"
           error={!!errors.password} helperText={errors.password?.message}
           {...register('password', validationRules.password)}
         />
-
         <FormInput
           label="Confirm Password" type="password"
           autoComplete="new-password" placeholder="••••••••"
           error={!!errors.confirmPassword} helperText={errors.confirmPassword?.message}
           {...register('confirmPassword', validationRules.confirmPassword(passwordValue))}
         />
-
         <Button
           type="submit" variant="contained" fullWidth
           disabled={loading} size="large"

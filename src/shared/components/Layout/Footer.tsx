@@ -1,27 +1,20 @@
-// ===============================================
-// Footer Component - Sweet&Treat Theme (FIXED)
-// ===============================================
-import { Box, Typography, Link as MuiLink } from '@mui/material';
+import { Link } from 'react-router-dom';
 import './Footer.css';
 
 export default function Footer() {
   return (
-    <Box component="footer" className="main-footer">
+    <footer className="main-footer">
       <div className="footer-content">
-
-        {/* Footer Top */}
         <div className="footer-top">
-
-          {/* Brand */}
           <div className="footer-brand">
             <div className="footer-logo">
-              <span className="logo-text">Sweet&Treat</span>
+              <span className="logo-text">Sweet&amp;Treat</span>
               <span className="logo-emoji">🍰</span>
             </div>
-            <Typography className="footer-tagline">
+            <p className="footer-tagline">
               A cozy corner of the internet dedicated to the art of
               dessert-making — with love, sugar, and a sprinkle of magic.
-            </Typography>
+            </p>
             <div className="social-links">
               <a href="#" className="social-icon" aria-label="Instagram">📸</a>
               <a href="#" className="social-icon" aria-label="Pinterest">📌</a>
@@ -29,49 +22,41 @@ export default function Footer() {
             </div>
           </div>
 
-          {/* Recipes */}
           <div className="footer-section">
             <h4>Recipes</h4>
             <ul>
-              <li><MuiLink href="/recipes">All Recipes</MuiLink></li>
-              <li><MuiLink href="/recipes?category=cakes">Cakes</MuiLink></li>
-              <li><MuiLink href="/recipes?category=cookies">Cookies</MuiLink></li>
-              <li><MuiLink href="/recipes?category=pastries">Pastries</MuiLink></li>
+              <li><Link to="/recipes">All Recipes</Link></li>
+              <li><Link to="/recipes?category=cakes">Cakes</Link></li>
+              <li><Link to="/recipes?category=cookies">Cookies</Link></li>
+              <li><Link to="/recipes?category=pastries">Pastries</Link></li>
             </ul>
           </div>
 
-          {/* Sweety */}
           <div className="footer-section">
             <h4>Sweety</h4>
             <ul>
-              <li><MuiLink href="#">Baking Tips</MuiLink></li>
-              <li><MuiLink href="#">Ingredient Guide</MuiLink></li>
-              <li><MuiLink href="#">Tools We Love</MuiLink></li>
-              <li><MuiLink href="#">FAQ</MuiLink></li>
+              <li><a href="#">Baking Tips</a></li>
+              <li><a href="#">Ingredient Guide</a></li>
+              <li><a href="#">Tools We Love</a></li>
+              <li><a href="#">FAQ</a></li>
             </ul>
           </div>
 
-          {/* Connect */}
           <div className="footer-section">
             <h4>Connect</h4>
             <ul>
-              <li><MuiLink href="#">About Us</MuiLink></li>
-              <li><MuiLink href="#">Contact</MuiLink></li>
-              <li><MuiLink href="#">Newsletter</MuiLink></li>
-              <li><MuiLink href="#">Privacy</MuiLink></li>
+              <li><a href="#">About Us</a></li>
+              <li><a href="#">Contact</a></li>
+              <li><a href="#">Newsletter</a></li>
+              <li><a href="#">Privacy</a></li>
             </ul>
           </div>
-
         </div>
 
-        {/* Footer Bottom */}
         <div className="footer-bottom">
-          <Typography className="copyright">
-            © 2026 Sweet&Treat — Made with 💕
-          </Typography>
+          <p className="copyright">© 2026 Sweet&amp;Treat — Made with 💕</p>
         </div>
-
       </div>
-    </Box>
+    </footer>
   );
 }

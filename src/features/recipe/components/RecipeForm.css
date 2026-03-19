@@ -1,0 +1,200 @@
+.rf-wrap {
+  max-width: 760px;
+  margin: 0 auto;
+  font-family: 'Nunito', sans-serif;
+}
+
+/* ── Section ── */
+.rf-section {
+  background: white;
+  border-radius: 20px;
+  padding: 24px 28px;
+  box-shadow: 0 4px 20px rgba(212, 84, 122, 0.07);
+  margin-bottom: 20px;
+}
+
+.rf-section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.rf-section-title {
+  font-family: 'Dancing Script', cursive;
+  font-size: 1.4rem;
+  color: #d4547a;
+  margin: 0 0 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* ── Shared inputs ── */
+.rf-label {
+  display: block;
+  font-weight: 700;
+  color: #6b7280;
+  font-size: 0.8rem;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+.rf-input {
+  width: 100%;
+  padding: 12px 16px;
+  border-radius: 12px;
+  border: 2px solid #fce7f3;
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.95rem;
+  outline: none;
+  box-sizing: border-box;
+  background: white;
+  color: #1f2937;
+  transition: border-color 0.2s;
+}
+
+.rf-input:focus { border-color: #d4547a; }
+.rf-input--error { border-color: #ef4444; }
+
+.rf-textarea { resize: vertical; }
+
+.rf-field-error {
+  color: #ef4444;
+  font-size: 0.8rem;
+  margin: 4px 0 0;
+}
+
+.rf-hint {
+  font-size: 0.82rem;
+  color: #9ca3af;
+  margin: -12px 0 16px;
+}
+
+.rf-hint--tight { margin: 0 0 8px; font-size: 0.8rem; }
+
+/* ── Grids ── */
+.rf-grid { display: grid; gap: 16px; }
+.rf-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.rf-grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+
+/* ── Tags ── */
+.rf-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.rf-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  border-radius: 999px;
+  background: #fce7f3;
+  color: #d4547a;
+  font-weight: 700;
+  font-size: 0.82rem;
+}
+
+.rf-tag-remove {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #d4547a;
+  font-size: 1rem;
+  line-height: 1;
+  padding: 0;
+}
+
+.rf-tag-input-row {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.rf-tag-input { flex: 1; }
+
+.rf-quick-label {
+  font-size: 0.75rem;
+  color: #9ca3af;
+  font-weight: 700;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.rf-suggested-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.rf-suggested-tag {
+  padding: 4px 12px;
+  border-radius: 999px;
+  cursor: pointer;
+  border: 1.5px solid #fce7f3;
+  background: white;
+  color: #9ca3af;
+  font-size: 0.78rem;
+  font-weight: 600;
+  font-family: 'Nunito', sans-serif;
+  transition: all 0.15s;
+}
+
+.rf-suggested-tag:hover { border-color: #d4547a; color: #d4547a; }
+
+/* ── Ingredient list ── */
+.rf-ing-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.rf-ing-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  background: #fdf2f8;
+  border-radius: 12px;
+  border: 1px solid #fce7f3;
+}
+
+.rf-ing-name { flex: 1; font-weight: 600; color: #1f2937; }
+.rf-ing-qty  { color: #d4547a; font-weight: 700; }
+.rf-ing-importance { font-size: 0.72rem; color: #9ca3af; }
+
+.rf-ing-remove {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #ef4444;
+  font-size: 1.1rem;
+}
+
+/* ── Ingredient add row ── */
+.rf-ing-add {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1.2fr auto;
+  gap: 10px;
+  align-items: end;
+}
+
+/* ── Submit ── */
+.rf-submit-row {
+  display: flex;
+  justify-content: flex-end;
+  padding-bottom: 40px;
+}
+
+/* ── Modal ── */
+.rf-modal-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 24px;
+}

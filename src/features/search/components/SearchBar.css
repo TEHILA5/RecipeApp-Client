@@ -1,0 +1,17 @@
+.search-bar-wrap {
+  position: relative;
+}
+
+.search-bar-input {
+  padding-right: 48px;
+  border-radius: 999px;
+}
+
+.search-bar-icon {
+  position: absolute;
+  right: 18px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 1.2rem;
+  pointer-events: none;
+}

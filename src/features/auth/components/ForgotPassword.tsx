@@ -1,6 +1,3 @@
-// ===============================================
-// ForgotPassword - Sweet&Treat | React Hook Form + MUI
-// ===============================================
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
@@ -19,14 +16,12 @@ export default function ForgotPassword() {
   const [email, setEmail] = useState('');
   const [serverError, setServerError] = useState('');
 
-  // ── Step 1 form ──
   const {
     register: regEmail,
     handleSubmit: handleEmail,
     formState: { errors: emailErrors, isSubmitting: emailSubmitting },
   } = useForm<EmailForm>();
 
-  // ── Step 2 form ──
   const {
     register: regPassword,
     handleSubmit: handlePassword,
@@ -45,10 +40,7 @@ export default function ForgotPassword() {
   const onPasswordSubmit = async (data: PasswordForm) => {
     setServerError('');
     try {
-      await axiosInstance.post('/user/reset-password', {
-        email,
-        newPassword: data.newPassword,
-      });
+      await axiosInstance.post('/user/reset-password', { email, newPassword: data.newPassword });
       setStep('success');
     } catch (err) {
       setServerError(handleApiError(err));
@@ -59,24 +51,18 @@ export default function ForgotPassword() {
     <div className="forgot-page">
       <div className="forgot-card">
 
-        {/* Step 1 — Email */}
         {step === 'email' && (
           <>
             <div className="forgot-icon">🔑</div>
             <h1 className="forgot-title">Reset <span>Password</span></h1>
-            <p className="forgot-subtitle">
-              Enter the email address linked to your account
-            </p>
+            <p className="forgot-subtitle">Enter the email address linked to your account</p>
 
             {serverError && <Alert severity="error" sx={{ mb: 2 }}>{serverError}</Alert>}
 
             <form onSubmit={handleEmail(onEmailSubmit)} className="forgot-form" noValidate>
               <TextField
-                label="Email Address"
-                type="email"
-                fullWidth
-                placeholder="your@email.com"
-                autoFocus
+                label="Email Address" type="email" fullWidth
+                placeholder="your@email.com" autoFocus
                 error={!!emailErrors.email}
                 helperText={emailErrors.email?.message}
                 {...regEmail('email', {
@@ -84,14 +70,8 @@ export default function ForgotPassword() {
                   pattern: { value: /\S+@\S+\.\S+/, message: 'Please enter a valid email' },
                 })}
               />
-              <Button
-                type="submit"
-                variant="contained"
-                fullWidth
-                size="large"
-                disabled={emailSubmitting}
-                startIcon={emailSubmitting ? <CircularProgress size={18} color="inherit" /> : null}
-              >
+              <Button type="submit" variant="contained" fullWidth size="large" disabled={emailSubmitting}
+                startIcon={emailSubmitting ? <CircularProgress size={18} color="inherit" /> : null}>
                 Continue →
               </Button>
             </form>
@@ -102,24 +82,18 @@ export default function ForgotPassword() {
           </>
         )}
 
-        {/* Step 2 — New Password */}
         {step === 'password' && (
           <>
             <div className="forgot-icon">🔒</div>
             <h1 className="forgot-title">New <span>Password</span></h1>
-            <p className="forgot-subtitle">
-              Choose a strong password for <strong>{email}</strong>
-            </p>
+            <p className="forgot-subtitle">Choose a strong password for <strong>{email}</strong></p>
 
             {serverError && <Alert severity="error" sx={{ mb: 2 }}>{serverError}</Alert>}
 
             <form onSubmit={handlePassword(onPasswordSubmit)} className="forgot-form" noValidate>
               <TextField
-                label="New Password"
-                type="password"
-                fullWidth
-                placeholder="At least 6 characters"
-                autoFocus
+                label="New Password" type="password" fullWidth
+                placeholder="At least 6 characters" autoFocus
                 error={!!passErrors.newPassword}
                 helperText={passErrors.newPassword?.message}
                 {...regPassword('newPassword', {
@@ -128,9 +102,7 @@ export default function ForgotPassword() {
                 })}
               />
               <TextField
-                label="Confirm Password"
-                type="password"
-                fullWidth
+                label="Confirm Password" type="password" fullWidth
                 placeholder="Repeat your password"
                 error={!!passErrors.confirmPassword}
                 helperText={passErrors.confirmPassword?.message}
@@ -139,41 +111,26 @@ export default function ForgotPassword() {
                   validate: (val) => val === passwordValue || 'Passwords do not match',
                 })}
               />
-              <Button
-                type="submit"
-                variant="contained"
-                fullWidth
-                size="large"
-                disabled={passSubmitting}
-                startIcon={passSubmitting ? <CircularProgress size={18} color="inherit" /> : null}
-              >
+              <Button type="submit" variant="contained" fullWidth size="large" disabled={passSubmitting}
+                startIcon={passSubmitting ? <CircularProgress size={18} color="inherit" /> : null}>
                 {passSubmitting ? 'Saving...' : '✨ Set New Password'}
               </Button>
             </form>
 
             <div className="forgot-back">
-              <button onClick={() => { setStep('email'); setServerError(''); }}>
-                ← Change Email
-              </button>
+              <button onClick={() => { setStep('email'); setServerError(''); }}>← Change Email</button>
             </div>
           </>
         )}
 
-        {/* Step 3 — Success */}
         {step === 'success' && (
           <div className="forgot-success">
             <div className="forgot-icon">🎉</div>
             <h1 className="forgot-title">Password <span>Reset!</span></h1>
             <p className="forgot-subtitle">
-              Your password has been updated successfully.
-              You can now log in with your new password.
+              Your password has been updated successfully. You can now log in with your new password.
             </p>
-            <Button
-              variant="contained"
-              fullWidth
-              size="large"
-              onClick={() => navigate('/login')}
-            >
+            <Button variant="contained" fullWidth size="large" onClick={() => navigate('/login')}>
               Go to Login →
             </Button>
           </div>

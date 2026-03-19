@@ -1,7 +1,6 @@
-// ===============================================
-// SearchBar - חיפוש לפי שם
-// ===============================================
 import Input from '../../../shared/components/UI/Input';
+import './SearchBar.css';
+
 interface SearchBarProps {
   value: string;
   onChange: (val: string) => void;
@@ -10,20 +9,16 @@ interface SearchBarProps {
 
 export default function SearchBar({ value, onChange, placeholder = 'Search...' }: SearchBarProps) {
   return (
-    <div style={{ position: 'relative' }}>
-      {/* ✅ Input component */}
+    <div className="search-bar-wrap">
       <Input
         autoFocus
         type="text"
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
-        style={{ paddingRight: '48px', borderRadius: '999px' }}
+        className="search-bar-input"
       />
-      <span style={{
-        position: 'absolute', right: '18px', top: '50%',
-        transform: 'translateY(-50%)', fontSize: '1.2rem', pointerEvents: 'none',
-      }}>🔍</span>
+      <span className="search-bar-icon">🔍</span>
     </div>
   );
 }

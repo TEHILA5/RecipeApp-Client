@@ -1,42 +1,33 @@
-/* ===============================================
-   CSS Variables - Sweet&Treat Theme
-   =============================================== */
-
 :root {
-  /* ── Colors ── */
-  --deep-pink:    #d4547a;
-  --pink:         #e8799a;
-  --light-pink:   #f0a8bc;
-  --blush:        #fce7f3;
-  --soft-pink:    #fdf2f8;
+  --deep-pink:   #d4547a;
+  --pink:        #e8799a;
+  --light-pink:  #f0a8bc;
+  --blush:       #fce7f3;
+  --soft-pink:   #fdf2f8;
 
-  --gold:         #c4894a;
-  --gold-light:   #e8c49a;
-  --cream:        #fff8f2;
+  --gold:        #c4894a;
+  --gold-light:  #e8c49a;
+  --cream:       #fff8f2;
 
-  --text:         #1f2937;
-  --mid:          #6b7280;
-  --light:        #9ca3af;
-  --border:       #e5e7eb;
-  --white:        #ffffff;
+  --text:        #1f2937;
+  --mid:         #6b7280;
+  --light:       #9ca3af;
+  --border:      #e5e7eb;
+  --white:       #ffffff;
 
-  /* ── Typography ── */
-  --font-main:    'Nunito', sans-serif;
-  --font-script:  'Dancing Script', cursive;
+  --font-main:   'Nunito', sans-serif;
+  --font-script: 'Dancing Script', cursive;
 
-  /* ── Spacing ── */
-  --nav-height:   70px;
-  --radius-sm:    8px;
-  --radius-md:    12px;
-  --radius-lg:    20px;
-  --radius-xl:    24px;
-  --radius-full:  999px;
+  --nav-height:  70px;
+  --radius-sm:   8px;
+  --radius-md:   12px;
+  --radius-lg:   20px;
+  --radius-xl:   24px;
+  --radius-full: 999px;
 
-  /* ── Shadows ── */
-  --shadow-sm:    0 2px 10px rgba(212, 84, 122, 0.08);
-  --shadow-md:    0 4px 20px rgba(212, 84, 122, 0.10);
-  --shadow-lg:    0 8px 40px rgba(212, 84, 122, 0.15);
+  --shadow-sm:   0 2px 10px rgba(212, 84, 122, 0.08);
+  --shadow-md:   0 4px 20px rgba(212, 84, 122, 0.10);
+  --shadow-lg:   0 8px 40px rgba(212, 84, 122, 0.15);
 
-  /* ── Transitions ── */
-  --transition:   all 0.2s ease;
+  --transition:  all 0.2s ease;
 }

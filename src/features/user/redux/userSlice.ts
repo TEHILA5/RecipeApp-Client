@@ -1,6 +1,3 @@
-// ===============================================
-// User Slice - ניהול נתוני משתמש ב-Redux
-// ===============================================
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { getMySavedRecipes, getMyComments } from '../../../api/userActionApi';
 import type { UserActionDto } from '../../recipe/types/userAction.types';
@@ -9,7 +6,6 @@ interface UserState {
   savedRecipes: UserActionDto[];
   loadingSaved: boolean;
   savedError: string | null;
-
   myComments: UserActionDto[];
   loadingComments: boolean;
   commentsError: string | null;
@@ -19,21 +15,21 @@ const initialState: UserState = {
   savedRecipes: [],
   loadingSaved: false,
   savedError: null,
-
   myComments: [],
   loadingComments: false,
   commentsError: null,
 };
 
-// ── Thunks ──
+const rejectMsg = (err: unknown, fallback: string) =>
+  err instanceof Error ? err.message : fallback;
 
 export const fetchSavedRecipes = createAsyncThunk(
   'user/fetchSavedRecipes',
   async (_, { rejectWithValue }) => {
     try {
       return await getMySavedRecipes();
-    } catch (err: unknown) {
-      return rejectWithValue(err instanceof Error ? err.message : 'Failed to load saved recipes');
+    } catch (err) {
+      return rejectWithValue(rejectMsg(err, 'Failed to load saved recipes'));
     }
   }
 );
@@ -43,13 +39,11 @@ export const fetchMyComments = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       return await getMyComments();
-    } catch (err: unknown) {
-      return rejectWithValue(err instanceof Error ? err.message : 'Failed to load comments');
+    } catch (err) {
+      return rejectWithValue(rejectMsg(err, 'Failed to load comments'));
     }
   }
 );
-
-// ── Slice ──
 
 const userSlice = createSlice({
   name: 'user',
@@ -63,7 +57,6 @@ const userSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    // fetchSavedRecipes
     builder
       .addCase(fetchSavedRecipes.pending, (state) => {
         state.loadingSaved = true;
@@ -76,10 +69,8 @@ const userSlice = createSlice({
       .addCase(fetchSavedRecipes.rejected, (state, action) => {
         state.loadingSaved = false;
         state.savedError = action.payload as string;
-      });
+      })
 
-    // fetchMyComments
-    builder
       .addCase(fetchMyComments.pending, (state) => {
         state.loadingComments = true;
         state.commentsError = null;

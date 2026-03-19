@@ -1,6 +1,3 @@
-// ===============================================
-// Validation - חוקי ולידציה לטפסים
-// ===============================================
 const EMAIL_REGEX = /\S+@\S+\.\S+/;
 const PHONE_REGEX = /^05\d{8}$/;
 const MIN_PASSWORD_LENGTH = 6;
@@ -43,9 +40,6 @@ export const validationRules = {
   },
 };
 
-/**
- * ולידציה פשוטה בלי React Hook Form
- */
 export const validate = {
   isEmail: (email: string) => EMAIL_REGEX.test(email),
   isPhone: (phone: string) => PHONE_REGEX.test(phone.replace(/[-\s]/g, '')),

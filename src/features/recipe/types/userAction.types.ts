@@ -1,6 +1,3 @@
-// ===============================================
-// UserAction Types - מותאם ל-C# DTOs
-// ===============================================
 import type { RecipeCategory } from './recipe.types';
 
 export type UserActionType = 'Comment' | 'History' | 'Book';
@@ -12,7 +9,6 @@ export interface UserActionDto {
   recipeName?: string;
   recipeImageUrl?: string;
   category?: RecipeCategory;
-  // Comment fields
   userName?: string;
   content?: string;
   rating?: number;

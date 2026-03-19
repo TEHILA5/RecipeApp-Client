@@ -1,6 +1,3 @@
-// ===============================================
-// useUserProfile - Custom hook for profile logic
-// ===============================================
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppSelector, useAppDispatch } from '../../../redux/hooks';
@@ -25,7 +22,7 @@ export function useUserProfile() {
     setSaveSuccess(false);
     try {
       const changed: UpdateUserData = {};
-      if (data.name !== user?.name) changed.name = data.name;
+      if (data.name  !== user?.name)  changed.name  = data.name;
       if (data.phone !== user?.phone) changed.phone = data.phone;
       if (data.email !== user?.email) changed.email = data.email;
 

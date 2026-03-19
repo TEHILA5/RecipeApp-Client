@@ -1,8 +1,5 @@
 import axiosInstance, { handleApiError } from './axiosConfig';
 
-// ===============================================
-// Types
-// ===============================================
 export interface LoginPayload {
   email: string;
   password: string;
@@ -26,47 +23,33 @@ export interface LoginResponse {
   token: string;
 }
 
-// ===============================================
-// Auth API Functions
-// ===============================================
-
-/**
- * התחברות למערכת
- */
 export const login = async (payload: LoginPayload): Promise<LoginResponse> => {
   try {
-    const response = await axiosInstance.post<LoginResponse>('/user/login', payload);
-    return response.data;
-  } catch (error) {
-    throw new Error(handleApiError(error));
+    const res = await axiosInstance.post<LoginResponse>('/user/login', payload);
+    return res.data;
+  } catch (err) {
+    throw new Error(handleApiError(err));
   }
 };
 
-/**
- * הרשמה למערכת
- */
 export const register = async (payload: RegisterPayload): Promise<LoginResponse> => {
   try {
-    const response = await axiosInstance.post<LoginResponse>('/user/register', payload);
-    return response.data;
-  } catch (error) {
-    throw new Error(handleApiError(error));
+    const res = await axiosInstance.post<LoginResponse>('/user/register', payload);
+    return res.data;
+  } catch (err) {
+    throw new Error(handleApiError(err));
   }
 };
 
-/**
- * קבלת פרטי המשתמש המחובר
- */
 export const getMe = async () => {
   try {
-    const response = await axiosInstance.get('/user/me');
-    return response.data;
-  } catch (error) {
-    throw new Error(handleApiError(error));
+    const res = await axiosInstance.get('/user/me');
+    return res.data;
+  } catch (err) {
+    throw new Error(handleApiError(err));
   }
 };
 
-// ✅ Export כ-object גם (תאימות למה שכתבת)
 export const authApi = {
   login,
   register,

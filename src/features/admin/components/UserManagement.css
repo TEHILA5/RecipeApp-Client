@@ -1,0 +1,188 @@
+.um-wrapper {
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 4px 20px rgba(212, 84, 122, 0.07);
+  overflow: hidden;
+}
+
+/* Header */
+.um-header {
+  padding: 20px 24px;
+  border-bottom: 1px solid #fce7f3;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.um-title {
+  font-family: 'Dancing Script', cursive;
+  font-size: 1.5rem;
+  color: #d4547a;
+}
+
+/* Search */
+.um-search-wrap {
+  position: relative;
+}
+
+.um-search {
+  padding: 9px 36px 9px 14px;
+  border: 2px solid #fce7f3;
+  border-radius: 999px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.85rem;
+  outline: none;
+  width: 240px;
+}
+
+.um-search-icon {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+/* Table */
+.um-table-wrap {
+  overflow-x: auto;
+}
+
+.um-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.um-thead-row {
+  background: #fdf2f8;
+}
+
+.um-th {
+  padding: 12px 16px;
+  text-align: left;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #9ca3af;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.um-td {
+  padding: 14px 16px;
+}
+
+.um-row {
+  border-top: 1px solid #fce7f3;
+  transition: opacity 0.2s;
+}
+
+.um-row-even { background: white; }
+.um-row-odd  { background: #fffbfd; }
+.um-row-deleting { opacity: 0.5; }
+
+/* User cell */
+.um-user-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.um-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #e8799a, #d4547a);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 800;
+  font-size: 0.85rem;
+  flex-shrink: 0;
+}
+
+.um-user-name {
+  font-weight: 700;
+  color: #1f2937;
+  font-size: 0.9rem;
+}
+
+.um-user-id {
+  font-size: 0.72rem;
+  color: #9ca3af;
+}
+
+.um-cell-text {
+  font-size: 0.85rem;
+  color: #6b7280;
+}
+
+.um-joined {
+  font-size: 0.82rem;
+  color: #9ca3af;
+}
+
+/* Inline inputs */
+.um-input {
+  padding: 6px 10px;
+  border: 2px solid #fce7f3;
+  border-radius: 8px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.88rem;
+  outline: none;
+}
+
+.um-input-sm { width: 130px; }
+.um-input-lg { width: 180px; }
+
+/* Actions */
+.um-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.um-btn {
+  padding: 6px 16px;
+  border-radius: 999px;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 700;
+  font-size: 0.78rem;
+  cursor: pointer;
+}
+
+.um-btn-save {
+  border: none;
+  background: #d4547a;
+  color: white;
+}
+
+.um-btn-cancel {
+  border: 2px solid #fce7f3;
+  background: white;
+  color: #6b7280;
+}
+
+.um-btn-edit {
+  border: 2px solid #fce7f3;
+  background: white;
+  color: #d4547a;
+}
+
+.um-btn-delete {
+  border: none;
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.um-btn-delete--busy {
+  cursor: not-allowed;
+}
+
+/* Empty state */
+.um-empty {
+  text-align: center;
+  padding: 40px;
+  color: #9ca3af;
+}

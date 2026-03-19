@@ -1,0 +1,195 @@
+.profile-page {
+  min-height: 100vh;
+  background: #fdf2f8;
+  padding-top: var(--nav-height, 70px);
+  font-family: 'Nunito', sans-serif;
+}
+
+.profile-page-header {
+  background: linear-gradient(135deg, rgba(232, 121, 154, 0.08), rgba(232, 196, 154, 0.08));
+  padding: 48px 24px 0;
+  border-bottom: 2px solid rgba(232, 121, 154, 0.1);
+}
+
+.profile-page-header-inner {
+  max-width: 860px;
+  margin: 0 auto;
+}
+
+.profile-tabs {
+  display: flex;
+  gap: 4px;
+  margin-top: 24px;
+}
+
+.profile-tab {
+  padding: 12px 24px;
+  border-radius: 12px 12px 0 0;
+  border: none;
+  cursor: pointer;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 700;
+  font-size: 0.88rem;
+  background: transparent;
+  color: #9ca3af;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+  transition: all 0.2s;
+}
+
+.profile-tab.active {
+  background: white;
+  color: #d4547a;
+  border-bottom-color: white;
+}
+
+.profile-page-body {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 32px 24px;
+}
+
+/* Stats */
+.stats-card,
+.danger-card {
+  background: white;
+  border-radius: 20px;
+  padding: 32px;
+  box-shadow: 0 4px 20px rgba(212, 84, 122, 0.07);
+}
+
+.stats-card h2,
+.danger-card h2 {
+  font-family: 'Dancing Script', cursive;
+  font-size: 1.8rem;
+  color: #d4547a;
+  margin-bottom: 24px;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 16px;
+}
+
+.stat-item {
+  padding: 24px 20px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #fdf2f8, #fff8f2);
+  border: 1px solid #fce7f3;
+  text-align: center;
+}
+
+.stat-emoji {
+  font-size: 2rem;
+  margin-bottom: 8px;
+}
+
+.stat-value {
+  font-family: 'Dancing Script', cursive;
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #d4547a;
+}
+
+.stat-label {
+  font-size: 0.82rem;
+  color: #9ca3af;
+  font-weight: 600;
+  margin-top: 4px;
+}
+
+/* Danger zone */
+.danger-row {
+  padding: 20px 24px;
+  border-radius: 16px;
+  border: 1px solid #e5e7eb;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.danger-row.red {
+  border-color: #fee2e2;
+  background: #fffafa;
+}
+
+.danger-title {
+  font-weight: 700;
+  color: #1f2937;
+  margin-bottom: 4px;
+}
+
+.danger-title.red {
+  color: #991b1b;
+}
+
+.danger-desc {
+  font-size: 0.85rem;
+  color: #9ca3af;
+}
+
+.signout-btn {
+  padding: 10px 24px;
+  border-radius: 999px;
+  border: 2px solid #e5e7eb;
+  background: white;
+  color: #6b7280;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.delete-btn {
+  padding: 10px 24px;
+  border-radius: 999px;
+  border: none;
+  background: #fee2e2;
+  color: #991b1b;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+/* Modal */
+.modal-desc {
+  color: #6b7280;
+  margin-bottom: 28px;
+  line-height: 1.6;
+  text-align: center;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+.modal-cancel {
+  padding: 12px 28px;
+  border-radius: 999px;
+  border: 2px solid #e5e7eb;
+  background: white;
+  color: #6b7280;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.modal-confirm {
+  padding: 12px 28px;
+  border-radius: 999px;
+  border: none;
+  background: #ef4444;
+  color: white;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.modal-confirm.loading {
+  opacity: 0.7;
+  cursor: not-allowed;
+}

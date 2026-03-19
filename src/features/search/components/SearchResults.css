@@ -1,0 +1,273 @@
+/* Recipe card mini */
+.recipe-card-mini {
+  display: block;
+  text-decoration: none;
+  background: white;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(212, 84, 122, 0.08);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.recipe-card-mini:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 30px rgba(212, 84, 122, 0.15);
+}
+
+.mini-img {
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+}
+
+.mini-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.mini-img-fallback {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #f9e4ec, #e8c49a);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 64px;
+}
+
+.mini-body {
+  padding: 16px 18px;
+}
+
+.mini-body h3 {
+  font-family: 'Dancing Script', cursive;
+  font-size: 1.25rem;
+  color: #1f2937;
+  margin: 8px 0 6px;
+}
+
+.mini-body p {
+  font-size: 0.8rem;
+  color: #9ca3af;
+  line-height: 1.5;
+  margin-bottom: 10px;
+}
+
+.mini-meta {
+  display: flex;
+  gap: 12px;
+  font-size: 0.75rem;
+  color: #6b7280;
+  font-weight: 600;
+}
+
+.mini-category {
+  margin-left: auto;
+  background: #fce7f3;
+  color: #d4547a;
+  padding: 2px 10px;
+  border-radius: 999px;
+}
+
+/* Results grid */
+.results-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.result-count {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #6b7280;
+  margin-bottom: 16px;
+}
+
+/* Empty state */
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 4px 20px rgba(212, 84, 122, 0.06);
+}
+
+.empty-emoji {
+  font-size: 64px;
+  margin-bottom: 16px;
+}
+
+.empty-state h3 {
+  font-family: 'Dancing Script', cursive;
+  font-size: 1.8rem;
+  color: #d4547a;
+  margin-bottom: 8px;
+}
+
+.empty-state p {
+  color: #9ca3af;
+}
+
+.sign-in-prompt {
+  margin-top: 16px;
+  color: #d4547a !important;
+  font-weight: 600;
+  font-size: 0.88rem;
+}
+
+.sign-in-prompt a {
+  color: #d4547a;
+}
+
+/* Loading */
+.search-loading {
+  text-align: center;
+  padding: 60px;
+  color: #9ca3af;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid #fce7f3;
+  border-top-color: #d4547a;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin: 0 auto 12px;
+}
+
+.spinner.alt {
+  width: 36px;
+  height: 36px;
+  border-top-color: #c4894a;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Tabs */
+.result-tabs {
+  display: flex;
+  gap: 4px;
+  background: #f3e8ef;
+  border-radius: 999px;
+  padding: 4px;
+  margin-bottom: 20px;
+}
+
+.tab-btn {
+  flex: 1;
+  padding: 10px 16px;
+  border-radius: 999px;
+  border: none;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 700;
+  font-size: 0.88rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  background: transparent;
+  color: #9ca3af;
+}
+
+.tab-btn.active {
+  background: white;
+  color: #d4547a;
+  box-shadow: 0 2px 10px rgba(212, 84, 122, 0.12);
+}
+
+.tab-btn.alt.active {
+  color: #c4894a;
+  box-shadow: 0 2px 10px rgba(196, 137, 74, 0.12);
+}
+
+/* Alternatives */
+.alt-banner {
+  background: linear-gradient(135deg, rgba(232, 196, 154, 0.2), rgba(196, 137, 74, 0.1));
+  border: 2px solid rgba(196, 137, 74, 0.2);
+  border-radius: 16px;
+  padding: 16px 20px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 1.5rem;
+}
+
+.alt-banner p {
+  margin: 0;
+  font-weight: 700;
+  color: #92400e;
+  font-size: 0.9rem;
+}
+
+.alt-banner p + p {
+  margin-top: 4px;
+  color: #9ca3af;
+  font-size: 0.8rem;
+  font-weight: 400;
+}
+
+.alt-banner strong {
+  color: #c4894a;
+}
+
+.alt-results {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.match-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.match-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 14px;
+  border-radius: 999px;
+  background: rgba(196, 137, 74, 0.1);
+  border: 1.5px solid rgba(196, 137, 74, 0.3);
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #92400e;
+}
+
+.match-tag .crossed {
+  text-decoration: line-through;
+  opacity: 0.55;
+}
+
+.match-tag .arrow {
+  opacity: 0.5;
+}
+
+.match-tag .alt-name {
+  color: #c4894a;
+}
+
+.match-tag .dot {
+  opacity: 0.35;
+}
+
+.ratio-badge {
+  background: rgba(196, 137, 74, 0.15);
+  border-radius: 6px;
+  padding: 1px 6px;
+  font-size: 0.72rem;
+  color: #92400e;
+}
+
+.amount-badge {
+  background: rgba(196, 137, 74, 0.2);
+  border-radius: 6px;
+  padding: 1px 8px;
+  font-size: 0.72rem;
+  color: #78350f;
+  font-weight: 800;
+}

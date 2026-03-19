@@ -1,0 +1,50 @@
+.ingredient-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px;
+  border-radius: 14px;
+  background: white;
+  border: 1px solid #fce7f3;
+  transition: box-shadow 0.2s;
+}
+
+.ingredient-card:hover {
+  box-shadow: 0 4px 16px rgba(212, 84, 122, 0.1);
+}
+
+.ingredient-card.editing {
+  background: #fdf2f8;
+  border: 2px solid #e8799a;
+  display: block;
+}
+
+.ingredient-name {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 1.1rem;
+}
+
+.ingredient-name span:last-child {
+  font-weight: 600;
+  color: #1f2937;
+  font-size: 0.95rem;
+}
+
+.edit-btn {
+  padding: 6px 16px;
+  border-radius: 999px;
+  border: 2px solid #fce7f3;
+  background: white;
+  color: #d4547a;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 700;
+  font-size: 0.78rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.edit-btn:hover {
+  background: #fce7f3;
+}

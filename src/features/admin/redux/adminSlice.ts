@@ -1,6 +1,3 @@
-// ===============================================
-// Admin Slice - ניהול נתוני Admin ב-Redux
-// ===============================================
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axiosInstance from '../../../api/axiosConfig';
 import type { ConversionDto } from '../../../api/conversionApi';
@@ -43,7 +40,8 @@ const initialState: AdminState = {
   loadingWeeklyStats: false,
 };
 
-// ── Thunks ──
+const rejectMsg = (err: unknown, fallback: string) =>
+  err instanceof Error ? err.message : fallback;
 
 export const fetchConversions = createAsyncThunk(
   'admin/fetchConversions',
@@ -51,8 +49,8 @@ export const fetchConversions = createAsyncThunk(
     try {
       const res = await axiosInstance.get<ConversionDto[]>('/conversion');
       return res.data;
-    } catch (err: unknown) {
-      return rejectWithValue(err instanceof Error ? err.message : 'Failed to load conversions');
+    } catch (err) {
+      return rejectWithValue(rejectMsg(err, 'Failed to load conversions'));
     }
   }
 );
@@ -63,8 +61,8 @@ export const fetchAllUsers = createAsyncThunk(
     try {
       const res = await axiosInstance.get<UserAdminDto[]>('/user');
       return res.data;
-    } catch (err: unknown) {
-      return rejectWithValue(err instanceof Error ? err.message : 'Failed to load users');
+    } catch (err) {
+      return rejectWithValue(rejectMsg(err, 'Failed to load users'));
     }
   }
 );
@@ -75,8 +73,8 @@ export const deleteConversionThunk = createAsyncThunk(
     try {
       await axiosInstance.delete(`/conversion/${id}`);
       return id;
-    } catch (err: unknown) {
-      return rejectWithValue(err instanceof Error ? err.message : 'Failed to delete');
+    } catch (err) {
+      return rejectWithValue(rejectMsg(err, 'Failed to delete'));
     }
   }
 );
@@ -87,8 +85,8 @@ export const deleteUserThunk = createAsyncThunk(
     try {
       await axiosInstance.delete(`/user/${id}`);
       return id;
-    } catch (err: unknown) {
-      return rejectWithValue(err instanceof Error ? err.message : 'Failed to delete');
+    } catch (err) {
+      return rejectWithValue(rejectMsg(err, 'Failed to delete'));
     }
   }
 );
@@ -99,13 +97,11 @@ export const fetchWeeklyStats = createAsyncThunk(
     try {
       const res = await axiosInstance.get<WeeklyCategoryStats[]>('/userAction/stats/weekly-categories');
       return res.data;
-    } catch (err: unknown) {
-      return rejectWithValue(err instanceof Error ? err.message : 'Failed to load stats');
+    } catch (err) {
+      return rejectWithValue(rejectMsg(err, 'Failed to load stats'));
     }
   }
 );
-
-// ── Slice ──
 
 const adminSlice = createSlice({
   name: 'admin',
@@ -124,7 +120,6 @@ const adminSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    // fetchConversions
     builder
       .addCase(fetchConversions.pending, (state) => {
         state.loadingConversions = true;
@@ -137,10 +132,8 @@ const adminSlice = createSlice({
       .addCase(fetchConversions.rejected, (state, action) => {
         state.loadingConversions = false;
         state.conversionsError = action.payload as string;
-      });
+      })
 
-    // fetchAllUsers
-    builder
       .addCase(fetchAllUsers.pending, (state) => {
         state.loadingUsers = true;
         state.usersError = null;
@@ -152,20 +145,15 @@ const adminSlice = createSlice({
       .addCase(fetchAllUsers.rejected, (state, action) => {
         state.loadingUsers = false;
         state.usersError = action.payload as string;
-      });
+      })
 
-    // deleteConversion
-    builder.addCase(deleteConversionThunk.fulfilled, (state, action) => {
-      state.conversions = state.conversions.filter((c) => c.id !== action.payload);
-    });
+      .addCase(deleteConversionThunk.fulfilled, (state, action) => {
+        state.conversions = state.conversions.filter((c) => c.id !== action.payload);
+      })
+      .addCase(deleteUserThunk.fulfilled, (state, action) => {
+        state.users = state.users.filter((u) => u.id !== action.payload);
+      })
 
-    // deleteUser
-    builder.addCase(deleteUserThunk.fulfilled, (state, action) => {
-      state.users = state.users.filter((u) => u.id !== action.payload);
-    });
-
-    // fetchWeeklyStats
-    builder
       .addCase(fetchWeeklyStats.pending, (state) => {
         state.loadingWeeklyStats = true;
       })

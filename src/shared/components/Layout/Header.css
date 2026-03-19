@@ -1,7 +1,3 @@
-/* ═══════════════════════════════════════════════
-   Header Navigation - Sweet&Treat Theme
-   ═══════════════════════════════════════════════ */
-
 .main-nav {
   position: fixed;
   top: 0;
@@ -20,17 +16,11 @@
 }
 
 @keyframes navIn {
-  from {
-    opacity: 0;
-    transform: translateY(-16px);
-  }
-  to {
-    opacity: 1;
-    transform: none;
-  }
+  from { opacity: 0; transform: translateY(-16px); }
+  to   { opacity: 1; transform: none; }
 }
 
-/* ── Logo ── */
+/* Logo */
 .nav-logo {
   display: flex;
   align-items: center;
@@ -43,18 +33,41 @@
 }
 
 .logo-image {
-  height: 48px; /* גובה מדויק מהעיצוב המקורי */
+  height: 48px;
   width: auto;
   object-fit: contain;
 }
 
-/* ── Navigation Links ── */
+/* Hamburger */
+.hamburger {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.6rem;
+  color: #d4547a;
+  margin-left: auto;
+}
+
+/* Nav links */
 .nav-links {
   display: flex;
   gap: 32px;
   list-style: none;
   margin: 0;
   padding: 0;
+}
+
+.nav-links.mobile {
+  position: absolute;
+  top: var(--nav-height, 70px);
+  left: 0;
+  right: 0;
+  background: white;
+  flex-direction: column;
+  padding: 16px 24px;
+  box-shadow: 0 8px 20px rgba(212, 84, 122, 0.1);
+  z-index: 100;
+  border-bottom: 2px solid #fce7f3;
 }
 
 .nav-links a {
@@ -88,7 +101,64 @@
   width: 100%;
 }
 
-/* ── User Actions ── */
+/* Admin link */
+.admin-link {
+  background: linear-gradient(135deg, #e8799a, #d4547a) !important;
+  color: white !important;
+  padding: 6px 16px;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 0.85rem;
+}
+
+.admin-link::after {
+  display: none;
+}
+
+/* Mobile user section */
+.mobile-user-section {
+  margin-top: 8px;
+  border-top: 1px solid #fce7f3;
+  padding-top: 12px;
+}
+
+.mobile-user {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.mobile-profile-link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #d4547a !important;
+  font-weight: 700;
+  text-transform: none !important;
+  letter-spacing: 0 !important;
+}
+
+.mobile-profile-link img {
+  width: 24px;
+}
+
+.mobile-logout-btn {
+  background: none;
+  border: 2px solid #fce7f3;
+  border-radius: 999px;
+  padding: 8px 16px;
+  color: #d4547a;
+  cursor: pointer;
+  font-weight: 700;
+  font-family: 'Nunito', sans-serif;
+}
+
+.mobile-auth-btns {
+  display: flex;
+  gap: 8px;
+}
+
+/* Nav actions (desktop) */
 .nav-actions {
   display: flex;
   align-items: center;
@@ -117,7 +187,7 @@
 }
 
 .chef-hat-icon {
-  width: 38px;  /* גודל מדויק מהעיצוב המקורי */
+  width: 38px;
   height: 38px;
   object-fit: contain;
   filter: drop-shadow(0 2px 6px rgba(232, 121, 154, 0.4));
@@ -130,7 +200,7 @@
   white-space: nowrap;
 }
 
-/* ── Buttons ── */
+/* Buttons */
 .btn-login {
   color: var(--deep-pink);
   font-weight: 700;
@@ -168,17 +238,8 @@
   box-shadow: 0 6px 20px rgba(212, 84, 122, 0.4);
 }
 
-/* ── Responsive ── */
 @media (max-width: 768px) {
   .main-nav {
     padding: 12px 24px;
-  }
-
-  .nav-links {
-    display: none; /* כאן אפשר להוסיף Mobile Menu */
-  }
-
-  .logo-text {
-    font-size: 1.5rem;
   }
 }

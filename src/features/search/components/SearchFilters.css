@@ -1,0 +1,119 @@
+.filter-hint {
+  font-size: 0.85rem;
+  color: #9ca3af;
+  font-weight: 600;
+  margin-bottom: 14px;
+}
+
+.filter-hint strong {
+  color: #d4547a;
+}
+
+/* Category */
+.category-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.category-chip {
+  padding: 8px 18px;
+  border-radius: 999px;
+  border: 2px solid #fce7f3;
+  background: white;
+  color: #6b7280;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 700;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.category-chip.active {
+  border-color: #d4547a;
+  background: #fce7f3;
+  color: #d4547a;
+}
+
+/* Ingredients */
+.ingredient-input-row {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.ingredient-input {
+  flex: 1;
+  padding: 12px 18px;
+  border: 2px solid #fce7f3;
+  border-radius: 999px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.92rem;
+  background: #fffbfd;
+  outline: none;
+  transition: border-color 0.2s;
+  box-sizing: border-box;
+}
+
+.ingredient-input:focus {
+  border-color: #d4547a;
+}
+
+.add-btn {
+  padding: 12px 20px;
+  border-radius: 999px;
+  border: none;
+  background: #e5e7eb;
+  color: #9ca3af;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 700;
+  font-size: 0.85rem;
+  cursor: not-allowed;
+  white-space: nowrap;
+  transition: all 0.2s;
+}
+
+.add-btn.active {
+  background: linear-gradient(135deg, #e8799a, #d4547a);
+  color: white;
+  cursor: pointer;
+}
+
+.ingredient-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.ingredient-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: #fce7f3;
+  color: #d4547a;
+  font-weight: 700;
+  font-size: 0.82rem;
+}
+
+.ingredient-tag button {
+  background: none;
+  border: none;
+  color: #d4547a;
+  cursor: pointer;
+  font-size: 1rem;
+  line-height: 1;
+  padding: 0;
+}
+
+.clear-btn {
+  padding: 6px 14px;
+  border-radius: 999px;
+  border: 1.5px solid #e5e7eb;
+  background: white;
+  color: #9ca3af;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+}

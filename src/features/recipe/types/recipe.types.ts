@@ -1,6 +1,4 @@
-// ===============================================
-// Recipe Types - מותאם לשרת (.NET)
-// ===============================================
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 export type RecipeCategory =
   | 'Sweats' | 'Cakes' | 'Cupcakes' | 'Cheesecakes' | 'BundtCakes'
@@ -56,14 +54,12 @@ export const CATEGORY_EMOJIS: Partial<Record<RecipeCategory, string>> = {
   MilkDesserts: '🥛', JellyAndGelatin: '🟣', TraditionalDesserts: '🏺',
 };
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
 export function normalizeRecipe(raw: any): Recipe {
   return {
     ...raw,
     category: typeof raw.category === 'number'
       ? (INT_TO_CATEGORY[raw.category] ?? 'Sweats')
       : raw.category,
-    // ✅ tags - מגיע כ-JSON string מהשרת, ממיר למערך
     tags: raw.tags
       ? (typeof raw.tags === 'string' ? JSON.parse(raw.tags) : raw.tags)
       : [],
@@ -75,7 +71,6 @@ export function normalizeRecipe(raw: any): Recipe {
     })) ?? [],
   };
 }
-/* eslint-enable @typescript-eslint/no-explicit-any */
 
 export interface RecipeIngredient {
   ingredientId: number;
@@ -99,7 +94,7 @@ export interface Recipe {
   ingredients: RecipeIngredient[];
   averageRating?: number;
   commentCount?: number;
-  tags?: string[]; // ✅ תגיות חופשיות
+  tags?: string[];
 }
 
 export interface RecipeCreateDto {
@@ -118,7 +113,7 @@ export interface RecipeCreateDto {
     unit: string;
     importance?: string;
   }>;
-  tags?: string[]; // ✅
+  tags?: string[];
 }
 
 export interface RecipeUpdateDto {
@@ -137,7 +132,7 @@ export interface RecipeUpdateDto {
     unit: string;
     importance?: string;
   }>;
-  tags?: string[]; // ✅
+  tags?: string[];
 }
 
 export interface RecipeFilters {

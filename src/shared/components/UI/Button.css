@@ -1,0 +1,45 @@
+.btn {
+  border-radius: 999px;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: none;
+}
+
+/* Variants */
+.btn-primary {
+  background: linear-gradient(135deg, #e8799a, #d4547a);
+  color: white;
+  box-shadow: 0 4px 14px rgba(212, 84, 122, 0.3);
+}
+
+.btn-outline {
+  background: white;
+  color: #d4547a;
+  border: 2px solid #fce7f3;
+}
+
+.btn-danger {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.btn-ghost {
+  background: transparent;
+  color: #6b7280;
+  border: 2px solid #e5e7eb;
+}
+
+/* Sizes */
+.btn-sm { padding: 6px 16px;   font-size: 0.78rem; }
+.btn-md { padding: 10px 24px;  font-size: 0.9rem; }
+.btn-lg { padding: 14px 32px;  font-size: 1rem; }
+
+/* Modifiers */
+.btn-full     { width: 100%; }
+.btn-disabled { opacity: 0.7; cursor: not-allowed; }

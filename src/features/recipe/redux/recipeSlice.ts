@@ -1,6 +1,3 @@
-// ===============================================
-// Recipe Slice - RTK Query + Redux Slice
-// ===============================================
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
 import type { Recipe, RecipeCreateDto, RecipeUpdateDto, RecipeCategory } from '../types/recipe.types';
@@ -18,11 +15,9 @@ function serializeForServer(data: RecipeCreateDto | RecipeUpdateDto): any {
   };
 }
 
-const API_BASE_URL =
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  (import.meta as any).env?.VITE_API_BASE_URL || 'https://localhost:7244/api';
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const API_BASE_URL = (import.meta as any).env?.VITE_API_BASE_URL || 'https://localhost:7244/api';
 
-// ── טיפוס לתוצאת החיפוש המתקדם ──
 export interface AdvancedSearchResult {
   intent: {
     category: string | null;
@@ -49,7 +44,6 @@ export const recipesApi = createApi({
   tagTypes: ['Recipes', 'Recipe'],
 
   endpoints: (builder) => ({
-
     getRecipes: builder.query<Recipe[], void>({
       query: () => '/recipe',
       transformResponse: (raw: unknown[]) => raw.map(normalizeRecipe),
@@ -73,31 +67,17 @@ export const recipesApi = createApi({
     }),
 
     searchByIngredients: builder.query<Recipe[], string[]>({
-      query: (ingredients) => ({
-        url: '/recipe/search-by-ingredients',
-        method: 'POST',
-        body: ingredients,
-      }),
+      query: (ingredients) => ({ url: '/recipe/search-by-ingredients', method: 'POST', body: ingredients }),
       transformResponse: (raw: unknown[]) => raw.map(normalizeRecipe),
     }),
 
-    // ✅ חיפוש לפי תגיות
     searchByTags: builder.query<Recipe[], string[]>({
-      query: (tags) => ({
-        url: '/recipe/search-by-tags',
-        method: 'POST',
-        body: tags,
-      }),
+      query: (tags) => ({ url: '/recipe/search-by-tags', method: 'POST', body: tags }),
       transformResponse: (raw: unknown[]) => raw.map(normalizeRecipe),
     }),
 
-    // ✅ חיפוש מתקדם — ניתוח טקסט חופשי + תוצאות
     analyzeAndSearch: builder.query<AdvancedSearchResult, string>({
-      query: (text) => ({
-        url: '/search/advanced',
-        method: 'POST',
-        body: JSON.stringify(text),
-      }),
+      query: (text) => ({ url: '/search/advanced', method: 'POST', body: JSON.stringify(text) }),
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       transformResponse: (raw: any) => ({
         intent: raw.intent,
@@ -106,47 +86,39 @@ export const recipesApi = createApi({
     }),
 
     createRecipe: builder.mutation<Recipe, RecipeCreateDto>({
-      query: (newRecipe) => ({
-        url: '/recipe',
-        method: 'POST',
-        body: serializeForServer(newRecipe),
-      }),
+      query: (newRecipe) => ({ url: '/recipe', method: 'POST', body: serializeForServer(newRecipe) }),
       transformResponse: (raw: unknown) => normalizeRecipe(raw),
       async onQueryStarted(newRecipe, { dispatch, queryFulfilled }) {
         const tempId = Date.now();
-        const patchResult = dispatch(
+        const patch = dispatch(
           recipesApi.util.updateQueryData('getRecipes', undefined, (draft) => {
             draft.unshift({ ...newRecipe, id: tempId, averageRating: 0, commentCount: 0 } as Recipe);
           })
         );
         try {
-          const { data: createdRecipe } = await queryFulfilled;
+          const { data: created } = await queryFulfilled;
           dispatch(
             recipesApi.util.updateQueryData('getRecipes', undefined, (draft) => {
-              const index = draft.findIndex((r) => r.id === tempId);
-              if (index !== -1) draft[index] = createdRecipe;
+              const idx = draft.findIndex((r) => r.id === tempId);
+              if (idx !== -1) draft[idx] = created;
             })
           );
-        } catch { patchResult.undo(); }
+        } catch { patch.undo(); }
       },
       invalidatesTags: ['Recipes'],
     }),
 
     updateRecipe: builder.mutation<Recipe, { id: number; data: RecipeUpdateDto }>({
-      query: ({ id, data }) => ({
-        url: `/recipe/${id}`,
-        method: 'PATCH',
-        body: serializeForServer(data),
-      }),
+      query: ({ id, data }) => ({ url: `/recipe/${id}`, method: 'PATCH', body: serializeForServer(data) }),
       transformResponse: (raw: unknown) => normalizeRecipe(raw),
       async onQueryStarted({ id, data }, { dispatch, queryFulfilled }) {
-        const patchResult = dispatch(
+        const patch = dispatch(
           recipesApi.util.updateQueryData('getRecipes', undefined, (draft) => {
-            const index = draft.findIndex((r) => r.id === id);
-            if (index !== -1) draft[index] = { ...draft[index], ...data } as Recipe;
+            const idx = draft.findIndex((r) => r.id === id);
+            if (idx !== -1) draft[idx] = { ...draft[idx], ...data } as Recipe;
           })
         );
-        try { await queryFulfilled; } catch { patchResult.undo(); }
+        try { await queryFulfilled; } catch { patch.undo(); }
       },
       invalidatesTags: (_result, _error, { id }) => ['Recipes', { type: 'Recipe', id }],
     }),
@@ -154,13 +126,13 @@ export const recipesApi = createApi({
     deleteRecipe: builder.mutation<void, number>({
       query: (id) => ({ url: `/recipe/${id}`, method: 'DELETE' }),
       async onQueryStarted(id, { dispatch, queryFulfilled }) {
-        const patchResult = dispatch(
+        const patch = dispatch(
           recipesApi.util.updateQueryData('getRecipes', undefined, (draft) => {
-            const index = draft.findIndex((r) => r.id === id);
-            if (index !== -1) draft.splice(index, 1);
+            const idx = draft.findIndex((r) => r.id === id);
+            if (idx !== -1) draft.splice(idx, 1);
           })
         );
-        try { await queryFulfilled; } catch { patchResult.undo(); }
+        try { await queryFulfilled; } catch { patch.undo(); }
       },
       invalidatesTags: ['Recipes'],
     }),
@@ -174,13 +146,13 @@ export const {
   useGetRecipesByCategoryQuery,
   useSearchByIngredientsQuery,
   useSearchByTagsQuery,
-  useAnalyzeAndSearchQuery,        // ✅ חדש
+  useAnalyzeAndSearchQuery,
   useCreateRecipeMutation,
   useUpdateRecipeMutation,
   useDeleteRecipeMutation,
 } = recipesApi;
 
-// ── Recipe Panel Slice ──
+// Recipe Panel Slice
 
 interface RecipePanelState {
   selectedCategory: RecipeCategory | null;
@@ -190,7 +162,10 @@ interface RecipePanelState {
 }
 
 const initialPanelState: RecipePanelState = {
-  selectedCategory: null, searchTerm: '', currentPage: 1, pageSize: 12,
+  selectedCategory: null,
+  searchTerm: '',
+  currentPage: 1,
+  pageSize: 12,
 };
 
 const recipePanelSlice = createSlice({
@@ -198,21 +173,34 @@ const recipePanelSlice = createSlice({
   initialState: initialPanelState,
   reducers: {
     setSelectedCategory: (state, action: PayloadAction<RecipeCategory | null>) => {
-      state.selectedCategory = action.payload; state.currentPage = 1;
+      state.selectedCategory = action.payload;
+      state.currentPage = 1;
     },
     setSearchTerm: (state, action: PayloadAction<string>) => {
-      state.searchTerm = action.payload; state.currentPage = 1;
+      state.searchTerm = action.payload;
+      state.currentPage = 1;
     },
     nextPage: (state) => { state.currentPage += 1; },
     previousPage: (state) => { if (state.currentPage > 1) state.currentPage -= 1; },
     setPageSize: (state, action: PayloadAction<number>) => {
-      state.pageSize = action.payload; state.currentPage = 1;
+      state.pageSize = action.payload;
+      state.currentPage = 1;
     },
     resetFilters: (state) => {
-      state.selectedCategory = null; state.searchTerm = ''; state.currentPage = 1;
+      state.selectedCategory = null;
+      state.searchTerm = '';
+      state.currentPage = 1;
     },
   },
 });
 
-export const { setSelectedCategory, setSearchTerm, nextPage, previousPage, setPageSize, resetFilters } = recipePanelSlice.actions;
+export const {
+  setSelectedCategory,
+  setSearchTerm,
+  nextPage,
+  previousPage,
+  setPageSize,
+  resetFilters,
+} = recipePanelSlice.actions;
+
 export default recipePanelSlice.reducer;

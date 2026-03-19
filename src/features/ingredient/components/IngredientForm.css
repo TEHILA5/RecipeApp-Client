@@ -1,0 +1,61 @@
+.if-wrap {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  width: 100%;
+}
+
+.if-field { flex: 1; }
+
+.if-input {
+  width: 100%;
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 2px solid #fce7f3;
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.9rem;
+  box-sizing: border-box;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.if-input--error { border-color: #ef4444; }
+
+.if-error {
+  color: #ef4444;
+  font-size: 0.78rem;
+  margin: 4px 0 0;
+}
+
+.if-btn {
+  padding: 10px 20px;
+  border-radius: 999px;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 700;
+  font-size: 0.85rem;
+  white-space: nowrap;
+  transition: all 0.2s;
+  cursor: pointer;
+}
+
+.if-btn--save {
+  border: none;
+  background: #e5e7eb;
+  color: #9ca3af;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.if-btn--save-active {
+  background: linear-gradient(135deg, #e8799a, #d4547a);
+  color: white;
+  cursor: pointer;
+  box-shadow: 0 3px 10px rgba(212, 84, 122, 0.3);
+}
+
+.if-btn--cancel {
+  padding: 10px 16px;
+  border: 2px solid #e5e7eb;
+  background: white;
+  color: #6b7280;
+}

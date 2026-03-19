@@ -1,7 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-// ===============================================
-// Auth Slice - ניהול התחברות ב-Redux
-// ===============================================
 import { createSlice, createAsyncThunk, type PayloadAction } from '@reduxjs/toolkit';
 import * as authApi from '../../../api/authApi';
 import type { LoginPayload, RegisterPayload } from '../../../api/authApi';
@@ -37,18 +34,16 @@ const isAdminFromToken = (token: string): boolean => {
   } catch { return false; }
 };
 
-// ── Thunks ──
-
 export const loginUser = createAsyncThunk(
   'auth/login',
   async (credentials: LoginPayload, { rejectWithValue }) => {
     try {
-      const response = await authApi.login(credentials);
-      localStorage.setItem('token', response.token);
-      localStorage.setItem('user', JSON.stringify(response.user));
-      return response;
-    } catch (error: any) {
-      return rejectWithValue(error.message || 'Login failed');
+      const res = await authApi.login(credentials);
+      localStorage.setItem('token', res.token);
+      localStorage.setItem('user', JSON.stringify(res.user));
+      return res;
+    } catch (err: any) {
+      return rejectWithValue(err.message || 'Login failed');
     }
   }
 );
@@ -57,12 +52,12 @@ export const registerUser = createAsyncThunk(
   'auth/register',
   async (userData: RegisterPayload, { rejectWithValue }) => {
     try {
-      const response = await authApi.register(userData);
-      localStorage.setItem('token', response.token);
-      localStorage.setItem('user', JSON.stringify(response.user));
-      return response;
-    } catch (error: any) {
-      return rejectWithValue(error.message || 'Registration failed');
+      const res = await authApi.register(userData);
+      localStorage.setItem('token', res.token);
+      localStorage.setItem('user', JSON.stringify(res.user));
+      return res;
+    } catch (err: any) {
+      return rejectWithValue(err.message || 'Registration failed');
     }
   }
 );
@@ -74,12 +69,11 @@ export const checkAuth = createAsyncThunk(
       const token = localStorage.getItem('token');
       const userStr = localStorage.getItem('user');
       if (!token || !userStr) throw new Error('No authentication found');
-      const user = JSON.parse(userStr);
-      return { user, token };
-    } catch (error: any) {
+      return { user: JSON.parse(userStr), token };
+    } catch (err: any) {
       localStorage.removeItem('token');
       localStorage.removeItem('user');
-      return rejectWithValue('Not authenticated: ' + error.message);
+      return rejectWithValue('Not authenticated: ' + err.message);
     }
   }
 );
@@ -89,13 +83,11 @@ export const fetchCurrentUser = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       return await authApi.getMe();
-    } catch (error: any) {
-      return rejectWithValue(error.message || 'Failed to fetch user');
+    } catch (err: any) {
+      return rejectWithValue(err.message || 'Failed to fetch user');
     }
   }
 );
-
-// ── Slice ──
 
 const authSlice = createSlice({
   name: 'auth',

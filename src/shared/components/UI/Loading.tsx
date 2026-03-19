@@ -1,6 +1,5 @@
-// ===============================================
-// Loading - ספינר טעינה
-// ===============================================
+import './Loading.css';
+
 interface LoadingProps {
   message?: string;
   size?: 'sm' | 'md' | 'lg';
@@ -17,26 +16,15 @@ export default function Loading({
   fullPage = false,
 }: LoadingProps) {
   const px = sizes[size];
+  const borderWidth = size === 'sm' ? 2 : 3;
 
   return (
-    <div style={{
-      display: 'flex', flexDirection: 'column',
-      alignItems: 'center', justifyContent: 'center',
-      minHeight: fullPage ? '60vh' : undefined,
-      padding: '40px',
-      fontFamily: "'Nunito',sans-serif",
-      color: '#9ca3af',
-    }}>
-      <div style={{
-        width: px, height: px,
-        border: `${size === 'sm' ? 2 : 3}px solid #fce7f3`,
-        borderTopColor: color,
-        borderRadius: '50%',
-        animation: 'spin 0.8s linear infinite',
-        marginBottom: message ? '12px' : 0,
-      }} />
-      <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
-      {message && <p style={{ margin: 0, fontWeight: 600, fontSize: '0.9rem' }}>{message}</p>}
+    <div className={`loading ${fullPage ? 'loading--full' : ''}`}>
+      <div
+        className="loading__spinner"
+        style={{ width: px, height: px, borderWidth, borderTopColor: color }}
+      />
+      {message && <p className="loading__message">{message}</p>}
     </div>
   );
 }

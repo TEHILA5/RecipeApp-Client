@@ -1,7 +1,3 @@
-// ===============================================
-// Redux Store - src/app/store.ts
-// ===============================================
-
 import { configureStore } from '@reduxjs/toolkit';
 import authReducer from '../features/auth/redux/authSlice';
 import ingredientReducer from '../features/ingredient/redux/ingredientSlice';
@@ -15,22 +11,11 @@ export const store = configureStore({
   reducer: {
     auth: authReducer,
     ingredients: ingredientReducer,
-
-    // ✅ סטייט גלובלי לפילטרים/עמודים
     recipePanel: recipePanelReducer,
-
-    // ✅ RTK Query cache
     [recipesApi.reducerPath]: recipesApi.reducer,
-
     ui: uiReducer,
-
-    // ✅ נתוני Admin - conversions + users
     admin: adminReducer,
-
-    // ✅ נתוני משתמש - saved recipes + comments
     user: userReducer,
-
-    // ✅ state של חיפוש
     search: searchReducer,
   },
   middleware: (getDefaultMiddleware) =>

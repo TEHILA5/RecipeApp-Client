@@ -1,6 +1,3 @@
-// ===============================================
-// Register Page - Sweet&Treat
-// ===============================================
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../../redux/hooks';

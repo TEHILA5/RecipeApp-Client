@@ -1,6 +1,3 @@
-// ===============================================
-// SearchPage - חיפוש מתכונים + Advanced Search
-// ===============================================
 import { useState, useEffect, useRef } from 'react';
 import {
   useGetRecipesQuery,
@@ -15,44 +12,51 @@ import {
   setActiveResultTab,
 } from '../redux/searchSlice';
 import { useDebounce } from '../../../shared/hooks/useDebounce';
-import { type Recipe, type RecipeCategory } from '../../recipe/types/recipe.types';
+import { type Recipe } from '../../recipe/types/recipe.types';
 import { getAllConversions, getAlternativesForIngredient, type ConversionDto } from '../../../api/conversionApi';
 import SearchBar from '../components/SearchBar';
 import SearchFilters from '../components/SearchFilters';
 import SearchResults from '../components/SearchResults';
 import AdvancedSearch from '../components/AdvancedSearch';
+import './SearchPage.css';
 
 type SearchMode = 'name' | 'category' | 'ingredients' | 'advanced';
 type BaseSearchMode = 'name' | 'category' | 'ingredients';
 
+const TABS: { key: SearchMode; label: string; emoji: string }[] = [
+  { key: 'name',        label: 'By Name',        emoji: '🔤' },
+  { key: 'category',    label: 'By Category',    emoji: '📂' },
+  { key: 'ingredients', label: 'By Ingredients', emoji: '🧂' },
+  { key: 'advanced',    label: 'Smart Search',   emoji: '🔮' },
+];
+
 export default function SearchPage() {
   const dispatch = useAppDispatch();
   const { isAuthenticated } = useAppSelector((s) => s.auth);
+  const { mode, nameInput, categoryInput, ingredientList, activeResultTab } = useAppSelector((s) => s.search);
 
-  const { mode, nameInput, categoryInput, ingredientList, activeResultTab } =
-    useAppSelector((s) => s.search);
+  // Local state to track the active tab (includes 'advanced' which is UI-only)
+  const [activeTab, setActiveTab] = useState<SearchMode>(mode);
 
   const [ingredientInput, setIngredientInput] = useState('');
-  const allConversionsRef = useRef<ConversionDto[]>([]);
   const [allConversions, setAllConversions] = useState<ConversionDto[]>([]);
   const [alternativeResults, setAlternativeResults] = useState<{
     recipe: Recipe;
     matchedVia: { original: string; alternative: string }[];
   }[]>([]);
   const [loadingAlternatives, setLoadingAlternatives] = useState(false);
+  const conversionsRef = useRef<ConversionDto[]>([]);
 
   useEffect(() => {
     getAllConversions().then((data) => {
-      allConversionsRef.current = data;
+      conversionsRef.current = data;
       setAllConversions(data);
     }).catch(() => {});
   }, []);
 
   const debouncedName = useDebounce(nameInput, 400);
 
-  const { data: allRecipes = [], isLoading: loadingAll } = useGetRecipesQuery(undefined, {
-    skip: mode !== 'name',
-  });
+  const { data: allRecipes = [], isLoading: loadingAll } = useGetRecipesQuery(undefined, { skip: mode !== 'name' });
   const { data: categoryResults = [], isLoading: loadingCat } = useGetRecipesByCategoryQuery(
     categoryInput as string,
     { skip: mode !== 'category' || !categoryInput }
@@ -61,11 +65,8 @@ export default function SearchPage() {
     ingredientList,
     { skip: mode !== 'ingredients' || ingredientList.length === 0 }
   );
-  const { data: allRecipesForAlt = [] } = useGetRecipesQuery(undefined, {
-    skip: mode !== 'ingredients',
-  });
+  const { data: allRecipesForAlt = [] } = useGetRecipesQuery(undefined, { skip: mode !== 'ingredients' });
 
-  // ── חיפוש חלופות ──
   useEffect(() => {
     if (mode !== 'ingredients' || ingredientList.length === 0 || loadingIng) {
       setAlternativeResults((prev) => prev.length === 0 ? prev : []);
@@ -80,44 +81,34 @@ export default function SearchPage() {
     const run = async () => {
       setLoadingAlternatives(true);
       await Promise.resolve();
-      const conversions = allConversionsRef.current;
-      const alternativeMap: Record<string, string[]> = {};
+
+      const conversions = conversionsRef.current;
+      const altMap: Record<string, string[]> = {};
       for (const ing of ingredientList) {
         const alts = getAlternativesForIngredient(ing, conversions);
-        alternativeMap[ing] = alts.map((a) => a.alternativeName.toLowerCase());
+        altMap[ing] = alts.map((a) => a.alternativeName.toLowerCase());
       }
 
-      const matched: { recipe: Recipe; matchedVia: { original: string; alternative: string }[] }[] = [];
-
+      const matched: typeof alternativeResults = [];
       for (const recipe of allRecipesForAlt) {
-        const recipeIngredients = recipe.ingredients?.map((i) =>
-          (i.ingredientName ?? '').toLowerCase()
-        ) ?? [];
+        const recipeIngs = recipe.ingredients?.map((i) => (i.ingredientName ?? '').toLowerCase()) ?? [];
         const matchedVia: { original: string; alternative: string }[] = [];
-        let allIngredientsMatched = true;
+        let allMatched = true;
 
         for (const ing of ingredientList) {
           const ingLower = ing.toLowerCase();
-          const alternatives = alternativeMap[ing] ?? [];
-          const directMatch = recipeIngredients.some((ri) => ri.includes(ingLower));
-          if (directMatch) continue;
-          let foundViaAlternative = false;
-          for (const alt of alternatives) {
-            if (recipeIngredients.some((ri) => ri.includes(alt))) {
-              matchedVia.push({ original: ing, alternative: alt });
-              foundViaAlternative = true;
-              break;
-            }
-          }
-          if (!foundViaAlternative) {
-            allIngredientsMatched = false;
+          if (recipeIngs.some((ri) => ri.includes(ingLower))) continue;
+
+          const alt = (altMap[ing] ?? []).find((a) => recipeIngs.some((ri) => ri.includes(a)));
+          if (alt) {
+            matchedVia.push({ original: ing, alternative: alt });
+          } else {
+            allMatched = false;
             break;
           }
         }
 
-        if (allIngredientsMatched && matchedVia.length > 0) {
-          matched.push({ recipe, matchedVia });
-        }
+        if (allMatched && matchedVia.length > 0) matched.push({ recipe, matchedVia });
       }
 
       setAlternativeResults(matched);
@@ -129,8 +120,6 @@ export default function SearchPage() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ingredientResults, ingredientList, loadingIng, mode]);
 
-  const isLoading = loadingAll || loadingCat || loadingIng;
-
   const nameResults: Recipe[] = debouncedName
     ? allRecipes.filter((r) =>
         r.name.toLowerCase().includes(debouncedName.toLowerCase()) ||
@@ -138,7 +127,7 @@ export default function SearchPage() {
       )
     : [];
 
-  const results: Recipe[] =
+  const results =
     mode === 'name' ? nameResults :
     mode === 'category' ? categoryResults :
     ingredientResults;
@@ -149,7 +138,10 @@ export default function SearchPage() {
     (mode === 'ingredients' && ingredientList.length > 0);
 
   const handleSetMode = (newMode: SearchMode) => {
-    dispatch(setMode(newMode as BaseSearchMode));
+    setActiveTab(newMode);
+    if (newMode !== 'advanced') {
+      dispatch(setMode(newMode as BaseSearchMode));
+    }
     dispatch(setSearchTerm(''));
     dispatch(setSelectedCategory(null));
     setIngredientInput('');
@@ -158,18 +150,16 @@ export default function SearchPage() {
 
   const handleAddIngredient = () => {
     const trimmed = ingredientInput.trim();
-    if (trimmed) {
-      dispatch(addIngredient(trimmed));
-      dispatch(setSearchTerm([...ingredientList, trimmed].join(', ')));
-      dispatch(setActiveResultTab('results'));
-    }
+    if (!trimmed) return;
+    dispatch(addIngredient(trimmed));
+    dispatch(setSearchTerm([...ingredientList, trimmed].join(', ')));
+    dispatch(setActiveResultTab('results'));
     setIngredientInput('');
   };
 
   const handleRemoveIngredient = (ing: string) => {
     dispatch(removeIngredient(ing));
-    const next = ingredientList.filter((i) => i !== ing);
-    dispatch(setSearchTerm(next.join(', ')));
+    dispatch(setSearchTerm(ingredientList.filter((i) => i !== ing).join(', ')));
   };
 
   const handleClearIngredients = () => {
@@ -179,81 +169,38 @@ export default function SearchPage() {
     dispatch(setActiveResultTab('results'));
   };
 
-  const handleSetCategory = (cat: RecipeCategory | '') => {
-    dispatch(setCategoryInput(cat));
-    dispatch(setSelectedCategory(cat || null));
-  };
-
-  // ── טאבים ──
-  const tabs: { key: SearchMode; label: string; emoji: string }[] = [
-    { key: 'name',        label: 'By Name',       emoji: '🔤' },
-    { key: 'category',    label: 'By Category',   emoji: '📂' },
-    { key: 'ingredients', label: 'By Ingredients',emoji: '🧂' },
-    { key: 'advanced',    label: 'Smart Search',   emoji: '🔮' },
-  ];
-
   return (
-    <div style={{ minHeight: '100vh', background: '#fdf2f8', paddingTop: 'var(--nav-height, 70px)', fontFamily: "'Nunito', sans-serif" }}>
-
-      {/* Header */}
-      <div style={{ background: 'linear-gradient(135deg, rgba(232,121,154,0.08), rgba(232,196,154,0.08))', padding: '48px 24px 36px', borderBottom: '2px solid rgba(232,121,154,0.1)' }}>
-        <div style={{ maxWidth: '760px', margin: '0 auto', textAlign: 'center' }}>
-          <div style={{ fontSize: '0.78rem', fontWeight: 700, color: '#d4547a', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: '10px' }}>✦ Find Your Recipe</div>
-          <h1 style={{ fontFamily: "'Dancing Script', cursive", fontSize: 'clamp(2.2rem, 4vw, 3rem)', color: '#1f2937', marginBottom: '10px', lineHeight: 1.1 }}>
-            Search <span style={{ color: '#d4547a' }}>Recipes</span> 🔍
-          </h1>
-          <p style={{ color: '#9ca3af', fontSize: '0.95rem', fontWeight: 500 }}>
-            {(mode as SearchMode) === 'advanced'
+    <div className="search-page">
+      <div className="search-header">
+        <div className="search-header-inner">
+          <div className="header-eyebrow">✦ Find Your Recipe</div>
+          <h1>Search <span>Recipes</span> 🔍</h1>
+          <p>
+            {activeTab === 'advanced'
               ? 'Describe what you want in plain English — let AI do the rest'
               : 'Find the perfect dessert by name, category, or ingredients'}
           </p>
         </div>
       </div>
 
-      <div style={{ maxWidth: '760px', margin: '0 auto', padding: '32px 24px' }}>
-
-        {/* Mode Tabs */}
-        <div style={{ display: 'flex', gap: '4px', background: '#f3e8ef', borderRadius: '999px', padding: '4px', marginBottom: '28px' }}>
-          {tabs.map(({ key, label, emoji }) => {
-            const isActive = mode === key;
-            const isAI = key === 'advanced';
-            return (
-              <button
-                key={key}
-                onClick={() => handleSetMode(key)}
-                style={{
-                  flex: 1,
-                  padding: '10px 8px',
-                  borderRadius: '999px',
-                  border: 'none',
-                  fontFamily: "'Nunito', sans-serif",
-                  fontWeight: 700,
-                  fontSize: '0.82rem',
-                  cursor: 'pointer',
-                  transition: 'all 0.2s',
-                  background: isActive
-                    ? isAI ? 'linear-gradient(135deg, #d4547a, #9b59b6)' : 'white'
-                    : 'transparent',
-                  color: isActive
-                    ? isAI ? 'white' : '#d4547a'
-                    : '#9ca3af',
-                  boxShadow: isActive ? '0 2px 10px rgba(212,84,122,0.15)' : 'none',
-                  whiteSpace: 'nowrap',
-                }}
-              >
-                {emoji} {label}
-              </button>
-            );
-          })}
+      <div className="search-body">
+        <div className="search-tabs">
+          {TABS.map(({ key, label, emoji }) => (
+            <button
+              key={key}
+              onClick={() => handleSetMode(key)}
+              className={`search-tab ${activeTab === key ? 'active' : ''} ${key === 'advanced' ? 'ai' : ''}`}
+            >
+              {emoji} {label}
+            </button>
+          ))}
         </div>
 
-        {/* Advanced Search Mode */}
-        {(mode as SearchMode) === 'advanced' ? (
+        {activeTab === 'advanced' ? (
           <AdvancedSearch />
         ) : (
           <>
-            {/* Search Input */}
-            <div style={{ background: 'white', borderRadius: '20px', padding: '24px', boxShadow: '0 4px 20px rgba(212,84,122,0.07)', marginBottom: '28px' }}>
+            <div className="search-input-card">
               {mode === 'name' && (
                 <SearchBar
                   value={nameInput}
@@ -265,7 +212,10 @@ export default function SearchPage() {
                 <SearchFilters
                   mode={mode}
                   categoryInput={categoryInput}
-                  onCategoryChange={handleSetCategory}
+                  onCategoryChange={(cat) => {
+                    dispatch(setCategoryInput(cat));
+                    dispatch(setSelectedCategory(cat || null));
+                  }}
                   ingredientInput={ingredientInput}
                   onIngredientInputChange={setIngredientInput}
                   ingredientList={ingredientList}
@@ -276,11 +226,10 @@ export default function SearchPage() {
               )}
             </div>
 
-            {/* Results */}
             <SearchResults
               mode={mode}
               results={results}
-              loading={isLoading}
+              loading={loadingAll || loadingCat || loadingIng}
               hasSearched={hasSearched}
               isAuthenticated={isAuthenticated}
               alternativeResults={alternativeResults}
