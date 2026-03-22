@@ -109,7 +109,11 @@ export const recipesApi = createApi({
     }),
 
     updateRecipe: builder.mutation<Recipe, { id: number; data: RecipeUpdateDto }>({
-      query: ({ id, data }) => ({ url: `/recipe/${id}`, method: 'PATCH', body: serializeForServer(data) }),
+      query: ({ id, data }) => ({
+        url: `/recipe/${id}`,
+        method: 'PATCH',
+        body: serializeForServer(data),
+      }),
       transformResponse: (raw: unknown) => normalizeRecipe(raw),
       async onQueryStarted({ id, data }, { dispatch, queryFulfilled }) {
         const patch = dispatch(

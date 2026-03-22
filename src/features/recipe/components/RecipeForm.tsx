@@ -68,7 +68,12 @@ function SectionTitle({ icon, title }: { icon: string; title: string }) {
 }
 
 export default function RecipeForm({ initialData, onSubmit, loading = false, submitLabel = 'Save Recipe' }: RecipeFormProps) {
-  const [form, setForm] = useState<RecipeFormData>({ ...defaultForm, ...initialData, tags: initialData?.tags ?? [] });
+  const [form, setForm] = useState<RecipeFormData>({
+    ...defaultForm,
+    ...initialData,
+    tags: initialData?.tags ?? [],
+    ingredients: initialData?.ingredients ?? [], // ← תיקון: מוודא שמצרכים תמיד מאותחלים
+  });
   const [errors, setErrors] = useState<Partial<Record<keyof RecipeFormData, string>>>({});
   const [ingredientOptions, setIngredientOptions] = useState<IngredientOption[]>([]);
   const [showNewIngredientModal, setShowNewIngredientModal] = useState(false);
@@ -79,6 +84,18 @@ export default function RecipeForm({ initialData, onSubmit, loading = false, sub
   const [newIngredient, setNewIngredient] = useState<FormIngredient>({
     ingredientId: 0, ingredientName: '', quantity: 1, unit: 'g', importance: 'Essential',
   });
+
+  // ← תיקון: כשה-initialData מגיע (async מה-API) — מעדכנים את הטופס
+  useEffect(() => {
+    if (initialData) {
+      setForm({
+        ...defaultForm,
+        ...initialData,
+        tags: initialData.tags ?? [],
+        ingredients: initialData.ingredients ?? [],
+      });
+    }
+  }, [initialData?.name, initialData?.ingredients?.length]);
 
   useEffect(() => {
     ingredientApi.getAllIngredients().then(setIngredientOptions).catch(() => {});
@@ -334,7 +351,7 @@ export default function RecipeForm({ initialData, onSubmit, loading = false, sub
           placeholder="e.g. Vanilla Extract"
           className={`rf-input ${newIngredientError ? 'rf-input--error' : ''}`}
         />
-        <ErrorMessage message={newIngredientError} style={{ marginTop: '8px' }} />
+        <ErrorMessage message={newIngredientError} className="rf-ingredient-error" />
         <div className="rf-modal-actions">
           <Button variant="ghost" onClick={() => setShowNewIngredientModal(false)} fullWidth>Cancel</Button>
           <Button onClick={handleCreateNewIngredient} loading={savingNewIngredient} disabled={!newIngredientName.trim()} fullWidth>✨ Create</Button>

@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import axiosInstance, { handleApiError } from './axiosConfig';
 import type { UserActionDto, BookCreateDto, CommentCreateDto, HistoryCreateDto } from '../features/recipe/types/userAction.types';
+import { CATEGORY_TO_INT } from '../features/recipe/types/recipe.types';
 
 export const getMySavedRecipes = async (): Promise<UserActionDto[]> => {
   try {
@@ -73,10 +74,12 @@ export const removeComment = async (recipeId: number): Promise<void> => {
 };
 
 export const addHistory = async (data: HistoryCreateDto): Promise<void> => {
-  try {
-    await axiosInstance.post('/useraction/history', data);
+  try { 
+    await axiosInstance.post('/useraction/history', {
+      category: CATEGORY_TO_INT[data.category] ?? 0,
+    });
   } catch {
-    // silent fail
+    // silent fail - history is not critical
   }
 };
 

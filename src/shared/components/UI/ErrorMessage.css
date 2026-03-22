@@ -11,3 +11,7 @@
   align-items: center;
   gap: 8px;
 }
+
+.rf-ingredient-error {
+  margin-top: 8px;
+}
