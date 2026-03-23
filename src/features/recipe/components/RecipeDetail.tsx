@@ -5,7 +5,7 @@ import { useDeleteRecipeMutation } from '../redux/recipeSlice';
 import { getMySavedRecipes, addBookmark, removeBookmark, addComment, addHistory, getRecipeComments } from '../../../api/userActionApi';
 import type { Recipe } from '../types/recipe.types';
 import type { UserActionDto, CommentCreateDto } from '../types/userAction.types';
-import { LEVEL_LABELS, CATEGORY_EMOJIS } from '../types/recipe.types';
+import { LEVEL_LABELS, CATEGORY_IMAGES } from '../types/recipe.types';
 import IngredientList from './IngredientList';
 import Modal from '../../../shared/components/UI/Modal';
 import './RecipeDetail.css';
@@ -51,7 +51,7 @@ export default function RecipeDetail({ recipe, onCommentAdded }: RecipeDetailPro
   const [activeTab, setActiveTab] = useState<'ingredients' | 'instructions' | 'comments'>('ingredients');
   const [hasCommented, setHasCommented] = useState(false);
 
-  const emoji = CATEGORY_EMOJIS[recipe.category] ?? '🍰';
+  const categoryImg = CATEGORY_IMAGES[recipe.category];
   const levelLabel = LEVEL_LABELS[recipe.level as 1 | 2 | 3] ?? 'Easy';
 
   useEffect(() => {
@@ -141,7 +141,13 @@ export default function RecipeDetail({ recipe, onCommentAdded }: RecipeDetailPro
         <div className="rd-img-wrap">
           {recipe.arrImage
             ? <img src={recipe.arrImage} alt={recipe.name} className="rd-img" />
-            : <div className="rd-img-emoji">{emoji}</div>}
+            : <div className="rd-img-emoji">
+                {categoryImg
+                  ? <img src={categoryImg} alt={recipe.category} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+                  : '🍰'
+                }
+              </div>
+          }
           <div className="rd-img-overlay" />
 
           {isAdmin && (

@@ -1,5 +1,5 @@
 import type { RecipeCategory } from '../../recipe/types/recipe.types';
-import { CATEGORY_EMOJIS } from '../../recipe/types/recipe.types';
+import { CATEGORY_EMOJIS, CATEGORY_IMAGES } from '../../recipe/types/recipe.types';
 import './SearchFilters.css';
 
 type SearchMode = 'name' | 'category' | 'ingredients';
@@ -61,7 +61,7 @@ export default function SearchFilters({
       <p className="filter-hint">Select a category ({ALL_CATEGORIES.length} available):</p>
       <div className="category-chips">
         {ALL_CATEGORIES.map(({ value, label }) => {
-          const emoji = CATEGORY_EMOJIS[value] ?? '🍰';
+          const img = CATEGORY_IMAGES[value];
           const active = categoryInput === value;
           return (
             <button
@@ -69,7 +69,10 @@ export default function SearchFilters({
               onClick={() => onCategoryChange(active ? '' : value)}
               className={`category-chip ${active ? 'active' : ''}`}
             >
-              {emoji} {label}
+              {img
+                ? <img src={img} alt={label} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+                : <span style={{ fontSize: '0.85rem' }}>{label}</span>
+              }
             </button>
           );
         })}

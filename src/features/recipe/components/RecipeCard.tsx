@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import type { Recipe } from '../types/recipe.types';
-import { LEVEL_LABELS, CATEGORY_EMOJIS } from '../types/recipe.types';
+import { LEVEL_LABELS, CATEGORY_IMAGES } from '../types/recipe.types';
 import StarRating from '../../../shared/components/StarRating';
 import ImageLazyLoad from '../../../shared/components/ImageLazyLoad';
 
@@ -10,17 +10,20 @@ interface RecipeCardProps {
 }
 
 export default function RecipeCard({ recipe, badge }: RecipeCardProps) {
-  const emoji = CATEGORY_EMOJIS[recipe.category] ?? '🍰';
+  const categoryImg = CATEGORY_IMAGES[recipe.category];
   const levelLabel = LEVEL_LABELS[recipe.level as 1 | 2 | 3] ?? 'Easy';
+
+  const fallback = categoryImg
+    ? <img src={categoryImg} alt={recipe.category} style={{ width: '48px', height: '48px', objectFit: 'contain' }} />
+    : '🍰';
 
   return (
     <Link to={`/recipes/${recipe.id}`} className="recipe-card">
       <div className="card-img-wrap" style={{ aspectRatio: '4/3' }}>
-        {}
         <ImageLazyLoad
           src={recipe.arrImage}
           alt={recipe.name}
-          fallback={emoji}
+          fallback={fallback}
         />
         {badge && <div className="card-badge">{badge}</div>}
       </div>
@@ -36,7 +39,7 @@ export default function RecipeCard({ recipe, badge }: RecipeCardProps) {
             : recipe.description}
         </p>
         <div className="card-meta">
-          <span className="meta-item"><span className="meta-icon">⏱️</span> {recipe.totalTime} min</span>
+          <span className="meta-item"><span className="meta-icon">⏱️</span> {recipe.prepTime} min</span>
           <span className="meta-item"><span className="meta-icon">👨‍🍳</span> {levelLabel}</span>
           {recipe.servings && (
             <span className="meta-item"><span className="meta-icon">🍽️</span> {recipe.servings}</span>

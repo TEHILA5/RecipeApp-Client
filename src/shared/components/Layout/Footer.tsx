@@ -9,16 +9,17 @@ export default function Footer() {
           <div className="footer-brand">
             <div className="footer-logo">
               <span className="logo-text">Sweet&amp;Treat</span>
-              <span className="logo-emoji">🍰</span>
             </div>
             <p className="footer-tagline">
               A cozy corner of the internet dedicated to the art of
               dessert-making — with love, sugar, and a sprinkle of magic.
             </p>
+
+            {/* ✔️ אייקונים בלי קישורים */}
             <div className="social-links">
-              <a href="#" className="social-icon" aria-label="Instagram">📸</a>
-              <a href="#" className="social-icon" aria-label="Pinterest">📌</a>
-              <a href="#" className="social-icon" aria-label="TikTok">🎵</a>
+              <span className="social-icon" aria-label="Instagram">📸</span>
+              <span className="social-icon" aria-label="Pinterest">📌</span>
+              <span className="social-icon" aria-label="TikTok">🎵</span>
             </div>
           </div>
 
@@ -26,29 +27,29 @@ export default function Footer() {
             <h4>Recipes</h4>
             <ul>
               <li><Link to="/recipes">All Recipes</Link></li>
-              <li><Link to="/recipes?category=cakes">Cakes</Link></li>
-              <li><Link to="/recipes?category=cookies">Cookies</Link></li>
-              <li><Link to="/recipes?category=pastries">Pastries</Link></li>
+              <li><Link to="/recipes?category=Cakes">Cakes</Link></li>
+              <li><Link to="/recipes?category=Cookies">Cookies</Link></li>
+              <li><Link to="/recipes?category=Pastries">Pastries</Link></li>
             </ul>
           </div>
 
           <div className="footer-section">
             <h4>Sweety</h4>
             <ul>
-              <li><a href="#">Baking Tips</a></li>
-              <li><a href="#">Ingredient Guide</a></li>
-              <li><a href="#">Tools We Love</a></li>
-              <li><a href="#">FAQ</a></li>
+              <li><Link to="/baking-tips">Baking Tips</Link></li>
+              <li><Link to="/ingredient-guide">Ingredient Guide</Link></li>
+              <li><Link to="/tools">Tools We Love</Link></li>
+              <li><Link to="/faq">FAQ</Link></li>
             </ul>
           </div>
 
           <div className="footer-section">
             <h4>Connect</h4>
             <ul>
-              <li><a href="#">About Us</a></li>
-              <li><a href="#">Contact</a></li>
-              <li><a href="#">Newsletter</a></li>
-              <li><a href="#">Privacy</a></li>
+              <li><Link to="/about">About Us</Link></li>
+              <li><Link to="/contact">Contact</Link></li>
+              <li><Link to="/newsletter">Newsletter</Link></li>
+              <li><Link to="/privacy">Privacy</Link></li>
             </ul>
           </div>
         </div>

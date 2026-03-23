@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useGetRecipesQuery, useDeleteRecipeMutation } from '../../recipe/redux/recipeSlice';
-import { CATEGORY_EMOJIS } from '../../recipe/types/recipe.types';
+import { CATEGORY_IMAGES } from '../../recipe/types/recipe.types';
 import './RecipeModeration.css';
 
 export default function RecipeModeration() {
@@ -57,7 +57,7 @@ export default function RecipeModeration() {
             </thead>
             <tbody>
               {filtered.map((recipe, idx) => {
-                const emoji = CATEGORY_EMOJIS[recipe.category] ?? '🍰';
+                const categoryImg = CATEGORY_IMAGES[recipe.category];
                 const isDeleting = deletingId === recipe.id && deleting;
                 return (
                   <tr key={recipe.id} className={`rm-row ${idx % 2 === 0 ? 'rm-row-even' : 'rm-row-odd'} ${isDeleting ? 'rm-row-deleting' : ''}`}>
@@ -66,7 +66,10 @@ export default function RecipeModeration() {
                         <div className="rm-thumb">
                           {recipe.arrImage
                             ? <img src={recipe.arrImage} alt="" className="rm-thumb-img" />
-                            : <span className="rm-thumb-emoji">{emoji}</span>}
+                            : categoryImg
+                              ? <img src={categoryImg} alt={recipe.category} className="rm-thumb-img" />
+                              : <span className="rm-thumb-emoji">🍰</span>
+                          }
                         </div>
                         <div>
                           <div className="rm-recipe-name">{recipe.name}</div>
@@ -75,7 +78,13 @@ export default function RecipeModeration() {
                       </div>
                     </td>
                     <td className="rm-td">
-                      <span className="rm-category-badge">{emoji} {recipe.category}</span>
+                      <span className="rm-category-badge">
+                        {categoryImg
+                          ? <img src={categoryImg} alt={recipe.category} style={{ width: '20px', height: '20px', objectFit: 'contain', verticalAlign: 'middle', marginRight: '6px' }} />
+                          : '🍰 '
+                        }
+                        {recipe.category}
+                      </span>
                     </td>
                     <td className="rm-td rm-rating">⭐ {recipe.averageRating?.toFixed(1) ?? '—'}</td>
                     <td className="rm-td rm-time">⏱️ {recipe.totalTime}m</td>

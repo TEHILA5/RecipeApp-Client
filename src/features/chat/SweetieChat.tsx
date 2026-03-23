@@ -38,10 +38,13 @@ export default function SweetieChat() {
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    if (messages.length > 0 || loading) {
-      bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+  if (messages.length > 0 || loading) {
+    const container = bottomRef.current?.parentElement;
+    if (container) {
+      container.scrollTop = container.scrollHeight;
     }
-  }, [messages, loading]);
+  }
+}, [messages, loading]);
 
   const sendMessage = async (text?: string) => {
     const userText = (text ?? input).trim();

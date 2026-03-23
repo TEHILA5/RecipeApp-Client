@@ -49,7 +49,8 @@ export function useRecipes(): UseRecipesReturn {
     if (debouncedSearch.trim()) {
       const term = debouncedSearch.toLowerCase();
       result = result.filter(
-        (r) => r.name.toLowerCase().includes(term) || r.description.toLowerCase().includes(term)
+        (r) => r.name.toLowerCase().includes(term) 
+        //|| r.description.toLowerCase().includes(term)
       );
     }
 

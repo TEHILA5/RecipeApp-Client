@@ -1,6 +1,7 @@
 import { useState, useRef } from 'react';
 import { useClickOutside } from '../../../shared/hooks/useClickOutside';
 import type { RecipeCategory, DifficultyLevel } from '../types/recipe.types';
+import { CATEGORY_IMAGES } from '../types/recipe.types';
 
 interface Filters {
   category: RecipeCategory | null;
@@ -14,40 +15,40 @@ interface RecipeFiltersProps {
   onClear: () => void;
 }
 
-const POPULAR_CATEGORIES: { value: RecipeCategory; label: string; emoji: string }[] = [
-  { value: 'Cakes',       label: 'Cakes',       emoji: '🎂' },
-  { value: 'Cookies',     label: 'Cookies',     emoji: '🍪' },
-  { value: 'Cupcakes',    label: 'Cupcakes',    emoji: '🧁' },
-  { value: 'Brownies',    label: 'Brownies',    emoji: '🟫' },
-  { value: 'Cheesecakes', label: 'Cheesecakes', emoji: '🍰' },
-  { value: 'IceCream',    label: 'Ice Cream',   emoji: '🍦' },
-  { value: 'Pies',        label: 'Pies',        emoji: '🥧' },
-  { value: 'Pastries',    label: 'Pastries',    emoji: '🥐' },
-  { value: 'Donuts',      label: 'Donuts',      emoji: '🍩' },
+const POPULAR_CATEGORIES: { value: RecipeCategory; label: string }[] = [
+  { value: 'Cakes',       label: 'Cakes'       },
+  { value: 'Cookies',     label: 'Cookies'     },
+  { value: 'Cupcakes',    label: 'Cupcakes'    },
+  { value: 'Brownies',    label: 'Brownies'    },
+  { value: 'Cheesecakes', label: 'Cheesecakes' },
+  { value: 'IceCream',    label: 'Ice Cream'   },
+  { value: 'Pies',        label: 'Pies'        },
+  { value: 'Pastries',    label: 'Pastries'    },
+  { value: 'Donuts',      label: 'Donuts'      },
 ];
 
-const MORE_CATEGORIES: { value: RecipeCategory; label: string; emoji: string }[] = [
-  { value: 'Sweats',              label: 'Sweets',            emoji: '🍬' },
-  { value: 'BundtCakes',          label: 'Bundt Cakes',       emoji: '🎂' },
-  { value: 'Bars',                label: 'Bars',              emoji: '🍫' },
-  { value: 'Mousse',              label: 'Mousse',            emoji: '🍮' },
-  { value: 'Puddings',            label: 'Puddings',          emoji: '🍮' },
-  { value: 'Panna',               label: 'Panna Cotta',       emoji: '🍶' },
-  { value: 'Tiramisu',            label: 'Tiramisu',          emoji: '☕' },
-  { value: 'FrozenDesserts',      label: 'Frozen Desserts',   emoji: '🧊' },
-  { value: 'Tarts',               label: 'Tarts',             emoji: '🥧' },
-  { value: 'Crumbles',            label: 'Crumbles',          emoji: '🫐' },
-  { value: 'FruitSalads',         label: 'Fruit Salads',      emoji: '🍓' },
-  { value: 'Churros',             label: 'Churros',           emoji: '🌀' },
-  { value: 'Crepes',              label: 'Crepes',            emoji: '🥞' },
-  { value: 'Waffles',             label: 'Waffles',           emoji: '🧇' },
-  { value: 'NoBakeCakes',         label: 'No-Bake Cakes',     emoji: '❄️' },
-  { value: 'Truffles',            label: 'Truffles',          emoji: '🍫' },
-  { value: 'EnergyBalls',         label: 'Energy Balls',      emoji: '⚡' },
-  { value: 'SoufleeAndCustard',   label: 'Souflee & Custard', emoji: '🥚' },
-  { value: 'MilkDesserts',        label: 'Milk Desserts',     emoji: '🥛' },
-  { value: 'JellyAndGelatin',     label: 'Jelly & Gelatin',   emoji: '🟣' },
-  { value: 'TraditionalDesserts', label: 'Traditional',       emoji: '🏺' },
+const MORE_CATEGORIES: { value: RecipeCategory; label: string }[] = [
+  { value: 'Sweats',              label: 'Sweets'            },
+  { value: 'BundtCakes',          label: 'Bundt Cakes'       },
+  { value: 'Bars',                label: 'Bars'              },
+  { value: 'Mousse',              label: 'Mousse'            },
+  { value: 'Puddings',            label: 'Puddings'          },
+  { value: 'Panna',               label: 'Panna Cotta'       },
+  { value: 'Tiramisu',            label: 'Tiramisu'          },
+  { value: 'FrozenDesserts',      label: 'Frozen Desserts'   },
+  { value: 'Tarts',               label: 'Tarts'             },
+  { value: 'Crumbles',            label: 'Crumbles'          },
+  { value: 'FruitSalads',         label: 'Fruit Salads'      },
+  { value: 'Churros',             label: 'Churros'           },
+  { value: 'Crepes',              label: 'Crepes'            },
+  { value: 'Waffles',             label: 'Waffles'           },
+  { value: 'NoBakeCakes',         label: 'No-Bake Cakes'     },
+  { value: 'Truffles',            label: 'Truffles'          },
+  { value: 'EnergyBalls',         label: 'Energy Balls'      },
+  { value: 'SoufleeAndCustard',   label: 'Souflee & Custard' },
+  { value: 'MilkDesserts',        label: 'Milk Desserts'     },
+  { value: 'JellyAndGelatin',     label: 'Jelly & Gelatin'   },
+  { value: 'TraditionalDesserts', label: 'Traditional'       },
 ];
 
 const LEVELS: { value: DifficultyLevel; label: string; emoji: string }[] = [
@@ -61,6 +62,20 @@ const TIME_OPTIONS = [
   { value: 60,  label: 'Under 1 hour' },
   { value: 120, label: 'Under 2 hours' },
 ];
+
+function CategoryChip({ value, label, active, onClick }: {
+  value: RecipeCategory; label: string; active: boolean; onClick: () => void;
+}) {
+  const img = CATEGORY_IMAGES[value];
+  return (
+    <button onClick={onClick} className={`filter-chip ${active ? 'active' : ''}`}>
+      {img
+        ? <img src={img} alt={label} style={{ width: '74.4px', height: '90.4px', objectFit: 'cover', overflow: 'hidden', display: 'block' }} />
+        : '🍰'
+      } 
+    </button>
+  );
+}
 
 export default function RecipeFilters({ filters, onFilterChange, onClear }: RecipeFiltersProps) {
   const [isExpanded, setIsExpanded] = useState(false);
@@ -96,24 +111,24 @@ export default function RecipeFilters({ filters, onFilterChange, onClear }: Reci
         <div className="filter-group" ref={panelRef}>
           <h4 className="filter-title">Category</h4>
           <div className="filter-options">
-            {POPULAR_CATEGORIES.map(({ value, label, emoji }) => (
-              <button
+            {POPULAR_CATEGORIES.map(({ value, label }) => (
+              <CategoryChip
                 key={value}
+                value={value}
+                label={label}
+                active={filters.category === value}
                 onClick={() => setCategory(value)}
-                className={`filter-chip ${filters.category === value ? 'active' : ''}`}
-              >
-                <span>{emoji}</span> {label}
-              </button>
+              />
             ))}
 
-            {showMoreCategories && MORE_CATEGORIES.map(({ value, label, emoji }) => (
-              <button
+            {showMoreCategories && MORE_CATEGORIES.map(({ value, label }) => (
+              <CategoryChip
                 key={value}
+                value={value}
+                label={label}
+                active={filters.category === value}
                 onClick={() => setCategory(value)}
-                className={`filter-chip ${filters.category === value ? 'active' : ''}`}
-              >
-                <span>{emoji}</span> {label}
-              </button>
+              />
             ))}
 
             <button className="filter-chip dashed" onClick={() => setShowMore((v) => !v)}>

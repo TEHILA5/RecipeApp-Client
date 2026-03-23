@@ -54,6 +54,39 @@ export const CATEGORY_EMOJIS: Partial<Record<RecipeCategory, string>> = {
   MilkDesserts: '🥛', JellyAndGelatin: '🟣', TraditionalDesserts: '🏺',
 };
 
+export const CATEGORY_IMAGES: Partial<Record<RecipeCategory, string>> = {
+  Cakes:               '/src/assets/icons/cakes.png',
+  Cupcakes:            '/src/assets/icons/cupcakes.png',
+  Cheesecakes:         '/src/assets/icons/cheesecakes.png',
+  Cookies:             '/src/assets/icons/cookies.png',
+  Brownies:            '/src/assets/icons/brownies.png',
+  IceCream:            '/src/assets/icons/icecream.png',
+  Mousse:              '/src/assets/icons/mousse.png',
+  Tiramisu:            '/src/assets/icons/tiramisu.png',
+  Pies:                '/src/assets/icons/pies.png',
+  Tarts:               '/src/assets/icons/tarts.png',
+  Pastries:            '/src/assets/icons/pastries.png',
+  Donuts:              '/src/assets/icons/donuts.png',  
+  Crepes:              '/src/assets/icons/crepes.png',
+  Waffles:             '/src/assets/icons/waffles.png',
+  Truffles:            '/src/assets/icons/truffles.png',
+  NoBakeCakes:         '/src/assets/icons/nobakecakes.png',
+  Sweats:              '/src/assets/icons/sweats.png',
+  BundtCakes:          '/src/assets/icons/bundtcakes.png',
+  Bars:                '/src/assets/icons/bars.png',
+  Puddings:            '/src/assets/icons/puddings.png',
+  Panna:               '/src/assets/icons/panna.png',
+  FrozenDesserts:      '/src/assets/icons/frozendesserts.png',
+  Crumbles:            '/src/assets/icons/crumbles.png',
+  FruitSalads:         '/src/assets/icons/fruitsalads.png',
+  Churros:             '/src/assets/icons/churros.png',
+  EnergyBalls:         '/src/assets/icons/energyballs.png',
+  SoufleeAndCustard:   '/src/assets/icons/soufleeandcustard.png',
+  MilkDesserts:        '/src/assets/icons/milkdesserts.png',
+  JellyAndGelatin:     '/src/assets/icons/jellyandgelatin.png',
+  TraditionalDesserts: '/src/assets/icons/traditionaldesserts.png',
+};
+
 export function normalizeRecipe(raw: any): Recipe {
   return {
     ...raw,

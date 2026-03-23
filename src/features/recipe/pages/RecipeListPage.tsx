@@ -19,11 +19,17 @@ export default function RecipeListPage() {
     setSearchTerm, setSortBy, setFilters, resetFilters,
   } = useRecipes();
 
+  // ✅ תיקון כאן
   useEffect(() => {
     const cat = searchParams.get('category') as RecipeCategory | null;
-    if (cat && !filters.category) setFilters({ ...filters, category: cat });
+
+    setFilters({
+      ...filters,
+      category: cat || null,
+    });
+
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [searchParams]);
 
   const handleFilterChange = (newFilters: typeof filters) => {
     setFilters(newFilters);

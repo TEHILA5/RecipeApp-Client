@@ -16,7 +16,7 @@ import {
   fetchWeeklyStats,
   type WeeklyCategoryStats,
 } from '../redux/adminSlice';
-import { CATEGORY_EMOJIS, type RecipeCategory } from '../../recipe/types/recipe.types';
+import { CATEGORY_IMAGES, type RecipeCategory } from '../../recipe/types/recipe.types';
 import './AdminDashboard.css';
 
 type ActiveTab = 'overview' | 'recipes' | 'ingredients' | 'conversions' | 'users' | 'analytics';
@@ -57,6 +57,13 @@ const CATEGORY_COLORS: Record<string, string> = {
 };
 
 const getColor = (cat: string) => CATEGORY_COLORS[cat] ?? '#9ca3af';
+
+function CategoryIcon({ name }: { name: string }) {
+  const img = CATEGORY_IMAGES[name as RecipeCategory];
+  return img
+    ? <img src={img} alt={name} style={{ width: '24px', height: '30px', objectFit: 'contain' }} />
+    : <span>🧁</span>; // Fallback cupcake if image missing
+}
 
 // ── Analytics ──
 
@@ -119,7 +126,6 @@ function AnalyticsTab({ weeklyStats, loading }: { weeklyStats: WeeklyCategorySta
           {weekData.map((item) => {
             const pct = (item.viewCount / maxCount) * 100;
             const color = getColor(item.categoryName);
-            const emoji = CATEGORY_EMOJIS[item.categoryName as RecipeCategory] ?? '🍬';
             return (
               <div key={item.categoryName} className="at-bar-col">
                 <span className="at-bar-count">{item.viewCount}</span>
@@ -131,8 +137,8 @@ function AnalyticsTab({ weeklyStats, loading }: { weeklyStats: WeeklyCategorySta
                   />
                 </div>
                 <div className="at-bar-label">
-                  <div>{emoji}</div>
-                  <div className="at-bar-name">{item.categoryName}</div>
+                    <CategoryIcon name={item.categoryName} />
+                    <div className="at-bar-name">{item.categoryName}</div>
                 </div>
               </div>
             );
@@ -146,12 +152,11 @@ function AnalyticsTab({ weeklyStats, loading }: { weeklyStats: WeeklyCategorySta
           {weekData.slice(0, 5).map((item, idx) => {
             const pct = Math.round((item.viewCount / maxCount) * 100);
             const color = getColor(item.categoryName);
-            const emoji = CATEGORY_EMOJIS[item.categoryName as RecipeCategory] ?? '🍬';
             const medals = ['🥇', '🥈', '🥉', '4️⃣', '5️⃣'];
             return (
               <div key={item.categoryName} className="at-top5-row">
                 <span className="at-medal">{medals[idx]}</span>
-                <span>{emoji}</span>
+                  <CategoryIcon name={item.categoryName} />
                 <div className="at-top5-info">
                   <div className="at-top5-meta">
                     <span className="at-top5-name">{item.categoryName}</span>
@@ -185,8 +190,8 @@ function AnalyticsTab({ weeklyStats, loading }: { weeklyStats: WeeklyCategorySta
                 {categories.map((cat, idx) => (
                   <tr key={cat} className={`at-trend-row ${idx % 2 === 0 ? '' : 'at-trend-row--odd'}`}>
                     <td className="at-trend-cat">
-                      <span>{CATEGORY_EMOJIS[cat as RecipeCategory] ?? '🍬'}</span>
-                      <span style={{ color: getColor(cat) }}>{cat}</span>
+                        <CategoryIcon name={cat} />
+                        <span style={{ color: getColor(cat) }}>{cat}</span>
                     </td>
                     {weeks.map((w) => {
                       const val = weeklyStats.find((s) => s.week === w && s.categoryName === cat)?.viewCount ?? 0;
@@ -352,6 +357,7 @@ export default function AdminDashboard() {
                 <Link to="/recipes/create" className="ad-btn ad-btn--primary">➕ Add New Recipe</Link>
                 <button onClick={() => setActiveTab('ingredients')} className="ad-btn ad-btn--outline">🧂 Manage Ingredients</button>
                 <button onClick={() => setActiveTab('analytics')} className="ad-btn ad-btn--outline">📈 View Analytics</button>
+                <Link to="/admin/reply" className="ad-btn ad-btn--outline">💌 Reply to Contact</Link>
               </div>
             </div>
           </div>

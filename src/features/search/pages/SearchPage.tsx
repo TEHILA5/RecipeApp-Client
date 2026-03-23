@@ -122,11 +122,10 @@ export default function SearchPage() {
 
   const nameResults: Recipe[] = debouncedName
     ? allRecipes.filter((r) =>
-        r.name.toLowerCase().includes(debouncedName.toLowerCase()) ||
-        r.description.toLowerCase().includes(debouncedName.toLowerCase())
+        r.name.toLowerCase().includes(debouncedName.toLowerCase())  
       )
     : [];
-
+  //||r.description.toLowerCase().includes(debouncedName.toLowerCase())
   const results =
     mode === 'name' ? nameResults :
     mode === 'category' ? categoryResults :

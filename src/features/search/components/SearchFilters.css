@@ -17,8 +17,9 @@
 }
 
 .category-chip {
-  padding: 8px 18px;
-  border-radius: 999px;
+  width: 115px;
+  height: 130px;
+  border-radius: 25%;
   border: 2px solid #fce7f3;
   background: white;
   color: #6b7280;
@@ -27,12 +28,16 @@
   font-size: 0.85rem;
   cursor: pointer;
   transition: all 0.2s;
+  padding: 0;
+  overflow: hidden;         /* חותך את הרקע הלבן של התמונה */
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .category-chip.active {
   border-color: #d4547a;
-  background: #fce7f3;
-  color: #d4547a;
+  box-shadow: 0 0 0 3px #fce7f3;
 }
 
 /* Ingredients */

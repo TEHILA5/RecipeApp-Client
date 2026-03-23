@@ -45,6 +45,7 @@ export default function Header() {
               <li><Link to="/search" onClick={closeMenu}>Search</Link></li>
               <li><Link to="/my-recipes" onClick={closeMenu}>My Recipes</Link></li>
               <li><Link to="/chat" onClick={closeMenu}>🍰 Sweetie</Link></li>
+              <li><Link to="/newchat" onClick={closeMenu}>Chat</Link></li>
             </>
           )}
 

@@ -6,40 +6,8 @@ import StarRating from '../../../shared/components/StarRating';
 import Hero from '../components/Hero';
 import CategoryGrid from '../components/CategoryGrid';
 import FeaturedRecipes from '../components/FeaturedRecipes';
+import RecipeCard from '../../recipe/components/RecipeCard';
 import './HomePage.css';
-
-function RecipeCard({ recipe, badge }: { recipe: Recipe; badge?: string }) {
-  const emoji = CATEGORY_EMOJIS[recipe.category] ?? '🍰';
-  const levelLabel = LEVEL_LABELS[recipe.level as 1 | 2 | 3] ?? 'Easy';
-  return (
-    <Link to={`/recipes/${recipe.id}`} className="recipe-card">
-      <div className="card-img-wrap">
-        {recipe.arrImage ? (
-          <img src={recipe.arrImage} alt={recipe.name} className="card-img"
-            onError={(e) => {
-              (e.target as HTMLImageElement).style.display = 'none';
-              (e.target as HTMLImageElement).nextElementSibling!.classList.remove('hidden');
-            }} />
-        ) : null}
-        <div className={`card-img card-img-emoji ${recipe.arrImage ? 'hidden' : ''}`}
-          style={{ background: 'linear-gradient(135deg, #f9e4ec, #e8c49a)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '72px' }}>
-          {emoji}
-        </div>
-        {badge && <div className="card-badge">{badge}</div>}
-      </div>
-      <div className="card-body">
-        <div className="card-rating"><StarRating rating={recipe.averageRating} /></div>
-        <h3 className="card-title">{recipe.name}</h3>
-        <p className="card-desc">{recipe.description}</p>
-        <div className="card-meta">
-          <span className="meta-item"><span className="meta-icon">⏱️</span> {recipe.totalTime} min</span>
-          <span className="meta-item"><span className="meta-icon">👨‍🍳</span> {levelLabel}</span>
-          {recipe.servings && <span className="meta-item"><span className="meta-icon">🍽️</span> {recipe.servings}</span>}
-        </div>
-      </div>
-    </Link>
-  );
-}
 
 function FeaturedCard({ recipe }: { recipe: Recipe }) {
   const emoji = CATEGORY_EMOJIS[recipe.category] ?? '🍰';

@@ -46,7 +46,7 @@ export default function Hero() {
           <div className="tip-label">💡 Sweety's Tip</div>
           <p className="tip-text">
             Always <em>preheat your oven</em> 15 minutes before baking for the
-            best results! A properly heated oven ensures even baking and perfect texture. 🍰
+            best results! A properly heated oven ensures even baking and perfect texture.
           </p>
         </div>
       </section>
