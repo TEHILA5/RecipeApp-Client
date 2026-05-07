@@ -28,9 +28,9 @@ import PrivacyPage from '../features/static/pages/PrivacyPage';
 import BakingTipsPage from '../features/static/pages/BakingTipsPage';
 import IngredientGuidePage from '../features/static/pages/IngredientGuidePage';
 import NewsletterPage from '../features/static/pages/NewsletterPage';
-import ToolsWeLovePage from '../features/static/pages/ToolsWeLovePage';
+import ToolsWeLovePage from '../features/static/pages/ToolsWeLovePage'; 
 import { useScrollToTop } from '../shared/hooks/useScrollToTop';
-import AdminReplyPage from '../features/admin/pages/AdminReplyPage';
+import AdminReplyPage from '../features/admin/pages/AdminReplyPage'; 
 
 function AppRoutes() {
   useScrollToTop();
@@ -71,8 +71,8 @@ function AppRoutes() {
           <Route path="/search"     element={<ProtectedRoute><SearchPage /></ProtectedRoute>} />
           <Route path="/profile"    element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
           <Route path="/my-recipes" element={<ProtectedRoute><MyRecipesPage /></ProtectedRoute>} />
-          <Route path="/chat"       element={<ProtectedRoute><SweetieChat /></ProtectedRoute>} />
-          <Route path="/newchat"    element={<ProtectedRoute><Chat /></ProtectedRoute>} />
+          <Route path="/chat"       element={<ProtectedRoute><SweetieChat /></ProtectedRoute>} /> 
+          <Route path="/real-chat"       element={<ProtectedRoute><Chat /></ProtectedRoute>} />
 
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>

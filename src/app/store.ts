@@ -1,18 +1,31 @@
 import { configureStore } from '@reduxjs/toolkit';
+import { baseApi } from '../api/baseApi';
 import authReducer from '../features/auth/redux/authSlice';
 import ingredientReducer from '../features/ingredient/redux/ingredientSlice';
-import recipePanelReducer, { recipesApi } from '../features/recipe/redux/recipeSlice';
+import recipePanelReducer from '../features/recipe/redux/recipeSlice';
 import uiReducer from '../redux/slices/uiSlice';
 import adminReducer from '../features/admin/redux/adminSlice';
 import userReducer from '../features/user/redux/userSlice';
 import searchReducer from '../features/search/redux/searchSlice';
 
+// NOTE: recipesApi is now part of baseApi (injected endpoints).
+// Import and use hooks from their respective api files:
+//   authApi    → /api/authApi.ts
+//   adminApi   → /api/adminApi.ts
+//   ingredientApi → /api/ingredientApi.ts
+//   userActionApi → /api/userActionApi.ts
+//   userApi    → /api/userApi.ts
+//   recipesApi → /features/recipe/redux/recipeSlice.ts (already RTK Query)
+
 export const store = configureStore({
   reducer: {
+    // RTK Query — single shared api reducer
+    [baseApi.reducerPath]: baseApi.reducer,
+
+    // Regular slices (UI state only)
     auth: authReducer,
     ingredients: ingredientReducer,
     recipePanel: recipePanelReducer,
-    [recipesApi.reducerPath]: recipesApi.reducer,
     ui: uiReducer,
     admin: adminReducer,
     user: userReducer,
@@ -24,7 +37,7 @@ export const store = configureStore({
         ignoredActions: ['ui/openModal'],
         ignoredPaths: ['ui.modal.onConfirm'],
       },
-    }).concat(recipesApi.middleware),
+    }).concat(baseApi.middleware),
 });
 
 export type RootState = ReturnType<typeof store.getState>;

@@ -1,5 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import axiosInstance, { handleApiError } from './axiosConfig';
+import { baseApi } from './baseApi';
 
 export interface IngredientDto {
   id: number;
@@ -20,67 +19,44 @@ export interface IngredientUpdateDto {
   unit?: string;
 }
 
-export const getAllIngredients = async (): Promise<IngredientDto[]> => {
-  try {
-    const res = await axiosInstance.get<IngredientDto[]>('/ingredient');
-    return res.data;
-  } catch (err) {
-    throw new Error(handleApiError(err));
-  }
-};
+export const ingredientApi = baseApi.injectEndpoints({
+  endpoints: (builder) => ({
+    getAllIngredients: builder.query<IngredientDto[], void>({
+      query: () => '/ingredient',
+      providesTags: ['Ingredients'],
+    }),
 
-export const getIngredientById = async (id: number): Promise<IngredientDto> => {
-  try {
-    const res = await axiosInstance.get<IngredientDto>(`/ingredient/${id}`);
-    return res.data;
-  } catch (err) {
-    throw new Error(handleApiError(err));
-  }
-};
+    getIngredientById: builder.query<IngredientDto, number>({
+      query: (id) => `/ingredient/${id}`,
+      providesTags: (_result, _error, id) => [{ type: 'Ingredients', id }],
+    }),
 
-export const getIngredientByName = async (name: string): Promise<IngredientDto | null> => {
-  try {
-    const res = await axiosInstance.get<IngredientDto>('/ingredient/by-name', { params: { name } });
-    return res.data;
-  } catch (err: any) {
-    if (err?.response?.status === 404) return null;
-    throw new Error(handleApiError(err));
-  }
-};
+    getIngredientByName: builder.query<IngredientDto | null, string>({
+      query: (name) => ({ url: '/ingredient/by-name', params: { name } }),
+    }),
 
-export const createIngredient = async (data: IngredientCreateDto): Promise<IngredientDto> => {
-  try {
-    const res = await axiosInstance.post<IngredientDto>('/ingredient', data);
-    return res.data;
-  } catch (err) {
-    throw new Error(handleApiError(err));
-  }
-};
+    createIngredient: builder.mutation<IngredientDto, IngredientCreateDto>({
+      query: (body) => ({ url: '/ingredient', method: 'POST', body }),
+      invalidatesTags: ['Ingredients'],
+    }),
 
-export const updateIngredient = async (id: number, data: IngredientUpdateDto): Promise<IngredientDto> => {
-  try {
-    const res = await axiosInstance.patch<IngredientDto>(`/ingredient/${id}`, data);
-    return res.data;
-  } catch (err) {
-    throw new Error(handleApiError(err));
-  }
-};
+    updateIngredient: builder.mutation<IngredientDto, { id: number; data: IngredientUpdateDto }>({
+      query: ({ id, data }) => ({ url: `/ingredient/${id}`, method: 'PATCH', body: data }),
+      invalidatesTags: (_result, _error, { id }) => ['Ingredients', { type: 'Ingredients', id }],
+    }),
 
-export const deleteIngredient = async (id: number): Promise<void> => {
-  try {
-    await axiosInstance.delete(`/ingredient/${id}`);
-  } catch (err) {
-    throw new Error(handleApiError(err));
-  }
-};
+    deleteIngredient: builder.mutation<void, number>({
+      query: (id) => ({ url: `/ingredient/${id}`, method: 'DELETE' }),
+      invalidatesTags: ['Ingredients'],
+    }),
+  }),
+});
 
-export const ingredientApi = {
-  getAllIngredients,
-  getIngredientById,
-  getIngredientByName,
-  createIngredient,
-  updateIngredient,
-  deleteIngredient,
-};
-
-export default ingredientApi;
+export const {
+  useGetAllIngredientsQuery,
+  useGetIngredientByIdQuery,
+  useGetIngredientByNameQuery,
+  useCreateIngredientMutation,
+  useUpdateIngredientMutation,
+  useDeleteIngredientMutation,
+} = ingredientApi;

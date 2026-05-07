@@ -1,4 +1,4 @@
-import axiosInstance, { handleApiError } from './axiosConfig';
+import { baseApi } from './baseApi';
 
 export interface UserDto {
   name: string;
@@ -13,28 +13,19 @@ export interface UserUpdateDto {
   phone?: string;
 }
 
-export const getMe = async (): Promise<UserDto> => {
-  try {
-    const res = await axiosInstance.get<UserDto>('/user/me');
-    return res.data;
-  } catch (err) {
-    throw new Error(handleApiError(err));
-  }
-};
+export const userApi = baseApi.injectEndpoints({
+  endpoints: (builder) => ({
+    updateMe: builder.mutation<UserDto, UserUpdateDto>({
+      query: (body) => ({ url: '/user/me', method: 'PATCH', body }),
+    }),
 
-export const updateMe = async (data: UserUpdateDto): Promise<UserDto> => {
-  try {
-    const res = await axiosInstance.patch<UserDto>('/user/me', data);
-    return res.data;
-  } catch (err) {
-    throw new Error(handleApiError(err));
-  }
-};
+    deleteMe: builder.mutation<void, void>({
+      query: () => ({ url: '/user/me', method: 'DELETE' }),
+    }),
+  }),
+});
 
-export const deleteMe = async (): Promise<void> => {
-  try {
-    await axiosInstance.delete('/user/me');
-  } catch (err) {
-    throw new Error(handleApiError(err));
-  }
-};
+export const {
+  useUpdateMeMutation,
+  useDeleteMeMutation,
+} = userApi;

@@ -1,7 +1,5 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { createSlice, createAsyncThunk, type PayloadAction } from '@reduxjs/toolkit';
-import * as authApi from '../../../api/authApi';
-import type { LoginPayload, RegisterPayload } from '../../../api/authApi';
+import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
+import { authApi } from '../../../api/authApi';
 
 interface User {
   name: string;
@@ -16,15 +14,8 @@ interface AuthState {
   token: string | null;
   isAuthenticated: boolean;
   isAdmin: boolean;
-  loading: boolean;
   error: string | null;
 }
-
-const initialState: AuthState = {
-  user: null, token: null,
-  isAuthenticated: false, isAdmin: false,
-  loading: false, error: null,
-};
 
 const isAdminFromToken = (token: string): boolean => {
   try {
@@ -34,122 +25,94 @@ const isAdminFromToken = (token: string): boolean => {
   } catch { return false; }
 };
 
-export const loginUser = createAsyncThunk(
-  'auth/login',
-  async (credentials: LoginPayload, { rejectWithValue }) => {
-    try {
-      const res = await authApi.login(credentials);
-      localStorage.setItem('token', res.token);
-      localStorage.setItem('user', JSON.stringify(res.user));
-      return res;
-    } catch (err: any) {
-      return rejectWithValue(err.message || 'Login failed');
-    }
-  }
-);
-
-export const registerUser = createAsyncThunk(
-  'auth/register',
-  async (userData: RegisterPayload, { rejectWithValue }) => {
-    try {
-      const res = await authApi.register(userData);
-      localStorage.setItem('token', res.token);
-      localStorage.setItem('user', JSON.stringify(res.user));
-      return res;
-    } catch (err: any) {
-      return rejectWithValue(err.message || 'Registration failed');
-    }
-  }
-);
-
-export const checkAuth = createAsyncThunk(
-  'auth/checkAuth',
-  async (_, { rejectWithValue }) => {
-    try {
-      const token = localStorage.getItem('token');
-      const userStr = localStorage.getItem('user');
-      if (!token || !userStr) throw new Error('No authentication found');
-      return { user: JSON.parse(userStr), token };
-    } catch (err: any) {
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
-      return rejectWithValue('Not authenticated: ' + err.message);
-    }
-  }
-);
-
-export const fetchCurrentUser = createAsyncThunk(
-  'auth/fetchCurrentUser',
-  async (_, { rejectWithValue }) => {
-    try {
-      return await authApi.getMe();
-    } catch (err: any) {
-      return rejectWithValue(err.message || 'Failed to fetch user');
-    }
-  }
-);
+const initialState: AuthState = {
+  user: null,
+  token: null,
+  isAuthenticated: false,
+  isAdmin: false,
+  error: null,
+};
 
 const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
     logout: (state) => {
-      state.user = null; state.token = null;
-      state.isAuthenticated = false; state.isAdmin = false; state.error = null;
+      state.user = null;
+      state.token = null;
+      state.isAuthenticated = false;
+      state.isAdmin = false;
+      state.error = null;
       localStorage.removeItem('token');
       localStorage.removeItem('user');
     },
-    clearError: (state) => { state.error = null; },
+    clearError: (state) => {
+      state.error = null;
+    },
     updateUser: (state, action: PayloadAction<Partial<User>>) => {
       if (state.user) {
         state.user = { ...state.user, ...action.payload };
         localStorage.setItem('user', JSON.stringify(state.user));
       }
     },
+    // Called on app init to restore session from localStorage
+    restoreAuth: (state) => {
+      const token = localStorage.getItem('token');
+      const userStr = localStorage.getItem('user');
+      if (token && userStr) {
+        try {
+          state.token = token;
+          state.user = JSON.parse(userStr);
+          state.isAuthenticated = true;
+          state.isAdmin = isAdminFromToken(token);
+        } catch {
+          localStorage.removeItem('token');
+          localStorage.removeItem('user');
+        }
+      }
+    },
   },
   extraReducers: (builder) => {
+    // Login
     builder
-      .addCase(loginUser.pending, (state) => { state.loading = true; state.error = null; })
-      .addCase(loginUser.fulfilled, (state, action) => {
-        state.loading = false; state.user = action.payload.user;
-        state.token = action.payload.token; state.isAuthenticated = true;
-        state.isAdmin = isAdminFromToken(action.payload.token); state.error = null;
+      .addMatcher(authApi.endpoints.login.matchFulfilled, (state, action) => {
+        const { token, user } = action.payload;
+        state.token = token;
+        state.user = user;
+        state.isAuthenticated = true;
+        state.isAdmin = isAdminFromToken(token);
+        state.error = null;
+        localStorage.setItem('token', token);
+        localStorage.setItem('user', JSON.stringify(user));
       })
-      .addCase(loginUser.rejected, (state, action) => {
-        state.loading = false; state.error = action.payload as string; state.isAuthenticated = false;
+      .addMatcher(authApi.endpoints.login.matchRejected, (state, action) => {
+        state.error = action.error.message || 'Login failed';
+        state.isAuthenticated = false;
       });
 
+    // Register
     builder
-      .addCase(registerUser.pending, (state) => { state.loading = true; state.error = null; })
-      .addCase(registerUser.fulfilled, (state, action) => {
-        state.loading = false; state.user = action.payload.user;
-        state.token = action.payload.token; state.isAuthenticated = true;
-        state.isAdmin = isAdminFromToken(action.payload.token); state.error = null;
+      .addMatcher(authApi.endpoints.register.matchFulfilled, (state, action) => {
+        const { token, user } = action.payload;
+        state.token = token;
+        state.user = user;
+        state.isAuthenticated = true;
+        state.isAdmin = isAdminFromToken(token);
+        state.error = null;
+        localStorage.setItem('token', token);
+        localStorage.setItem('user', JSON.stringify(user));
       })
-      .addCase(registerUser.rejected, (state, action) => {
-        state.loading = false; state.error = action.payload as string; state.isAuthenticated = false;
+      .addMatcher(authApi.endpoints.register.matchRejected, (state, action) => {
+        state.error = action.error.message || 'Registration failed';
+        state.isAuthenticated = false;
       });
 
-    builder
-      .addCase(checkAuth.fulfilled, (state, action) => {
-        state.user = action.payload.user; state.token = action.payload.token;
-        state.isAuthenticated = true; state.isAdmin = isAdminFromToken(action.payload.token);
-      })
-      .addCase(checkAuth.rejected, (state) => {
-        state.user = null; state.token = null;
-        state.isAuthenticated = false; state.isAdmin = false;
-      });
-
-    builder
-      .addCase(fetchCurrentUser.pending, (state) => { state.loading = true; })
-      .addCase(fetchCurrentUser.fulfilled, (state, action) => {
-        state.loading = false; state.user = action.payload;
-      })
-      .addCase(fetchCurrentUser.rejected, (state, action) => {
-        state.loading = false; state.error = action.payload as string;
-      });
+    // getMe
+    builder.addMatcher(authApi.endpoints.getMe.matchFulfilled, (state, action) => {
+      state.user = action.payload;
+    });
   },
 });
 
-export const { logout, clearError, updateUser } = authSlice.actions;
+export const { logout, clearError, updateUser, restoreAuth } = authSlice.actions;
 export default authSlice.reducer;

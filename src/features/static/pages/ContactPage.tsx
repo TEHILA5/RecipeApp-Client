@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import axiosInstance from '../../../api/axiosConfig';
+import { useSendContactMessageMutation } from '../../../api/contactApi';
 import { useGetRecipesQuery } from '../../recipe/redux/recipeSlice';
 import { StaticPage } from './StaticPageHelpers';
 import './ContactPage.css';
@@ -29,10 +29,10 @@ export default function ContactPage() {
     urgency: 'Normal',
   });
 
-  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const [errorMsg, setErrorMsg] = useState('');
 
   const { data: recipes = [] } = useGetRecipesQuery();
+  const [sendContactMessage, { isLoading, isSuccess }] = useSendContactMessageMutation();
 
   const updateField = (field: string, value: string) => {
     setForm((f) => ({ ...f, [field]: value }));
@@ -45,40 +45,34 @@ export default function ContactPage() {
     if (!form.category) return setErrorMsg('Please select a category'), false;
     if (form.message.trim().length < 10)
       return setErrorMsg('Please write at least 10 characters'), false;
-
     return true;
   };
 
   const handleSubmit = async () => {
     if (!validate()) return;
 
-    setStatus('loading');
-
     try {
-      await axiosInstance.post('/contact/send', {
+      await sendContactMessage({
         name: form.name.trim(),
         email: form.email.trim(),
         category: form.category,
         recipeName: form.recipeName.trim() || null,
         message: form.message.trim(),
         urgency: form.urgency,
-      });
-
-      setStatus('success');
+      }).unwrap();
     } catch {
-      setStatus('error');
       setErrorMsg('Something went wrong. Please try again.');
     }
   };
 
-  if (status === 'success') {
+  if (isSuccess) {
     return (
       <StaticPage emoji="✅" title="Message Sent!" subtitle="We'll get back to you soon">
         <div className="contact-success">
           <div className="contact-success-icon">💌</div>
           <h2 className="contact-success-title">Got your message!</h2>
           <p className="contact-success-text">
-            Thank you <strong>{form.name}</strong>, we’ll reply to <strong>{form.email}</strong> soon.
+            Thank you <strong>{form.name}</strong>, we'll reply to <strong>{form.email}</strong> soon.
           </p>
           <p className="contact-success-small">Typical response time: 24–48 hours.</p>
         </div>
@@ -155,10 +149,7 @@ export default function ContactPage() {
             value={form.message}
             onChange={(e) => updateField('message', e.target.value)}
           />
-
-          <div className="contact-counter">
-            {form.message.length} characters
-          </div>
+          <div className="contact-counter">{form.message.length} characters</div>
         </div>
 
         {/* Urgency */}
@@ -183,9 +174,9 @@ export default function ContactPage() {
         <button
           className="contact-submit"
           onClick={handleSubmit}
-          disabled={status === 'loading'}
+          disabled={isLoading}
         >
-          {status === 'loading' ? 'Sending...' : 'Send Message'}
+          {isLoading ? 'Sending...' : 'Send Message'}
         </button>
       </div>
     </StaticPage>

@@ -1,108 +1,81 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import axiosInstance, { handleApiError } from './axiosConfig';
+import { baseApi } from './baseApi';
 import type { UserActionDto, BookCreateDto, CommentCreateDto, HistoryCreateDto } from '../features/recipe/types/userAction.types';
 import { CATEGORY_TO_INT } from '../features/recipe/types/recipe.types';
 
-export const getMySavedRecipes = async (): Promise<UserActionDto[]> => {
-  try {
-    const res = await axiosInstance.get<UserActionDto[]>('/useraction/my-saved');
-    return res.data;
-  } catch (err) {
-    throw new Error(handleApiError(err));
-  }
-};
+export const userActionApi = baseApi.injectEndpoints({
+  endpoints: (builder) => ({
+    getMySavedRecipes: builder.query<UserActionDto[], void>({
+      query: () => '/useraction/my-saved',
+      providesTags: ['SavedRecipes'],
+    }),
 
-export const getMyHistory = async (): Promise<UserActionDto[]> => {
-  try {
-    const res = await axiosInstance.get<UserActionDto[]>('/useraction/my-history');
-    return res.data;
-  } catch (err) {
-    throw new Error(handleApiError(err));
-  }
-};
+    getMyHistory: builder.query<UserActionDto[], void>({
+      query: () => '/useraction/my-history',
+    }),
 
-export const getMyComments = async (): Promise<UserActionDto[]> => {
-  try {
-    const res = await axiosInstance.get<UserActionDto[]>('/useraction/my-comments');
-    return res.data;
-  } catch (err) {
-    throw new Error(handleApiError(err));
-  }
-};
+    getMyComments: builder.query<UserActionDto[], void>({
+      query: () => '/useraction/my-comments',
+      providesTags: ['Comments'],
+    }),
 
-export const getRecipeComments = async (recipeId: number): Promise<UserActionDto[]> => {
-  try {
-    const res = await axiosInstance.get<UserActionDto[]>(`/useraction/recipe/${recipeId}/comments`);
-    return res.data;
-  } catch (err) {
-    throw new Error(handleApiError(err));
-  }
-};
+    getRecipeComments: builder.query<UserActionDto[], number>({
+      query: (recipeId) => `/useraction/recipe/${recipeId}/comments`,
+      providesTags: (_result, _error, recipeId) => [{ type: 'Comments', id: recipeId }],
+    }),
 
-export const addBookmark = async (recipeId: number): Promise<UserActionDto> => {
-  try {
-    const res = await axiosInstance.post<UserActionDto>('/useraction/book', { recipeId } as BookCreateDto);
-    return res.data;
-  } catch (err) {
-    throw new Error(handleApiError(err));
-  }
-};
+    getUserPreferences: builder.query<unknown, void>({
+      query: () => '/useraction/my-preferences',
+    }),
 
-export const removeBookmark = async (recipeId: number): Promise<void> => {
-  try {
-    await axiosInstance.delete(`/useraction/book/recipe/${recipeId}`);
-  } catch (err) {
-    throw new Error(handleApiError(err));
-  }
-};
+    addBookmark: builder.mutation<UserActionDto, number>({
+      query: (recipeId) => ({
+        url: '/useraction/book',
+        method: 'POST',
+        body: { recipeId } as BookCreateDto,
+      }),
+      invalidatesTags: ['SavedRecipes'],
+    }),
 
-export const addComment = async (data: CommentCreateDto): Promise<UserActionDto> => {
-  try {
-    const res = await axiosInstance.post<UserActionDto>('/useraction/comment', data);
-    return res.data;
-  } catch (err) {
-    throw new Error(handleApiError(err));
-  }
-};
+    removeBookmark: builder.mutation<void, number>({
+      query: (recipeId) => ({
+        url: `/useraction/book/recipe/${recipeId}`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: ['SavedRecipes'],
+    }),
 
-export const removeComment = async (recipeId: number): Promise<void> => {
-  try {
-    await axiosInstance.delete(`/useraction/comment/recipe/${recipeId}`);
-  } catch (err) {
-    throw new Error(handleApiError(err));
-  }
-};
+    addComment: builder.mutation<UserActionDto, CommentCreateDto>({
+      query: (body) => ({ url: '/useraction/comment', method: 'POST', body }),
+      invalidatesTags: (_result, _error, { recipeId }) => ['Comments', { type: 'Comments', id: recipeId }],
+    }),
 
-export const addHistory = async (data: HistoryCreateDto): Promise<void> => {
-  try { 
-    await axiosInstance.post('/useraction/history', {
-      category: CATEGORY_TO_INT[data.category] ?? 0,
-    });
-  } catch {
-    // silent fail - history is not critical
-  }
-};
+    removeComment: builder.mutation<void, number>({
+      query: (recipeId) => ({
+        url: `/useraction/comment/recipe/${recipeId}`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: ['Comments'],
+    }),
 
-export const getUserPreferences = async () => {
-  try {
-    const res = await axiosInstance.get('/useraction/my-preferences');
-    return res.data;
-  } catch (err) {
-    throw new Error(handleApiError(err));
-  }
-};
+    addHistory: builder.mutation<void, HistoryCreateDto>({
+      query: (data) => ({
+        url: '/useraction/history',
+        method: 'POST',
+        body: { category: CATEGORY_TO_INT[data.category] ?? 0 },
+      }),
+    }),
+  }),
+});
 
-export const userActionApi = {
-  getMySavedRecipes,
-  getMyHistory,
-  getMyComments,
-  addBookmark,
-  removeBookmark,
-  addComment,
-  removeComment,
-  addHistory,
-  getUserPreferences,
-  getRecipeComments,
-};
-
-export default userActionApi;
+export const {
+  useGetMySavedRecipesQuery,
+  useGetMyHistoryQuery,
+  useGetMyCommentsQuery,
+  useGetRecipeCommentsQuery,
+  useGetUserPreferencesQuery,
+  useAddBookmarkMutation,
+  useRemoveBookmarkMutation,
+  useAddCommentMutation,
+  useRemoveCommentMutation,
+  useAddHistoryMutation,
+} = userActionApi;

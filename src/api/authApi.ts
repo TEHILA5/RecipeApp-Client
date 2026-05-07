@@ -1,4 +1,4 @@
-import axiosInstance, { handleApiError } from './axiosConfig';
+import { baseApi } from './baseApi';
 
 export interface LoginPayload {
   email: string;
@@ -23,37 +23,39 @@ export interface LoginResponse {
   token: string;
 }
 
-export const login = async (payload: LoginPayload): Promise<LoginResponse> => {
-  try {
-    const res = await axiosInstance.post<LoginResponse>('/user/login', payload);
-    return res.data;
-  } catch (err) {
-    throw new Error(handleApiError(err));
-  }
-};
+export interface UserDto {
+  name: string;
+  email: string;
+  phone: string;
+  createdAt?: string;
+}
 
-export const register = async (payload: RegisterPayload): Promise<LoginResponse> => {
-  try {
-    const res = await axiosInstance.post<LoginResponse>('/user/register', payload);
-    return res.data;
-  } catch (err) {
-    throw new Error(handleApiError(err));
-  }
-};
+export const authApi = baseApi.injectEndpoints({
+  endpoints: (builder) => ({
+    login: builder.mutation<LoginResponse, LoginPayload>({
+      query: (credentials) => ({
+        url: '/user/login',
+        method: 'POST',
+        body: credentials,
+      }),
+    }),
 
-export const getMe = async () => {
-  try {
-    const res = await axiosInstance.get('/user/me');
-    return res.data;
-  } catch (err) {
-    throw new Error(handleApiError(err));
-  }
-};
+    register: builder.mutation<LoginResponse, RegisterPayload>({
+      query: (userData) => ({
+        url: '/user/register',
+        method: 'POST',
+        body: userData,
+      }),
+    }),
 
-export const authApi = {
-  login,
-  register,
-  me: getMe,
-};
+    getMe: builder.query<UserDto, void>({
+      query: () => '/user/me',
+    }),
+  }),
+});
 
-export default authApi;
+export const {
+  useLoginMutation,
+  useRegisterMutation,
+  useGetMeQuery,
+} = authApi;
