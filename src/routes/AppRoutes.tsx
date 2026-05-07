@@ -72,7 +72,7 @@ function AppRoutes() {
           <Route path="/profile"    element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
           <Route path="/my-recipes" element={<ProtectedRoute><MyRecipesPage /></ProtectedRoute>} />
           <Route path="/chat"       element={<ProtectedRoute><SweetieChat /></ProtectedRoute>} /> 
-          <Route path="/real-chat"       element={<ProtectedRoute><Chat /></ProtectedRoute>} />
+          <Route path="/newchat"       element={<ProtectedRoute><Chat /></ProtectedRoute>} />
 
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>

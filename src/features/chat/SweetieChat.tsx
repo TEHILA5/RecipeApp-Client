@@ -1,13 +1,9 @@
-import axiosInstance from "../../api/axiosConfig";
 import { useState, useRef, useEffect } from "react";
+import { useSendChatMessageMutation } from '../../api/chatApi';
+import type { ChatMessage } from '../../api/chatApi';
 import sweety from '../../assets/images/sweety.png';
 import sweetyTip from '../../assets/images/sweety-tip.png';
 import './SweetieChat.css';
-
-interface Message {
-  role: "user" | "assistant";
-  content: string;
-}
 
 const SUGGESTIONS = [
   "🎂 Chocolate cake recipe",
@@ -31,44 +27,41 @@ function TypingDots() {
 }
 
 export default function SweetieChat() {
-  const [messages, setMessages] = useState<Message[]>([]);
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
-  const [loading, setLoading] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
+  const [sendChatMessage, { isLoading }] = useSendChatMessageMutation();
+
   useEffect(() => {
-  if (messages.length > 0 || loading) {
-    const container = bottomRef.current?.parentElement;
-    if (container) {
-      container.scrollTop = container.scrollHeight;
+    if (messages.length > 0 || isLoading) {
+      const container = bottomRef.current?.parentElement;
+      if (container) container.scrollTop = container.scrollHeight;
     }
-  }
-}, [messages, loading]);
+  }, [messages, isLoading]);
 
   const sendMessage = async (text?: string) => {
     const userText = (text ?? input).trim();
-    if (!userText || loading) return;
+    if (!userText || isLoading) return;
     setInput("");
 
-    const userMsg: Message = { role: "user", content: userText };
-    const updated: Message[] = [...messages, userMsg];
+    const userMsg: ChatMessage = { role: "user", content: userText };
+    const updated: ChatMessage[] = [...messages, userMsg];
     setMessages(updated);
-    setLoading(true);
 
     try {
-      const { data } = await axiosInstance.post("/chat", { messages: updated });
-      setMessages([...updated, { role: "assistant", content: data.reply || "Something went wrong 🍰" }]);
+      const result = await sendChatMessage({ messages: updated }).unwrap();
+      setMessages([...updated, { role: "assistant", content: result.reply || "Something went wrong 🍰" }]);
     } catch {
       setMessages([...updated, { role: "assistant", content: "Connection error. Please try again 🍰" }]);
     } finally {
-      setLoading(false);
       setTimeout(() => inputRef.current?.focus(), 100);
     }
   };
 
   const sendSuggestion = (s: string) => sendMessage(s.replace(/^[^\s]+\s/, ""));
-  const canSend = !loading && !!input.trim();
+  const canSend = !isLoading && !!input.trim();
 
   return (
     <div className="sc-page">
@@ -116,7 +109,7 @@ export default function SweetieChat() {
           );
         })}
 
-        {loading && (
+        {isLoading && (
           <div className="sc-msg-row sweetie-msg">
             <div className="sc-bot-icon">🍰</div>
             <div className="sc-bubble sc-bubble--bot sc-bubble--typing">

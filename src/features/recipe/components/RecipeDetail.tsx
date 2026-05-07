@@ -1,10 +1,17 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppSelector } from '../../../redux/hooks';
 import { useDeleteRecipeMutation } from '../redux/recipeSlice';
-import { getMySavedRecipes, addBookmark, removeBookmark, addComment, addHistory, getRecipeComments } from '../../../api/userActionApi';
+import {
+  useGetMySavedRecipesQuery,
+  useAddBookmarkMutation,
+  useRemoveBookmarkMutation,
+  useAddCommentMutation,
+  useAddHistoryMutation,
+  useGetRecipeCommentsQuery,
+} from '../../../api/userActionApi';
 import type { Recipe } from '../types/recipe.types';
-import type { UserActionDto, CommentCreateDto } from '../types/userAction.types';
+import type { CommentCreateDto } from '../types/userAction.types';
 import { LEVEL_LABELS, CATEGORY_IMAGES } from '../types/recipe.types';
 import IngredientList from './IngredientList';
 import Modal from '../../../shared/components/UI/Modal';
@@ -38,87 +45,68 @@ export default function RecipeDetail({ recipe, onCommentAdded }: RecipeDetailPro
   const isLoggedIn = !!user;
 
   const [deleteRecipe] = useDeleteRecipeMutation();
+  const [addBookmark, { isLoading: addingBookmark }] = useAddBookmarkMutation();
+  const [removeBookmark, { isLoading: removingBookmark }] = useRemoveBookmarkMutation();
+  const [addComment, { isLoading: submittingComment }] = useAddCommentMutation();
+  const [addHistory] = useAddHistoryMutation();
 
-  const [comments, setComments] = useState<UserActionDto[]>([]);
-  const [isBookmarked, setIsBookmarked] = useState(false);
-  const [loadingComments, setLoadingComments] = useState(false);
-  const [submittingComment, setSubmittingComment] = useState(false);
+  // Fetch comments via RTK Query
+  const {
+    data: comments = [],
+    isLoading: loadingComments,
+  } = useGetRecipeCommentsQuery(recipe.id);
+
+  // Fetch saved recipes to derive bookmark status
+  const { data: savedRecipes = [] } = useGetMySavedRecipesQuery(undefined, { skip: !isLoggedIn });
+
+  const isBookmarked = savedRecipes.some((a) => a.recipeId === recipe.id);
+  const hasCommented = isLoggedIn
+    ? comments.some((c) => c.userName === user?.name)
+    : false;
+
   const [deletingRecipe, setDeletingRecipe] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [commentForm, setCommentForm] = useState({ content: '', rating: 5 });
   const [commentError, setCommentError] = useState('');
-  const [bookmarkLoading, setBookmarkLoading] = useState(false);
   const [activeTab, setActiveTab] = useState<'ingredients' | 'instructions' | 'comments'>('ingredients');
-  const [hasCommented, setHasCommented] = useState(false);
 
   const categoryImg = CATEGORY_IMAGES[recipe.category];
   const levelLabel = LEVEL_LABELS[recipe.level as 1 | 2 | 3] ?? 'Easy';
+  const bookmarkLoading = addingBookmark || removingBookmark;
 
-  useEffect(() => {
-    loadComments();
-    if (isLoggedIn) {
-      checkBookmarkStatus();
-      recordHistory();
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [recipe.id, isLoggedIn]);
-
-  const loadComments = async () => {
-    setLoadingComments(true);
-    try {
-      const data = await getRecipeComments(recipe.id);
-      setComments(data);
-      if (isLoggedIn) setHasCommented(data.some((c) => c.userName === user?.name));
-    } catch (err: unknown) {
-      setCommentError(err instanceof Error ? err.message : 'Failed to load comments');
-    } finally {
-      setLoadingComments(false);
-    }
-  };
-
-  const checkBookmarkStatus = async () => {
-    try {
-      const saved = await getMySavedRecipes();
-      setIsBookmarked(saved.some((a) => a.recipeId === recipe.id));
-    } catch (err: unknown) {
-      setCommentError(err instanceof Error ? err.message : 'Failed to check bookmark status');
-    }
-  };
-
-  const recordHistory = async () => {
-    try { await addHistory({ category: recipe.category }); } catch (err: unknown) {
-      setCommentError(err instanceof Error ? err.message : 'Failed to record history');
-    }
-  };
+  // Record history once on mount (fire-and-forget)
+  // Using a ref to prevent double-firing in StrictMode
+  const historyRecorded = useState(false);
+  if (isLoggedIn && !historyRecorded[0]) {
+    historyRecorded[1](true);
+    addHistory({ category: recipe.category });
+  }
 
   const handleBookmark = async () => {
     if (!isLoggedIn) { navigate('/login'); return; }
-    setBookmarkLoading(true);
     try {
-      if (isBookmarked) { await removeBookmark(recipe.id); setIsBookmarked(false); }
-      else              { await addBookmark(recipe.id);    setIsBookmarked(true); }
-    } catch (err: unknown) {
-      setCommentError(err instanceof Error ? err.message : 'Failed to update bookmark status');
+      if (isBookmarked) await removeBookmark(recipe.id).unwrap();
+      else              await addBookmark(recipe.id).unwrap();
+    } catch {
+      // bookmark errors are silent; cache invalidation handles UI update
     }
-    finally { setBookmarkLoading(false); }
   };
 
   const handleSubmitComment = async () => {
     if (!isLoggedIn) { navigate('/login'); return; }
     if (!commentForm.content.trim()) { setCommentError('Please write a comment'); return; }
     setCommentError('');
-    setSubmittingComment(true);
     try {
-      const dto: CommentCreateDto = { recipeId: recipe.id, content: commentForm.content.trim(), rating: commentForm.rating };
-      const newComment = await addComment(dto);
-      setComments((prev) => [...prev, newComment]);
+      const dto: CommentCreateDto = {
+        recipeId: recipe.id,
+        content: commentForm.content.trim(),
+        rating: commentForm.rating,
+      };
+      await addComment(dto).unwrap();
       setCommentForm({ content: '', rating: 5 });
-      setHasCommented(true);
       onCommentAdded?.();
     } catch (err: unknown) {
       setCommentError(err instanceof Error ? err.message : 'Failed to submit comment');
-    } finally {
-      setSubmittingComment(false);
     }
   };
 

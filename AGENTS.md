@@ -63,9 +63,9 @@ See [src/app/store.ts](src/app/store.ts) — combines all slices and RTK Query b
 
 ### Component Structure
 
-- **Pages**: `features/*/pages/[Name]Page.tsx` + `[Name]Page.css`
+- **Pages**: `features/*/pages/[Name]Page.tsx` + optional `[Name]Page.css`
   - Handles routing & feature-level orchestration
-- **Components**: `features/*/components/[Name].tsx` (scoped styling adjacent)
+- **Components**: `features/*/components/[Name].tsx` (scoped styling adjacent if needed)
   - Reusable within feature or across via `src/shared/components/`
 - **Shared Components**: `src/shared/components/` (FormInput, StarRating, ImageLazyLoad, UI/Layout helpers)
 
@@ -73,7 +73,7 @@ See [src/app/store.ts](src/app/store.ts) — combines all slices and RTK Query b
 
 1. **CSS Variables** (`src/styles/variables.css`) — color palette, spacing defaults
 2. **Material-UI Theme** (`src/styles/themes/muiTheme.ts`) — customized with pink/gold scheme
-3. **Feature CSS** (`features/*/components/*.css`, `features/*/pages/*.css`) — local overrides
+3. **Feature CSS** (`features/*/components/*.css`, `features/*/pages/*.css`) — local overrides (optional)
 4. **Tailwind** (`tailwind.config.js`) — utility classes for rapid layout (light usage)
 
 **Color Palette**:
@@ -81,34 +81,95 @@ See [src/app/store.ts](src/app/store.ts) — combines all slices and RTK Query b
 - Secondary: `#c4894a` (gold)
 - Light backgrounds, gradients, hover effects heavily used
 
+**⚠️ CSS Pairing**: CSS files (`.css`) are **optional**. Not all components have them. Many use MUI classes or Tailwind utilities exclusively. Choose your approach per component:
+- **Prefer MUI styling** for Material-UI components (TextField, Button, Card, etc.)
+- **Use Tailwind utilities** for layout & quick styling
+- **Create `.css` file** only when complex styling is needed (animations, media queries, special effects)
+
 ### Authentication & Authorization
 
 - **Token Storage**: JWT in localStorage (see [authSlice](src/features/auth/redux/authSlice.ts))
 - **Auto-Injection**: Bearer token auto-added in [`baseApi.prepareHeaders()`](src/api/baseApi.ts)
 - **Protected Routes**: [ProtectedRoute.tsx](src/routes/ProtectedRoute.tsx), [AdminRoute.tsx](src/routes/AdminRoute.tsx)
 - **Role Parsing**: Admin status decoded from JWT claims in `authSlice.ts`
-- **Session Restore**: `restoreAuth()` called on app init to restore session from localStorage on page refresh
+
+```typescript
+// Admin role extracted from JWT token payload
+const isAdminFromToken = (token: string): boolean => {
+  const payload = JSON.parse(atob(token.split('.')[1]));
+  const role = payload['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'];
+  return role === 'Admin';
+};
+```
+
+- **Session Restore**: `restoreAuth()` action called on app init (see [App.tsx](src/App.tsx)) to restore session from localStorage on page refresh
 
 ### Data Transformation & Validation
 
 **Recipe Category Mapping** (Critical Pattern):
 - Backend returns category as `number` (0-29)
 - Frontend uses category `string` (Cakes, Cookies, etc.)
-- **Conversion**: `normalizeRecipe()` (int→string), `serializeForServer()` (string→int)
-- **Location**: [src/features/recipe/types/recipe.types.ts](src/features/recipe/types/recipe.types.ts)
-- **Usage**: Auto-applied in RTK Query hooks; must manually apply in non-RTK contexts
+- **Conversion**: `normalizeRecipe()` (int→string), `serializeForServer()` (string→int, private function in recipeSlice)
+- **Normalization**: `normalizeRecipe()` defined in [src/features/recipe/types/recipe.types.ts](src/features/recipe/types/recipe.types.ts)
+- **Serialization**: `serializeForServer()` defined in [src/features/recipe/redux/recipeSlice.ts](src/features/recipe/redux/recipeSlice.ts) (private)
+- **Usage**: Auto-applied in RTK Query hooks via `transformResponse`; must manually apply in non-RTK contexts
 
 **Validation**:
 - Centralized rules in [src/shared/utils/validation.ts](src/shared/utils/validation.ts)
 - Phone format: Israeli only (`05XXXXXXXXX`)
 - Email, password, required fields defined here
-- Used with React Hook Form + Yup
+- Used with React Hook Form only (inline validation rules)
 
 ### Forms & Validation
 
-- **Framework**: React Hook Form + Yup resolver
+- **Framework**: React Hook Form with inline validation rules (no external validator library)
 - **Example**: [LoginForm.tsx](src/features/auth/components/LoginForm.tsx)
 - **Shared Input**: [FormInput.tsx](src/shared/components/FormInput.tsx) — wraps MUI TextField with validation
+- **Validation Rules**: All custom rules centralized in [src/shared/utils/validation.ts](src/shared/utils/validation.ts); imported and used directly in form register calls
+
+## Custom Hooks (Shared Utilities)
+
+### Shared Hooks (`src/shared/hooks/`)
+
+| Hook | Purpose | Example |
+|------|---------|----------|
+| `useDebounce(value, ms)` | Debounce input changes | Search, filter inputs |
+| `useClickOutside(ref, callback)` | Detect clicks outside element | Close modals, dropdowns |
+| `useInfiniteScroll(callback, options)` | Lazy-load on scroll | Recipe listing, pagination |
+| `useLocalStorage(key, initialValue)` | Persist state to localStorage | Theme preference, filters |
+| `useMediaQuery(query)` | Detect responsive breakpoints | Mobile/desktop layouts |
+| `useScrollToTop()` | Scroll page to top on navigation | After page change |
+
+**Usage**: Import from `src/shared/hooks/` and use in any component. These prevent code duplication.
+
+### Redux Hooks (`src/redux/hooks.ts`)
+
+- **`useAppDispatch()`**: Typed Redux dispatch hook (dispatch actions with type safety)
+- **`useAppSelector(selector)`**: Typed Redux selector hook (access Redux state with type safety)
+
+**Usage**: Use these instead of `useDispatch()` and `useSelector()` from Redux for full TypeScript support:
+```typescript
+const dispatch = useAppDispatch();
+const { user, isAuthenticated } = useAppSelector(state => state.auth);
+```
+
+### Utility Functions (`src/shared/utils/`)
+
+**formatting.ts**:
+- `calcAverageRating(ratings: number[])` — Calculate average of rating array
+- `sortBy(array, key)` — Generic array sorting by property
+- `unique(array, key?)` — Deduplicate array
+- `sleep(ms)` — Promise-based sleep utility
+- `truncate(str, length)` — Truncate string to length
+- `formatShortDate(date)` — Format date in Hebrew locale
+- `formatRating(rating)` — Format rating for display
+
+**helpers.ts**:
+- Various app-specific helpers (check file for current utilities)
+
+**validation.ts**:
+- Phone, email, password, required field validators
+- Constants: `PHONE_REGEX`, `EMAIL_REGEX`, etc.
 
 ## Common Patterns
 
@@ -138,39 +199,70 @@ export const { useCreateIngredientMutation } = ingredientApi;
 ### Adding a New Feature Page
 
 1. Create directory: `features/[name]/pages/`, `features/[name]/components/`, `features/[name]/redux/`
-2. Create page: `features/[name]/pages/[Name]Page.tsx` + `[Name]Page.css`
+2. Create page: `features/[name]/pages/[Name]Page.tsx` + optional `[Name]Page.css`
 3. If needed, create RTK Query API: `src/api/[name]Api.ts`
 4. Add to store: import slice in [src/app/store.ts](src/app/store.ts)
 5. Add route: [src/routes/AppRoutes.tsx](src/routes/AppRoutes.tsx)
 
 ### Styling a Component
 
-1. Create `ComponentName.css` adjacent to `ComponentName.tsx`
-2. Use CSS variables for colors: `color: var(--primary-pink);`
-3. For MUI-specific styling, customize in [muiTheme.ts](src/styles/themes/muiTheme.ts)
-4. For utility classes, use Tailwind
+**Choose based on complexity:**
+
+1. **Simple components** → Use MUI `sx` prop or Tailwind classes directly
+   ```typescript
+   <Button sx={{ color: 'var(--primary-pink)', padding: '8px' }} />
+   ```
+
+2. **Medium complexity** → Create component `.css` file
+   ```typescript
+   // MyComponent.tsx
+   import './MyComponent.css';
+   export default function MyComponent() {
+     return <div className="my-component">...</div>;
+   }
+   ```
+
+3. **Complex styling** → Create `.css` file with media queries, animations
+   ```css
+   /* MyComponent.css */
+   .my-component { /* ... */ }
+   @media (max-width: 768px) { /* ... */ }
+   @keyframes slideIn { /* ... */ }
+   ```
+
+Use CSS variables for colors: `color: var(--primary-pink);`
+
+For MUI-specific styling, customize in [muiTheme.ts](src/styles/themes/muiTheme.ts)
 
 ## Important Conventions & Gotchas
 
 | Issue | Details | Fix |
 |-------|---------|-----|
 | **Recipe data mismatch** | Backend sends category as `number`; frontend expects `string` | Apply `normalizeRecipe()` to all recipe queries |
-| **Session lost on refresh** | Auth state not persisted | Ensure `restoreAuth()` called on app init (check [main.tsx](src/main.tsx)) |
+| **Session lost on refresh** | Auth state not persisted | Ensure `restoreAuth()` called on app init (see [App.tsx](src/App.tsx)) |
 | **Type errors in Redux** | Non-serializable function in middleware | UI slice disables serialization check for modal callbacks; acceptable here |
 | **Form validation fails** | Custom rules not applied | Check [validation.ts](src/shared/utils/validation.ts) for available validators |
 | **API auth fails** | Missing Bearer token | Token auto-injected in `baseApi`; verify JWT stored in auth slice |
+| **CSS not applying** | CSS file not imported in component | Always import `.css` at top of component: `import './ComponentName.css';` |
+| **CSS files are optional** | Not all components have `.css` pairs | Use MUI `sx` or Tailwind if `.css` not needed |
+| **Admin role missing** | JWT not properly parsed | Check `isAdminFromToken()` in [authSlice.ts](src/features/auth/redux/authSlice.ts) |
 
 ## Type System
 
 - **DTOs** (API contracts): Defined inline in `src/api/*Api.ts`
 - **Domain Models** (UI logic): In `features/*/types/*Types.ts`
-- **Mappings**: Constants in type files (e.g., `RECIPE_CATEGORIES_MAP`)
+- **Mappings**: Constants in type files (e.g., `RECIPE_CATEGORIES_MAP`, `INT_TO_CATEGORY`)
 - **Avoid `any`**: Use TypeScript strict mode for safety
 
 ## Real-Time Features
 
-- **Chat**: SignalR (`@microsoft/signalr`) connection in [SweetieChat.tsx](src/features/chat/SweetieChat.tsx)
-- **Connection state**: Managed in chat hooks
+### Sweetie Chat (AI Assistant)
+- **Framework**: SignalR WebSocket via `@microsoft/signalr`
+- **Component**: [SweetieChat.tsx](src/features/chat/SweetieChat.tsx)
+- **Features**: Real-time chat, AI recipe suggestions, recipe analysis
+- **Connection Management**: HubConnection lifecycle in chat hooks
+- **API**: See [src/api/chatApi.ts](src/api/chatApi.ts) for endpoints
+- **State**: Chat messages managed in Redux
 
 ## Key Files by Use Case
 
@@ -179,17 +271,45 @@ export const { useCreateIngredientMutation } = ingredientApi;
 | Add a new API endpoint | [src/api/baseApi.ts](src/api/baseApi.ts), `src/api/[domain]Api.ts` |
 | Add a new page | [src/routes/AppRoutes.tsx](src/routes/AppRoutes.tsx), `features/[name]/pages/` |
 | Add Redux state | `features/*/redux/*Slice.ts` or `src/redux/slices/*Slice.ts` |
-| Style a component | Companion `.css` file + [src/styles/themes/muiTheme.ts](src/styles/themes/muiTheme.ts) for MUI |
+| Style a component | Companion `.css` file (optional) + [src/styles/themes/muiTheme.ts](src/styles/themes/muiTheme.ts) for MUI |
 | Validate user input | [src/shared/utils/validation.ts](src/shared/utils/validation.ts) |
 | Protect a route | [src/routes/ProtectedRoute.tsx](src/routes/ProtectedRoute.tsx), [src/routes/AdminRoute.tsx](src/routes/AdminRoute.tsx) |
 | Share a component | `src/shared/components/` |
 | Add global CSS variables | [src/styles/variables.css](src/styles/variables.css) |
+| Use custom hooks | `src/shared/hooks/` |
 
 ## Build & Deployment
 
 - **Type Checking**: `tsc -b` runs before Vite build
 - **Output**: `dist/` folder (Vite bundles + minifies)
 - **ESLint**: Run before commit (`npm run lint`)
+- **No tests**: Test setup does not exist in this project (experimental)
+
+## Component Naming & Structure
+
+### Files & Exports
+- **Default export**: All components use `export default function ComponentName() { }`
+- **Page naming**: `[FeatureName]Page.tsx` (e.g., `LoginPage.tsx`, `AdminDashboard.tsx`)
+- **Component naming**: `[ComponentName].tsx` (PascalCase)
+- **Redux naming**: `[featureName]Slice.ts`
+- **API naming**: `[domainName]Api.ts`
+
+### Props Typing
+- **Props interfaces**: Defined **inline** near the component (NOT in separate type files)
+  ```typescript
+  interface MyComponentProps {
+    title: string;
+    onClose: () => void;
+  }
+  
+  export default function MyComponent({ title, onClose }: MyComponentProps) { }
+  ```
+
+## Known Issues & Limitations
+
+- **No test framework**: Jest, Vitest, or testing utilities are not set up. Any test additions are experimental.
+- **Error handling patterns**: Mostly use `console.error()` and Redux error state. Consider adding error boundaries for unhandled exceptions.
+- **Environment config**: `.env` file exists with `VITE_API_BASE_URL=https://localhost:7244/api` for local development.
 
 ---
 

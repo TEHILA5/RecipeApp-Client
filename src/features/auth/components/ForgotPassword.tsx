@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { TextField, Button, Alert, CircularProgress } from '@mui/material';
-import axiosInstance, { handleApiError } from '../../../api/axiosConfig';
+import { useResetPasswordMutation } from '../../../api/authApi';
 import './ForgotPassword.css';
 
 type Step = 'email' | 'password' | 'success';
@@ -15,6 +15,8 @@ export default function ForgotPassword() {
   const [step, setStep] = useState<Step>('email');
   const [email, setEmail] = useState('');
   const [serverError, setServerError] = useState('');
+
+  const [resetPassword] = useResetPasswordMutation();
 
   const {
     register: regEmail,
@@ -40,10 +42,10 @@ export default function ForgotPassword() {
   const onPasswordSubmit = async (data: PasswordForm) => {
     setServerError('');
     try {
-      await axiosInstance.post('/user/reset-password', { email, newPassword: data.newPassword });
+      await resetPassword({ email, newPassword: data.newPassword }).unwrap();
       setStep('success');
-    } catch (err) {
-      setServerError(handleApiError(err));
+    } catch {
+      setServerError('Failed to reset password. Please try again.');
     }
   };
 

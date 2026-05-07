@@ -4,49 +4,20 @@ import { useGetRecipesQuery } from '../../recipe/redux/recipeSlice';
 import StatsCard from '../components/StatsCard';
 import UserManagement from '../components/UserManagement';
 import RecipeModeration from '../components/RecipeModeration';
-import { useAppSelector, useAppDispatch } from '../../../redux/hooks';
-import { type ConversionDto } from '../../../api/conversionApi';
-import axiosInstance from '../../../api/axiosConfig';
-import { getErrorMessage } from '../../../shared/utils/helpers';
+import { useAppSelector } from '../../../redux/hooks';
 import {
-  fetchConversions,
-  deleteConversionThunk,
-  addConversion,
-  updateConversionInState,
-  fetchWeeklyStats,
-  type WeeklyCategoryStats,
-} from '../redux/adminSlice';
+  useGetAllConversionsQuery,
+  useCreateConversionMutation,
+  useUpdateConversionMutation,
+  useDeleteConversionMutation,
+  useGetWeeklyStatsQuery,
+  useGetAllIngredientsAdminQuery,
+  type ConversionDto,
+} from '../../../api/adminApi';
 import { CATEGORY_IMAGES, type RecipeCategory } from '../../recipe/types/recipe.types';
 import './AdminDashboard.css';
 
 type ActiveTab = 'overview' | 'recipes' | 'ingredients' | 'conversions' | 'users' | 'analytics';
-
-const createConversion = async (data: {
-  ingredientId1: number;
-  ingredientId2: number;
-  conversionRatio: number;
-  isBidirectional: boolean;
-}): Promise<ConversionDto> => {
-  const res = await axiosInstance.post<ConversionDto>('/conversion', data);
-  return res.data;
-};
-
-const updateConversion = async (
-  id: number,
-  data: { conversionRatio?: number; isBidirectional?: boolean }
-): Promise<ConversionDto> => {
-  const res = await axiosInstance.patch<ConversionDto>(`/conversion/${id}`, data);
-  return res.data;
-};
-
-interface IngredientOption { id: number; name: string; }
-
-const fetchAllIngredients = async (): Promise<IngredientOption[]> => {
-  try {
-    const res = await axiosInstance.get<IngredientOption[]>('/ingredient');
-    return res.data;
-  } catch { return []; }
-};
 
 const CATEGORY_COLORS: Record<string, string> = {
   Cakes: '#d4547a', Cookies: '#f59e0b', IceCream: '#3b82f6',
@@ -62,10 +33,17 @@ function CategoryIcon({ name }: { name: string }) {
   const img = CATEGORY_IMAGES[name as RecipeCategory];
   return img
     ? <img src={img} alt={name} style={{ width: '24px', height: '30px', objectFit: 'contain' }} />
-    : <span>🧁</span>; // Fallback cupcake if image missing
+    : <span>🧁</span>;
 }
 
 // ── Analytics ──
+
+interface WeeklyCategoryStats {
+  week: string;
+  weekLabel: string;
+  categoryName: string;
+  viewCount: number;
+}
 
 function AnalyticsTab({ weeklyStats, loading }: { weeklyStats: WeeklyCategoryStats[]; loading: boolean }) {
   const [selectedWeek, setSelectedWeek] = useState<string>('');
@@ -137,8 +115,8 @@ function AnalyticsTab({ weeklyStats, loading }: { weeklyStats: WeeklyCategorySta
                   />
                 </div>
                 <div className="at-bar-label">
-                    <CategoryIcon name={item.categoryName} />
-                    <div className="at-bar-name">{item.categoryName}</div>
+                  <CategoryIcon name={item.categoryName} />
+                  <div className="at-bar-name">{item.categoryName}</div>
                 </div>
               </div>
             );
@@ -156,7 +134,7 @@ function AnalyticsTab({ weeklyStats, loading }: { weeklyStats: WeeklyCategorySta
             return (
               <div key={item.categoryName} className="at-top5-row">
                 <span className="at-medal">{medals[idx]}</span>
-                  <CategoryIcon name={item.categoryName} />
+                <CategoryIcon name={item.categoryName} />
                 <div className="at-top5-info">
                   <div className="at-top5-meta">
                     <span className="at-top5-name">{item.categoryName}</span>
@@ -190,8 +168,8 @@ function AnalyticsTab({ weeklyStats, loading }: { weeklyStats: WeeklyCategorySta
                 {categories.map((cat, idx) => (
                   <tr key={cat} className={`at-trend-row ${idx % 2 === 0 ? '' : 'at-trend-row--odd'}`}>
                     <td className="at-trend-cat">
-                        <CategoryIcon name={cat} />
-                        <span style={{ color: getColor(cat) }}>{cat}</span>
+                      <CategoryIcon name={cat} />
+                      <span style={{ color: getColor(cat) }}>{cat}</span>
                     </td>
                     {weeks.map((w) => {
                       const val = weeklyStats.find((s) => s.week === w && s.categoryName === cat)?.viewCount ?? 0;
@@ -216,15 +194,22 @@ function AnalyticsTab({ weeklyStats, loading }: { weeklyStats: WeeklyCategorySta
 
 export default function AdminDashboard() {
   const { user } = useAppSelector((s) => s.auth);
-  const dispatch = useAppDispatch();
-
-  const conversions = useAppSelector((s) => s.admin.conversions);
-  const loadingConversions = useAppSelector((s) => s.admin.loadingConversions);
-  const weeklyStats = useAppSelector((s) => s.admin.weeklyStats);
-  const loadingWeeklyStats = useAppSelector((s) => s.admin.loadingWeeklyStats);
+  const [activeTab, setActiveTab] = useState<ActiveTab>('overview');
 
   const { data: recipes = [] } = useGetRecipesQuery();
-  const [activeTab, setActiveTab] = useState<ActiveTab>('overview');
+  const { data: conversions = [], isLoading: loadingConversions } = useGetAllConversionsQuery();
+  const { data: weeklyStats = [], isLoading: loadingWeeklyStats } = useGetWeeklyStatsQuery(
+    undefined,
+    { skip: activeTab !== 'analytics' }
+  );
+  const { data: allIngredients = [] } = useGetAllIngredientsAdminQuery(
+    undefined,
+    { skip: activeTab !== 'conversions' }
+  );
+
+  const [createConversion] = useCreateConversionMutation();
+  const [updateConversion] = useUpdateConversionMutation();
+  const [deleteConversion] = useDeleteConversionMutation();
 
   const [convSearch, setConvSearch] = useState('');
   const [convError, setConvError] = useState('');
@@ -238,16 +223,9 @@ export default function AdminDashboard() {
     ingredient2Query: '', ingredient2Id: 0, ingredient2Name: '',
     conversionRatio: '', isBidirectional: true,
   });
-  const [allIngredients, setAllIngredients] = useState<IngredientOption[]>([]);
-  const [ing1Options, setIng1Options] = useState<IngredientOption[]>([]);
-  const [ing2Options, setIng2Options] = useState<IngredientOption[]>([]);
 
-  useEffect(() => { dispatch(fetchConversions()); }, [dispatch]);
-
-  useEffect(() => {
-    if (activeTab === 'conversions') fetchAllIngredients().then(setAllIngredients);
-    if (activeTab === 'analytics') dispatch(fetchWeeklyStats());
-  }, [activeTab, dispatch]);
+  const [ing1Options, setIng1Options] = useState<{ id: number; name: string }[]>([]);
+  const [ing2Options, setIng2Options] = useState<{ id: number; name: string }[]>([]);
 
   useEffect(() => {
     if (form.ingredient1Query.length < 1) { setIng1Options([]); return; }
@@ -264,9 +242,13 @@ export default function AdminDashboard() {
   const handleDeleteConversion = async (id: number) => {
     if (!confirm('Delete this conversion?')) return;
     setDeletingConvId(id);
-    try { await dispatch(deleteConversionThunk(id)).unwrap(); }
-    catch { setConvError('Failed to delete'); }
-    finally { setDeletingConvId(null); }
+    try {
+      await deleteConversion(id).unwrap();
+    } catch {
+      setConvError('Failed to delete');
+    } finally {
+      setDeletingConvId(null);
+    }
   };
 
   const handleSaveConversion = async () => {
@@ -276,23 +258,38 @@ export default function AdminDashboard() {
     if (!ratio || ratio <= 0) { setConvError('Please enter a valid ratio'); return; }
     setSavingConv(true);
     try {
-      const created = await createConversion({ ingredientId1: form.ingredient1Id, ingredientId2: form.ingredient2Id, conversionRatio: ratio, isBidirectional: form.isBidirectional });
-      dispatch(addConversion(created));
+      await createConversion({
+        ingredientId1: form.ingredient1Id,
+        ingredientId2: form.ingredient2Id,
+        conversionRatio: ratio,
+        isBidirectional: form.isBidirectional,
+      }).unwrap();
       setShowAddForm(false);
       setForm({ ingredient1Query: '', ingredient1Id: 0, ingredient1Name: '', ingredient2Query: '', ingredient2Id: 0, ingredient2Name: '', conversionRatio: '', isBidirectional: true });
-    } catch (err: unknown) { setConvError(getErrorMessage(err)); }
-    finally { setSavingConv(false); }
+    } catch {
+      setConvError('Failed to save conversion');
+    } finally {
+      setSavingConv(false);
+    }
   };
 
   const handleUpdateConversion = async () => {
     if (!editingConv) return;
     setSavingConv(true);
     try {
-      const updated = await updateConversion(editingConv.id, { conversionRatio: editingConv.conversionRatio ?? undefined, isBidirectional: editingConv.isBidirectional ?? undefined });
-      dispatch(updateConversionInState(updated));
+      await updateConversion({
+        id: editingConv.id,
+        data: {
+          conversionRatio: editingConv.conversionRatio,
+          isBidirectional: editingConv.isBidirectional,
+        },
+      }).unwrap();
       setEditingConv(null);
-    } catch { setConvError('Failed to update'); }
-    finally { setSavingConv(false); }
+    } catch {
+      setConvError('Failed to update');
+    } finally {
+      setSavingConv(false);
+    }
   };
 
   const filteredConversions = conversions.filter((c) =>
@@ -303,8 +300,9 @@ export default function AdminDashboard() {
   const stats = {
     totalRecipes: recipes.length,
     topCategory: recipes.length > 0
-      ? Object.entries(recipes.reduce((acc, r) => { acc[r.category] = (acc[r.category] ?? 0) + 1; return acc; }, {} as Record<string, number>))
-          .sort(([, a], [, b]) => b - a)[0]?.[0] ?? '—'
+      ? Object.entries(
+          recipes.reduce((acc, r) => { acc[r.category] = (acc[r.category] ?? 0) + 1; return acc; }, {} as Record<string, number>)
+        ).sort(([, a], [, b]) => b - a)[0]?.[0] ?? '—'
       : '—',
     avgRating: recipes.length > 0
       ? (recipes.reduce((sum, r) => sum + (r.averageRating || 0), 0) / recipes.length).toFixed(1)
@@ -375,7 +373,9 @@ export default function AdminDashboard() {
 
         {activeTab === 'users' && <UserManagement />}
 
-        {activeTab === 'analytics' && <AnalyticsTab weeklyStats={weeklyStats} loading={loadingWeeklyStats} />}
+        {activeTab === 'analytics' && (
+          <AnalyticsTab weeklyStats={weeklyStats} loading={loadingWeeklyStats} />
+        )}
 
         {activeTab === 'conversions' && (
           <div>
@@ -412,7 +412,10 @@ export default function AdminDashboard() {
                               <div
                                 key={ing.id}
                                 className="cv-dropdown-item"
-                                onClick={() => { setForm((f) => ({ ...f, [idKey]: ing.id, [nameKey]: ing.name, [queryKey]: ing.name })); setOptions([]); }}
+                                onClick={() => {
+                                  setForm((f) => ({ ...f, [idKey]: ing.id, [nameKey]: ing.name, [queryKey]: ing.name }));
+                                  setOptions([]);
+                                }}
                               >
                                 {ing.name} <span className="cv-dropdown-id">#{ing.id}</span>
                               </div>
@@ -422,7 +425,12 @@ export default function AdminDashboard() {
                         {form[idKey] > 0 && (
                           <div className="cv-selected">
                             ✅ {form[nameKey]}
-                            <button className="cv-clear-btn" onClick={() => setForm((f) => ({ ...f, [idKey]: 0, [nameKey]: '', [queryKey]: '' }))}>×</button>
+                            <button
+                              className="cv-clear-btn"
+                              onClick={() => setForm((f) => ({ ...f, [idKey]: 0, [nameKey]: '', [queryKey]: '' }))}
+                            >
+                              ×
+                            </button>
                           </div>
                         )}
                       </div>
@@ -441,7 +449,10 @@ export default function AdminDashboard() {
                     />
                   </div>
                   <div className="cv-toggle-wrap">
-                    <div className={`cv-toggle ${form.isBidirectional ? 'cv-toggle--on' : ''}`} onClick={() => setForm((f) => ({ ...f, isBidirectional: !f.isBidirectional }))}>
+                    <div
+                      className={`cv-toggle ${form.isBidirectional ? 'cv-toggle--on' : ''}`}
+                      onClick={() => setForm((f) => ({ ...f, isBidirectional: !f.isBidirectional }))}
+                    >
                       <div className="cv-toggle-thumb" />
                     </div>
                     <span className="cv-toggle-label">Bidirectional {form.isBidirectional ? '↔️' : '→'}</span>
@@ -453,7 +464,11 @@ export default function AdminDashboard() {
                   </div>
                 )}
                 {convError && <p className="cv-error">{convError}</p>}
-                <button onClick={handleSaveConversion} disabled={savingConv} className={`cv-save-btn ${savingConv ? 'cv-save-btn--busy' : ''}`}>
+                <button
+                  onClick={handleSaveConversion}
+                  disabled={savingConv}
+                  className={`cv-save-btn ${savingConv ? 'cv-save-btn--busy' : ''}`}
+                >
                   {savingConv ? 'Saving...' : '✅ Save Conversion'}
                 </button>
               </div>
@@ -463,7 +478,13 @@ export default function AdminDashboard() {
               <div className="cv-table-header">
                 <span className="cv-count">{filteredConversions.length} conversion{filteredConversions.length !== 1 ? 's' : ''}</span>
                 <div className="cv-search-wrap">
-                  <input type="text" value={convSearch} onChange={(e) => setConvSearch(e.target.value)} placeholder="Search ingredients..." className="cv-search" />
+                  <input
+                    type="text"
+                    value={convSearch}
+                    onChange={(e) => setConvSearch(e.target.value)}
+                    placeholder="Search ingredients..."
+                    className="cv-search"
+                  />
                   <span className="cv-search-icon">🔍</span>
                 </div>
               </div>
@@ -521,13 +542,19 @@ export default function AdminDashboard() {
                             <div className="cv-actions">
                               {editingConv?.id === conv.id ? (
                                 <>
-                                  <button onClick={handleUpdateConversion} disabled={savingConv} className="cv-btn cv-btn--save">{savingConv ? '...' : '✅ Save'}</button>
+                                  <button onClick={handleUpdateConversion} disabled={savingConv} className="cv-btn cv-btn--save">
+                                    {savingConv ? '...' : '✅ Save'}
+                                  </button>
                                   <button onClick={() => setEditingConv(null)} className="cv-btn cv-btn--cancel">Cancel</button>
                                 </>
                               ) : (
                                 <>
                                   <button onClick={() => setEditingConv(conv)} className="cv-btn cv-btn--edit">✏️ Edit</button>
-                                  <button onClick={() => handleDeleteConversion(conv.id)} disabled={deletingConvId === conv.id} className="cv-btn cv-btn--delete">
+                                  <button
+                                    onClick={() => handleDeleteConversion(conv.id)}
+                                    disabled={deletingConvId === conv.id}
+                                    className="cv-btn cv-btn--delete"
+                                  >
                                     {deletingConvId === conv.id ? '...' : '🗑️ Delete'}
                                   </button>
                                 </>

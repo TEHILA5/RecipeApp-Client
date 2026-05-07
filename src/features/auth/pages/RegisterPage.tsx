@@ -1,7 +1,9 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
-import { registerUser, clearError } from '../redux/authSlice';
+import { useAppSelector } from '../../../redux/hooks';
+import { useRegisterMutation } from '../../../api/authApi';
+import { clearError } from '../redux/authSlice';
+import { useAppDispatch } from '../../../redux/hooks';
 import RegisterForm from '../components/RegisterForm';
 import './LoginPage.css';
 
@@ -16,21 +18,28 @@ interface RegisterFormData {
 function RegisterPage() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  const { loading, error, isAuthenticated } = useAppSelector((s) => s.auth);
+  const { isAuthenticated } = useAppSelector((s) => s.auth);
+  const [register, { isLoading, error }] = useRegisterMutation();
 
   useEffect(() => { dispatch(clearError()); }, [dispatch]);
   useEffect(() => { if (isAuthenticated) navigate('/'); }, [isAuthenticated, navigate]);
 
   const onSubmit = async (data: RegisterFormData) => {
     try {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { confirmPassword, ...registerData } = data;
-      await dispatch(registerUser(registerData)).unwrap();
+      void confirmPassword;
+      await register(registerData).unwrap();
       navigate('/');
     } catch (err) {
       console.error('Registration failed:', err);
     }
   };
+
+  const errorMessage = error
+    ? typeof error === 'object' && 'message' in error && error.message
+      ? error.message
+      : 'Registration failed'
+    : null;
 
   return (
     <div className="login-page">
@@ -46,7 +55,7 @@ function RegisterPage() {
           </div>
         </div>
         <div className="login-form-wrapper">
-          <RegisterForm onSubmit={onSubmit} loading={loading} error={error} />
+          <RegisterForm onSubmit={onSubmit} loading={isLoading} error={errorMessage} />
         </div>
       </div>
     </div>

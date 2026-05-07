@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 export function useAuth() {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const { user, isAuthenticated, isAdmin, loading, error } = useAppSelector((s) => s.auth);
+  const { user, isAuthenticated, isAdmin, error } = useAppSelector((s) => s.auth);
 
   const handleLogout = () => {
     dispatch(logout());
@@ -16,7 +16,6 @@ export function useAuth() {
     user,
     isAuthenticated,
     isAdmin,
-    loading,
     error,
     handleLogout,
     clearError: () => dispatch(clearError()),

@@ -3,7 +3,7 @@ import { BrowserRouter } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import { ThemeProvider, CssBaseline } from '@mui/material';
 import { store } from './app/store';
-import { checkAuth } from './features/auth/redux/authSlice';
+import { restoreAuth } from './features/auth/redux/authSlice';
 import AppRoutes from './routes/AppRoutes';
 import theme from './styles/themes/muiTheme';
 import Toast from './shared/components/UI/Toast';
@@ -12,7 +12,7 @@ import './App.css';
 
 function App() {
   useEffect(() => {
-    store.dispatch(checkAuth());
+    store.dispatch(restoreAuth());
 
     const loadingScreen = document.getElementById('loading-screen');
     if (loadingScreen) {

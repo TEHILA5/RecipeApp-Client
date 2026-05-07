@@ -8,21 +8,22 @@ import adminReducer from '../features/admin/redux/adminSlice';
 import userReducer from '../features/user/redux/userSlice';
 import searchReducer from '../features/search/redux/searchSlice';
 
-// NOTE: recipesApi is now part of baseApi (injected endpoints).
-// Import and use hooks from their respective api files:
-//   authApi    → /api/authApi.ts
-//   adminApi   → /api/adminApi.ts
+// All API endpoints are injected into the single baseApi:
+//   authApi       → /api/authApi.ts
+//   adminApi      → /api/adminApi.ts
 //   ingredientApi → /api/ingredientApi.ts
 //   userActionApi → /api/userActionApi.ts
-//   userApi    → /api/userApi.ts
-//   recipesApi → /features/recipe/redux/recipeSlice.ts (already RTK Query)
+//   userApi       → /api/userApi.ts
+//   contactApi    → /api/contactApi.ts
+//   chatApi       → /api/chatApi.ts
+//   recipesApi    → /features/recipe/redux/recipeSlice.ts
 
 export const store = configureStore({
   reducer: {
-    // RTK Query — single shared api reducer
+    // Single RTK Query reducer for all API calls
     [baseApi.reducerPath]: baseApi.reducer,
 
-    // Regular slices (UI state only)
+    // UI slices (no server state)
     auth: authReducer,
     ingredients: ingredientReducer,
     recipePanel: recipePanelReducer,

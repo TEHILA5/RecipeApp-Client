@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { type Recipe, CATEGORY_EMOJIS, LEVEL_LABELS } from '../../recipe/types/recipe.types';
-import { type ConversionDto } from '../../../api/conversionApi';
+import { type ConversionDto } from '../../../api/adminApi';
 import StarRating from '../../../shared/components/StarRating';
 import Button from '../../../shared/components/UI/Button';
 import './SearchResults.css';

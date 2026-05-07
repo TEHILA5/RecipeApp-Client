@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useAppDispatch } from '../../../redux/hooks';
 import { updateUser } from '../../auth/redux/authSlice';
-import { updateMe } from '../../../api/userApi';
+import { useUpdateMeMutation } from '../../../api/userApi';
 import type { UserDto, UserUpdateDto } from '../../../api/userApi';
 import './ProfileCard.css';
 
@@ -17,8 +17,9 @@ const FIELDS = [
 
 export default function ProfileCard({ user }: ProfileCardProps) {
   const dispatch = useAppDispatch();
+  const [updateMe, { isLoading: saving }] = useUpdateMeMutation();
+
   const [editing, setEditing] = useState(false);
-  const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [form, setForm] = useState<UserUpdateDto>({
@@ -33,18 +34,15 @@ export default function ProfileCard({ user }: ProfileCardProps) {
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) { setError('Please enter a valid email address'); return; }
     if (form.phone && !/^[\d\-+() ]{7,15}$/.test(form.phone)) { setError('Please enter a valid phone number'); return; }
 
-    setSaving(true);
     setError('');
     try {
-      const updated = await updateMe(form);
+      const updated = await updateMe(form).unwrap();
       dispatch(updateUser({ name: updated.name, email: updated.email, phone: updated.phone }));
       setSuccess('Profile updated! ✅');
       setEditing(false);
       setTimeout(() => setSuccess(''), 3000);
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Failed to update profile');
-    } finally {
-      setSaving(false);
     }
   };
 

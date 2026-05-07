@@ -1,38 +1,9 @@
 import { baseApi } from './baseApi';
-
-export interface LoginPayload {
-  email: string;
-  password: string;
-}
-
-export interface RegisterPayload {
-  name: string;
-  phone: string;
-  email: string;
-  password: string;
-}
-
-export interface LoginResponse {
-  user: {
-    id?: number;
-    name: string;
-    email: string;
-    phone: string;
-    isAdmin?: boolean;
-  };
-  token: string;
-}
-
-export interface UserDto {
-  name: string;
-  email: string;
-  phone: string;
-  createdAt?: string;
-}
+import type { AuthResponse, LoginCredentials, RegisterData } from '../features/auth/types/auth.types';
 
 export const authApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
-    login: builder.mutation<LoginResponse, LoginPayload>({
+    login: builder.mutation<AuthResponse, LoginCredentials>({
       query: (credentials) => ({
         url: '/user/login',
         method: 'POST',
@@ -40,16 +11,24 @@ export const authApi = baseApi.injectEndpoints({
       }),
     }),
 
-    register: builder.mutation<LoginResponse, RegisterPayload>({
-      query: (userData) => ({
+    register: builder.mutation<AuthResponse, RegisterData>({
+      query: (data) => ({
         url: '/user/register',
         method: 'POST',
-        body: userData,
+        body: data,
       }),
     }),
 
-    getMe: builder.query<UserDto, void>({
+    getMe: builder.query<AuthResponse['user'], void>({
       query: () => '/user/me',
+    }),
+
+    resetPassword: builder.mutation<void, { email: string; newPassword: string }>({
+      query: (body) => ({
+        url: '/user/reset-password',
+        method: 'POST',
+        body,
+      }),
     }),
   }),
 });
@@ -58,4 +37,5 @@ export const {
   useLoginMutation,
   useRegisterMutation,
   useGetMeQuery,
+  useResetPasswordMutation,
 } = authApi;

@@ -2,13 +2,16 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppSelector, useAppDispatch } from '../../../redux/hooks';
 import { logout, updateUser } from '../../auth/redux/authSlice';
-import { updateMe, deleteMe } from '../../../api/userApi';
+import { useUpdateMeMutation, useDeleteMeMutation } from '../../../api/userApi';
 import type { UpdateUserData } from '../../auth/types/auth.types';
 
 export function useUserProfile() {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const { user } = useAppSelector((s) => s.auth);
+
+  const [updateMe] = useUpdateMeMutation();
+  const [deleteMe] = useDeleteMeMutation();
 
   const [saving, setSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
@@ -27,7 +30,7 @@ export function useUserProfile() {
       if (data.email !== user?.email) changed.email = data.email;
 
       if (Object.keys(changed).length > 0) {
-        const updated = await updateMe(changed);
+        const updated = await updateMe(changed).unwrap();
         dispatch(updateUser({ name: updated.name, email: updated.email, phone: updated.phone }));
       }
 
@@ -43,7 +46,7 @@ export function useUserProfile() {
   const handleDeleteAccount = async () => {
     setDeleting(true);
     try {
-      await deleteMe();
+      await deleteMe().unwrap();
       dispatch(logout());
       navigate('/');
     } catch (err: unknown) {

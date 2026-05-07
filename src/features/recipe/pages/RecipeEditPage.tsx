@@ -78,7 +78,10 @@ export default function RecipeEditPage() {
         </div>
       </div>
 
+      {/* key={recipe.id} remounts RecipeForm with fresh state once data loads,
+          avoiding the setState-in-useEffect anti-pattern entirely */}
       <RecipeForm
+        key={recipe.id}
         initialData={initialData}
         onSubmit={handleSubmit}
         loading={saving}

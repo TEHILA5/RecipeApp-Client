@@ -1,20 +1,14 @@
-import { useState, useEffect, useMemo } from 'react';
-import { getAllConversions, type ConversionDto } from '../../../api/conversionApi';
+import { useMemo, useState } from 'react';
+import { useGetAllConversionsQuery } from '../../../api/adminApi';
 import Loading from '../../../shared/components/UI/Loading';
 import './ConversionsPage.css';
 
 export default function ConversionsPage() {
-  const [conversions, setConversions] = useState<ConversionDto[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { data: conversions = [], isLoading } = useGetAllConversionsQuery();
+
   const [search, setSearch] = useState('');
   const [calcFrom, setCalcFrom] = useState('');
   const [calcAmount, setCalcAmount] = useState('');
-
-  useEffect(() => {
-    getAllConversions()
-      .then(setConversions)
-      .finally(() => setLoading(false));
-  }, []);
 
   const filtered = useMemo(() => {
     const q = search.toLowerCase();
@@ -139,7 +133,7 @@ export default function ConversionsPage() {
             </div>
           </div>
 
-          {loading ? (
+          {isLoading ? (
             <Loading message="Loading..." color="#7c3aed" />
           ) : filtered.length === 0 ? (
             <div className="table-empty">

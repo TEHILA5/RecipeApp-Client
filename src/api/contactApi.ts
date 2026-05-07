@@ -1,6 +1,6 @@
 import { baseApi } from './baseApi';
 
-export interface ContactFormDto {
+export interface ContactMessageDto {
   name: string;
   email: string;
   category: string;
@@ -9,16 +9,24 @@ export interface ContactFormDto {
   urgency: string;
 }
 
+export interface NewsletterSubscribeDto {
+  email: string;
+  name: string;
+}
+
 export const contactApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
-    sendContactMessage: builder.mutation<void, ContactFormDto>({
-      query: (payload) => ({
-        url: '/contact/send',
-        method: 'POST',
-        body: payload,
-      }),
+    sendContactMessage: builder.mutation<void, ContactMessageDto>({
+      query: (body) => ({ url: '/contact', method: 'POST', body }),
+    }),
+
+    subscribeNewsletter: builder.mutation<void, NewsletterSubscribeDto>({
+      query: (body) => ({ url: '/newsletter/subscribe', method: 'POST', body }),
     }),
   }),
 });
 
-export const { useSendContactMessageMutation } = contactApi;
+export const {
+  useSendContactMessageMutation,
+  useSubscribeNewsletterMutation,
+} = contactApi; 

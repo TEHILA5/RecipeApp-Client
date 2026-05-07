@@ -1,12 +1,13 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import type { RecipeCreateDto, RecipeUpdateDto, RecipeCategory, DifficultyLevel } from '../types/recipe.types';
-import * as ingredientApi from '../../../api/ingredientApi';
+import {
+  useGetAllIngredientsQuery,
+  useCreateIngredientMutation,
+} from '../../../api/ingredientApi';
 import Modal from '../../../shared/components/UI/Modal';
 import Button from '../../../shared/components/UI/Button';
 import ErrorMessage from '../../../shared/components/UI/ErrorMessage';
 import './RecipeForm.css';
-
-interface IngredientOption { id: number; name: string; }
 
 interface FormIngredient {
   ingredientId: number;
@@ -62,9 +63,7 @@ const defaultForm: RecipeFormData = {
 };
 
 function SectionTitle({ icon, title }: { icon: string; title: string }) {
-  return (
-    <h3 className="rf-section-title">{icon} {title}</h3>
-  );
+  return <h3 className="rf-section-title">{icon} {title}</h3>;
 }
 
 export default function RecipeForm({ initialData, onSubmit, loading = false, submitLabel = 'Save Recipe' }: RecipeFormProps) {
@@ -72,34 +71,19 @@ export default function RecipeForm({ initialData, onSubmit, loading = false, sub
     ...defaultForm,
     ...initialData,
     tags: initialData?.tags ?? [],
-    ingredients: initialData?.ingredients ?? [], // ← תיקון: מוודא שמצרכים תמיד מאותחלים
+    ingredients: initialData?.ingredients ?? [],
   });
   const [errors, setErrors] = useState<Partial<Record<keyof RecipeFormData, string>>>({});
-  const [ingredientOptions, setIngredientOptions] = useState<IngredientOption[]>([]);
   const [showNewIngredientModal, setShowNewIngredientModal] = useState(false);
   const [newIngredientName, setNewIngredientName] = useState('');
-  const [savingNewIngredient, setSavingNewIngredient] = useState(false);
   const [newIngredientError, setNewIngredientError] = useState('');
   const [tagInput, setTagInput] = useState('');
   const [newIngredient, setNewIngredient] = useState<FormIngredient>({
     ingredientId: 0, ingredientName: '', quantity: 1, unit: 'g', importance: 'Essential',
   });
 
-  // ← תיקון: כשה-initialData מגיע (async מה-API) — מעדכנים את הטופס
-  useEffect(() => {
-    if (initialData) {
-      setForm({
-        ...defaultForm,
-        ...initialData,
-        tags: initialData.tags ?? [],
-        ingredients: initialData.ingredients ?? [],
-      });
-    }
-  }, [initialData?.name, initialData?.ingredients?.length]);
-
-  useEffect(() => {
-    ingredientApi.getAllIngredients().then(setIngredientOptions).catch(() => {});
-  }, []);
+  const { data: ingredientOptions = [] } = useGetAllIngredientsQuery();
+  const [createIngredient, { isLoading: savingNewIngredient }] = useCreateIngredientMutation();
 
   const set = (field: keyof RecipeFormData, value: unknown) => {
     setForm((f) => ({ ...f, [field]: value }));
@@ -124,7 +108,7 @@ export default function RecipeForm({ initialData, onSubmit, loading = false, sub
     if (!form.instructions.trim()) errs.instructions = 'Instructions are required';
     if (form.servings < 1)         errs.servings = 'Must be at least 1';
     if (form.prepTime < 1)         errs.prepTime = 'Must be at least 1 minute';
-    if (form.totalTime < form.prepTime) errs.totalTime = 'Total time must be ≥ prep time';
+    if (form.totalTime < form.prepTime) errs.totalTime = 'Total time must be >= prep time';
     setErrors(errs);
     return Object.keys(errs).length === 0;
   };
@@ -156,17 +140,15 @@ export default function RecipeForm({ initialData, onSubmit, loading = false, sub
 
   const handleCreateNewIngredient = async () => {
     if (!newIngredientName.trim()) { setNewIngredientError('Ingredient name is required'); return; }
-    setSavingNewIngredient(true);
     setNewIngredientError('');
     try {
-      const created = await ingredientApi.createIngredient({ name: newIngredientName.trim() });
-      setIngredientOptions((prev) => [...prev, { id: created.id, name: created.name }]);
+      const created = await createIngredient({ name: newIngredientName.trim() }).unwrap();
       setNewIngredient((n) => ({ ...n, ingredientId: created.id, ingredientName: created.name }));
       setNewIngredientName('');
       setShowNewIngredientModal(false);
     } catch (err: unknown) {
       setNewIngredientError(err instanceof Error ? err.message : 'Failed to create ingredient');
-    } finally { setSavingNewIngredient(false); }
+    }
   };
 
   return (
@@ -222,7 +204,7 @@ export default function RecipeForm({ initialData, onSubmit, loading = false, sub
             {form.tags.map((tag) => (
               <span key={tag} className="rf-tag">
                 #{tag}
-                <button className="rf-tag-remove" onClick={() => handleRemoveTag(tag)}>×</button>
+                <button className="rf-tag-remove" onClick={() => handleRemoveTag(tag)}>x</button>
               </span>
             ))}
           </div>
@@ -273,7 +255,7 @@ export default function RecipeForm({ initialData, onSubmit, loading = false, sub
         <div className="rf-section-header">
           <SectionTitle icon="🧂" title="Ingredients" />
           <Button variant="outline" size="sm" onClick={() => { setShowNewIngredientModal(true); setNewIngredientError(''); setNewIngredientName(''); }}>
-            ➕ New Ingredient
+            New Ingredient
           </Button>
         </div>
 
@@ -284,7 +266,7 @@ export default function RecipeForm({ initialData, onSubmit, loading = false, sub
                 <span className="rf-ing-name">{ing.ingredientName}</span>
                 <span className="rf-ing-qty">{ing.quantity} {ing.unit}</span>
                 <span className="rf-ing-importance">{ing.importance}</span>
-                <button className="rf-ing-remove" onClick={() => handleRemoveIngredient(i)}>×</button>
+                <button className="rf-ing-remove" onClick={() => handleRemoveIngredient(i)}>x</button>
               </div>
             ))}
           </div>
@@ -334,7 +316,7 @@ export default function RecipeForm({ initialData, onSubmit, loading = false, sub
         <textarea
           className={`rf-input rf-textarea ${errors.instructions ? 'rf-input--error' : ''}`}
           value={form.instructions} onChange={(e) => set('instructions', e.target.value)}
-          rows={8} placeholder={`Step 1: Preheat oven to 180°C\nStep 2: Mix flour and sugar\nStep 3: ...`} />
+          rows={8} placeholder="Step 1: Preheat oven to 180 degrees" />
         {errors.instructions && <p className="rf-field-error">{errors.instructions}</p>}
       </div>
 

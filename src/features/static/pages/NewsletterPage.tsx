@@ -1,28 +1,25 @@
 import { useState } from 'react';
-import axiosInstance from '../../../api/axiosConfig';
+import { useSubscribeNewsletterMutation } from '../../../api/contactApi';
 import { labelStyle, inputStyle } from './StaticPageHelpers';
 
 export default function NewsletterPage() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
-  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const [errorMsg, setErrorMsg] = useState('');
+
+  const [subscribeNewsletter, { isLoading, isSuccess }] = useSubscribeNewsletterMutation();
 
   const handleSubmit = async () => {
     if (!email.trim()) { setErrorMsg('Email is required'); return; }
     if (!email.includes('@')) { setErrorMsg('Please enter a valid email'); return; }
 
-    setStatus('loading');
     setErrorMsg('');
-
     try {
-      await axiosInstance.post('/newsletter/subscribe', {
+      await subscribeNewsletter({
         email: email.trim(),
         name: name.trim() || 'Sweet Lover',
-      });
-      setStatus('success');
+      }).unwrap();
     } catch {
-      setStatus('error');
       setErrorMsg('Something went wrong. Please try again.');
     }
   };
@@ -43,7 +40,7 @@ export default function NewsletterPage() {
 
       <div style={{ maxWidth: '560px', margin: '0 auto', padding: '48px 24px' }}>
 
-        {status === 'success' ? (
+        {isSuccess ? (
           /* ── Success State ── */
           <div style={{ background: 'white', borderRadius: '24px', padding: '48px 32px', textAlign: 'center', boxShadow: '0 8px 32px rgba(212,84,122,0.12)' }}>
             <div style={{ fontSize: '4rem', marginBottom: '16px' }}>🎉</div>
@@ -93,17 +90,17 @@ export default function NewsletterPage() {
 
               <button
                 onClick={handleSubmit}
-                disabled={status === 'loading'}
+                disabled={isLoading}
                 style={{
                   padding: '14px', borderRadius: '999px', border: 'none',
                   background: 'linear-gradient(135deg, #d4547a, #e8799a)',
                   color: 'white', fontFamily: "'Nunito',sans-serif", fontWeight: 700,
-                  fontSize: '1rem', cursor: status === 'loading' ? 'not-allowed' : 'pointer',
-                  opacity: status === 'loading' ? 0.7 : 1,
+                  fontSize: '1rem', cursor: isLoading ? 'not-allowed' : 'pointer',
+                  opacity: isLoading ? 0.7 : 1,
                   boxShadow: '0 4px 16px rgba(212,84,122,0.3)',
                   marginTop: '8px',
                 }}>
-                {status === 'loading' ? '📨 Sending...' : '💌 Send Me the Newsletter'}
+                {isLoading ? '📨 Sending...' : '💌 Send Me the Newsletter'}
               </button>
 
               <p style={{ color: '#9ca3af', fontSize: '0.78rem', textAlign: 'center', marginTop: '4px' }}>

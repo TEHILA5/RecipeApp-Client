@@ -1,40 +1,19 @@
-import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useGetRecipesQuery } from '../../recipe/redux/recipeSlice';
-import { removeBookmark } from '../../../api/userActionApi';
+import { useGetMySavedRecipesQuery, useRemoveBookmarkMutation } from '../../../api/userActionApi';
 import { CATEGORY_EMOJIS, LEVEL_LABELS } from '../../recipe/types/recipe.types';
 import StarRating from '../../../shared/components/StarRating';
-import { useAppSelector, useAppDispatch } from '../../../redux/hooks';
 import Loading from '../../../shared/components/UI/Loading';
 import ErrorMessage from '../../../shared/components/UI/ErrorMessage';
-import { fetchSavedRecipes, removeSavedRecipe } from '../redux/userSlice';
 import './MyFavorites.css';
 
 export default function MyFavorites() {
-  const dispatch = useAppDispatch();
-  const saved = useAppSelector((s) => s.user.savedRecipes);
-  const loading = useAppSelector((s) => s.user.loadingSaved);
+  const { data: saved = [], isLoading, isError } = useGetMySavedRecipesQuery();
   const { data: recipes = [] } = useGetRecipesQuery();
+  const [removeBookmark, { isLoading: removing }] = useRemoveBookmarkMutation();
 
-  const [error, setError] = useState('');
-  const [removingId, setRemovingId] = useState<number | null>(null);
-
-  useEffect(() => { dispatch(fetchSavedRecipes()); }, [dispatch]);
-
-  const handleRemove = async (recipeId: number) => {
-    setRemovingId(recipeId);
-    try {
-      await removeBookmark(recipeId);
-      dispatch(removeSavedRecipe(recipeId));
-    } catch {
-      setError('Failed to remove recipe');
-    } finally {
-      setRemovingId(null);
-    }
-  };
-
-  if (loading) return <Loading size="md" />;
-  if (error) return <ErrorMessage message={error} />;
+  if (isLoading) return <Loading size="md" />;
+  if (isError) return <ErrorMessage message="Failed to load saved recipes" />;
 
   if (saved.length === 0) return (
     <div className="favorites-empty">
@@ -51,14 +30,14 @@ export default function MyFavorites() {
         const recipe = recipes.find((r) => r.id === item.recipeId);
         const emoji = CATEGORY_EMOJIS[recipe?.category as keyof typeof CATEGORY_EMOJIS] ?? '🍰';
         const level = LEVEL_LABELS[recipe?.level as 1 | 2 | 3] ?? 'Easy';
-        const removing = removingId === item.recipeId;
+        const isRemoving = removing;
         const imgSrc = recipe?.arrImage || item.recipeImageUrl;
         const desc = recipe?.description
           ? recipe.description.length > 80 ? `${recipe.description.substring(0, 80)}...` : recipe.description
           : null;
 
         return (
-          <div key={item.id} className={`favorite-card ${removing ? 'removing' : ''}`}>
+          <div key={item.id} className={`favorite-card ${isRemoving ? 'removing' : ''}`}>
             <Link to={`/recipes/${item.recipeId}`}>
               <div className="favorite-img">
                 {imgSrc ? (
@@ -89,11 +68,11 @@ export default function MyFavorites() {
 
             <div className="favorite-actions">
               <button
-                onClick={() => handleRemove(item.recipeId!)}
-                disabled={removing}
-                className={`remove-btn ${removing ? 'removing' : ''}`}
+                onClick={() => removeBookmark(item.recipeId!)}
+                disabled={isRemoving}
+                className={`remove-btn ${isRemoving ? 'removing' : ''}`}
               >
-                {removing ? 'Removing...' : '🔖 Remove from Saved'}
+                {isRemoving ? 'Removing...' : '🔖 Remove from Saved'}
               </button>
             </div>
           </div>

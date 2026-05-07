@@ -24,9 +24,16 @@ export interface WeeklyCategoryStats {
   viewCount: number;
 }
 
+export interface ReplyDto {
+  toEmail: string;
+  toName: string;
+  subject: string;
+  replyContent: string;
+}
+
 export const adminApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
-    // Conversions
+    // ── Conversions ──
     getAllConversions: builder.query<ConversionDto[], void>({
       query: () => '/conversion',
       providesTags: ['Conversions'],
@@ -37,12 +44,12 @@ export const adminApi = baseApi.injectEndpoints({
       providesTags: (_result, _error, id) => [{ type: 'Conversions', id }],
     }),
 
-    createConversion: builder.mutation<ConversionDto, Omit<ConversionDto, 'id'>>({
+    createConversion: builder.mutation<ConversionDto, Omit<ConversionDto, 'id' | 'ingredient1Name' | 'ingredient2Name'> & { ingredientId1: number; ingredientId2: number }>({
       query: (body) => ({ url: '/conversion', method: 'POST', body }),
       invalidatesTags: ['Conversions'],
     }),
 
-    updateConversion: builder.mutation<ConversionDto, { id: number; data: Partial<ConversionDto> }>({
+    updateConversion: builder.mutation<ConversionDto, { id: number; data: Partial<Pick<ConversionDto, 'conversionRatio' | 'isBidirectional'>> }>({
       query: ({ id, data }) => ({ url: `/conversion/${id}`, method: 'PATCH', body: data }),
       invalidatesTags: (_result, _error, { id }) => ['Conversions', { type: 'Conversions', id }],
     }),
@@ -52,7 +59,7 @@ export const adminApi = baseApi.injectEndpoints({
       invalidatesTags: ['Conversions'],
     }),
 
-    // Users (admin)
+    // ── Users (admin) ──
     getAllUsers: builder.query<UserAdminDto[], void>({
       query: () => '/user',
       providesTags: ['Users'],
@@ -68,10 +75,21 @@ export const adminApi = baseApi.injectEndpoints({
       invalidatesTags: ['Users'],
     }),
 
-    // Stats
+    // ── Stats ──
     getWeeklyStats: builder.query<WeeklyCategoryStats[], void>({
       query: () => '/userAction/stats/weekly-categories',
       providesTags: ['WeeklyStats'],
+    }),
+
+    // ── Ingredients (for admin dropdowns) ──
+    getAllIngredientsAdmin: builder.query<{ id: number; name: string }[], void>({
+      query: () => '/ingredient',
+      providesTags: ['Ingredients'],
+    }),
+
+    // ── Contact Reply ──
+    sendReply: builder.mutation<void, ReplyDto>({
+      query: (body) => ({ url: '/contact/reply', method: 'POST', body }),
     }),
   }),
 });
@@ -86,4 +104,6 @@ export const {
   useDeleteUserMutation,
   useUpdateUserMutation,
   useGetWeeklyStatsQuery,
+  useGetAllIngredientsAdminQuery,
+  useSendReplyMutation,
 } = adminApi;

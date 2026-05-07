@@ -1,8 +1,6 @@
 import { useState } from 'react';
-import axiosInstance from '../../../api/axiosConfig';
+import { useSendReplyMutation } from '../../../api/adminApi';
 import './AdminReplyPage.css';
-
-type Status = 'idle' | 'loading' | 'success' | 'error';
 
 type Form = {
   toEmail: string;
@@ -19,8 +17,8 @@ export default function AdminReplyPage() {
     replyContent: '',
   });
 
-  const [status, setStatus] = useState<Status>('idle');
   const [error, setError] = useState('');
+  const [sendReply, { isLoading, isSuccess }] = useSendReplyMutation();
 
   const update = (key: keyof Form, value: string) => {
     setForm((f) => ({ ...f, [key]: value }));
@@ -31,44 +29,35 @@ export default function AdminReplyPage() {
     if (!form.toEmail.includes('@')) return setError('Invalid email'), false;
     if (!form.toName.trim()) return setError('Name required'), false;
     if (!form.subject.trim()) return setError('Subject required'), false;
-    if (form.replyContent.trim().length < 10)
-      return setError('Message too short'), false;
+    if (form.replyContent.trim().length < 10) return setError('Message too short'), false;
     return true;
   };
 
   const send = async () => {
     if (!validate()) return;
-
-    setStatus('loading');
-
     try {
-      await axiosInstance.post('/contact/reply', {
+      await sendReply({
         toEmail: form.toEmail.trim(),
         toName: form.toName.trim(),
         subject: form.subject.trim(),
         replyContent: form.replyContent.trim(),
-      });
-
-      setStatus('success');
+      }).unwrap();
     } catch {
-      setStatus('error');
       setError('Failed to send reply');
     }
   };
 
   const reset = () => {
     setForm({ toEmail: '', toName: '', subject: '', replyContent: '' });
-    setStatus('idle');
     setError('');
   };
 
-  if (status === 'success') {
+  if (isSuccess) {
     return (
       <div className="reply-page">
         <div className="success-box">
           <div className="big-icon">✅</div>
           <h2>Reply Sent!</h2>
-
           <button onClick={reset} className="primary-btn">
             Send Another Reply
           </button>
@@ -79,9 +68,7 @@ export default function AdminReplyPage() {
 
   return (
     <div className="reply-page">
-
       <div className="reply-card">
-
         <h1 className="title">Reply to Contact 💌</h1>
 
         <input
@@ -114,18 +101,13 @@ export default function AdminReplyPage() {
 
         {error && <p className="error">{error}</p>}
 
-        <button
-          onClick={send}
-          disabled={status === 'loading'}
-          className="primary-btn"
-        >
-          {status === 'loading' ? 'Sending...' : 'Send Reply'}
+        <button onClick={send} disabled={isLoading} className="primary-btn">
+          {isLoading ? 'Sending...' : 'Send Reply'}
         </button>
 
         <button onClick={reset} className="secondary-btn">
           Clear
         </button>
-
       </div>
     </div>
   );

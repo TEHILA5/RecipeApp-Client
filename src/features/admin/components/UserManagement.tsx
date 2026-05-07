@@ -1,29 +1,15 @@
-import { useState, useEffect } from 'react';
-import axiosInstance from '../../../api/axiosConfig';
-import { useAppSelector, useAppDispatch } from '../../../redux/hooks';
+import { useState } from 'react';
+import { useGetAllUsersQuery, useDeleteUserMutation, useUpdateUserMutation } from '../../../api/adminApi';
+import type { UserAdminDto } from '../../../api/adminApi';
 import Loading from '../../../shared/components/UI/Loading';
 import { formatShortDate } from '../../../shared/utils/formatting';
 import ErrorMessage from '../../../shared/components/UI/ErrorMessage';
-import { fetchAllUsers, deleteUserThunk, updateUserInState } from '../redux/adminSlice';
 import './UserManagement.css';
 
-interface UserAdminDto {
-  id: number;
-  name: string;
-  email: string;
-  phone: string;
-  createdAt?: string;
-}
-
-const updateUserApi = async (id: number, data: Partial<UserAdminDto>): Promise<UserAdminDto> => {
-  const res = await axiosInstance.patch<UserAdminDto>(`/user/${id}`, data);
-  return res.data;
-};
-
 export default function UserManagement() {
-  const dispatch = useAppDispatch();
-  const users = useAppSelector((s) => s.admin.users);
-  const loading = useAppSelector((s) => s.admin.loadingUsers);
+  const { data: users = [], isLoading } = useGetAllUsersQuery();
+  const [deleteUser] = useDeleteUserMutation();
+  const [updateUser] = useUpdateUserMutation();
 
   const [error, setError] = useState('');
   const [search, setSearch] = useState('');
@@ -31,42 +17,45 @@ export default function UserManagement() {
   const [saving, setSaving] = useState(false);
   const [deletingId, setDeletingId] = useState<number | null>(null);
 
-  useEffect(() => {
-    dispatch(fetchAllUsers());
-  }, [dispatch]);
-
   const handleUpdate = async () => {
     if (!editingUser) return;
     setSaving(true);
     try {
-      const updated = await updateUserApi(editingUser.id, {
-        name: editingUser.name,
-        email: editingUser.email,
-        phone: editingUser.phone,
-      });
-      dispatch(updateUserInState(updated));
+      await updateUser({
+        id: editingUser.id,
+        data: {
+          name: editingUser.name,
+          email: editingUser.email,
+          phone: editingUser.phone,
+        },
+      }).unwrap();
       setEditingUser(null);
     } catch {
       setError('Failed to update user');
-    } finally { setSaving(false); }
+    } finally {
+      setSaving(false);
+    }
   };
 
   const handleDelete = async (id: number) => {
     if (!confirm('Delete this user? This cannot be undone.')) return;
     setDeletingId(id);
     try {
-      await dispatch(deleteUserThunk(id)).unwrap();
+      await deleteUser(id).unwrap();
     } catch {
       setError('Failed to delete user');
-    } finally { setDeletingId(null); }
+    } finally {
+      setDeletingId(null);
+    }
   };
 
-  const filtered = users.filter((u) =>
-    u.name?.toLowerCase().includes(search.toLowerCase()) ||
-    u.email?.toLowerCase().includes(search.toLowerCase())
+  const filtered = users.filter(
+    (u) =>
+      u.name?.toLowerCase().includes(search.toLowerCase()) ||
+      u.email?.toLowerCase().includes(search.toLowerCase())
   );
 
-  if (loading) return <Loading message="Loading users..." size="md" />;
+  if (isLoading) return <Loading message="Loading users..." size="md" />;
 
   return (
     <div className="um-wrapper">
@@ -84,7 +73,11 @@ export default function UserManagement() {
         </div>
       </div>
 
-      {error && <ErrorMessage message={error} style={{ margin: '16px 24px' }} />}
+      {error && (
+        <div style={{ margin: '16px 24px' }}>
+          <ErrorMessage message={error} />
+        </div>
+      )}
 
       <div className="um-table-wrap">
         <table className="um-table">
@@ -100,15 +93,19 @@ export default function UserManagement() {
               const isEditing = editingUser?.id === user.id;
               const isDeleting = deletingId === user.id;
               return (
-                <tr key={user.id} className={`um-row ${idx % 2 === 0 ? 'um-row-even' : 'um-row-odd'} ${isDeleting ? 'um-row-deleting' : ''}`}>
-
+                <tr
+                  key={user.id}
+                  className={`um-row ${idx % 2 === 0 ? 'um-row-even' : 'um-row-odd'} ${isDeleting ? 'um-row-deleting' : ''}`}
+                >
                   <td className="um-td">
                     <div className="um-user-info">
                       <div className="um-avatar">{user.name?.[0]?.toUpperCase() ?? '?'}</div>
                       {isEditing ? (
                         <input
                           value={editingUser.name}
-                          onChange={(e) => setEditingUser((u) => u ? { ...u, name: e.target.value } : u)}
+                          onChange={(e) =>
+                            setEditingUser((u) => (u ? { ...u, name: e.target.value } : u))
+                          }
                           className="um-input um-input-sm"
                         />
                       ) : (
@@ -124,7 +121,9 @@ export default function UserManagement() {
                     {isEditing ? (
                       <input
                         value={editingUser.email}
-                        onChange={(e) => setEditingUser((u) => u ? { ...u, email: e.target.value } : u)}
+                        onChange={(e) =>
+                          setEditingUser((u) => (u ? { ...u, email: e.target.value } : u))
+                        }
                         className="um-input um-input-lg"
                       />
                     ) : (
@@ -136,7 +135,9 @@ export default function UserManagement() {
                     {isEditing ? (
                       <input
                         value={editingUser.phone}
-                        onChange={(e) => setEditingUser((u) => u ? { ...u, phone: e.target.value } : u)}
+                        onChange={(e) =>
+                          setEditingUser((u) => (u ? { ...u, phone: e.target.value } : u))
+                        }
                         className="um-input um-input-sm"
                       />
                     ) : (
@@ -150,19 +151,33 @@ export default function UserManagement() {
                     <div className="um-actions">
                       {isEditing ? (
                         <>
-                          <button onClick={handleUpdate} disabled={saving} className="um-btn um-btn-save">
+                          <button
+                            onClick={handleUpdate}
+                            disabled={saving}
+                            className="um-btn um-btn-save"
+                          >
                             {saving ? '...' : '✅ Save'}
                           </button>
-                          <button onClick={() => setEditingUser(null)} className="um-btn um-btn-cancel">
+                          <button
+                            onClick={() => setEditingUser(null)}
+                            className="um-btn um-btn-cancel"
+                          >
                             Cancel
                           </button>
                         </>
                       ) : (
                         <>
-                          <button onClick={() => setEditingUser(user)} className="um-btn um-btn-edit">
+                          <button
+                            onClick={() => setEditingUser(user)}
+                            className="um-btn um-btn-edit"
+                          >
                             ✏️ Edit
                           </button>
-                          <button onClick={() => handleDelete(user.id)} disabled={isDeleting} className={`um-btn um-btn-delete ${isDeleting ? 'um-btn-delete--busy' : ''}`}>
+                          <button
+                            onClick={() => handleDelete(user.id)}
+                            disabled={isDeleting}
+                            className={`um-btn um-btn-delete ${isDeleting ? 'um-btn-delete--busy' : ''}`}
+                          >
                             {isDeleting ? '...' : '🗑️ Delete'}
                           </button>
                         </>

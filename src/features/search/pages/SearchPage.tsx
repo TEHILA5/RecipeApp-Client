@@ -11,9 +11,10 @@ import {
   addIngredient, removeIngredient, clearIngredients,
   setActiveResultTab,
 } from '../redux/searchSlice';
+import { useGetAllConversionsQuery } from '../../../api/adminApi';
+import { getAlternativesForIngredient } from '../utils/conversionUtils';
 import { useDebounce } from '../../../shared/hooks/useDebounce';
 import { type Recipe } from '../../recipe/types/recipe.types';
-import { getAllConversions, getAlternativesForIngredient, type ConversionDto } from '../../../api/conversionApi';
 import SearchBar from '../components/SearchBar';
 import SearchFilters from '../components/SearchFilters';
 import SearchResults from '../components/SearchResults';
@@ -35,24 +36,21 @@ export default function SearchPage() {
   const { isAuthenticated } = useAppSelector((s) => s.auth);
   const { mode, nameInput, categoryInput, ingredientList, activeResultTab } = useAppSelector((s) => s.search);
 
-  // Local state to track the active tab (includes 'advanced' which is UI-only)
   const [activeTab, setActiveTab] = useState<SearchMode>(mode);
-
   const [ingredientInput, setIngredientInput] = useState('');
-  const [allConversions, setAllConversions] = useState<ConversionDto[]>([]);
   const [alternativeResults, setAlternativeResults] = useState<{
     recipe: Recipe;
     matchedVia: { original: string; alternative: string }[];
   }[]>([]);
   const [loadingAlternatives, setLoadingAlternatives] = useState(false);
-  const conversionsRef = useRef<ConversionDto[]>([]);
 
-  useEffect(() => {
-    getAllConversions().then((data) => {
-      conversionsRef.current = data;
-      setAllConversions(data);
-    }).catch(() => {});
-  }, []);
+  // ✅ RTK Query — replaces getAllConversions() axios call + useEffect
+  const { data: allConversions = [] } = useGetAllConversionsQuery();
+
+  // Keep a ref so the alternatives useEffect can read the latest value
+  // without needing it as a dependency (avoids re-running on every refetch)
+  const conversionsRef = useRef(allConversions);
+  useEffect(() => { conversionsRef.current = allConversions; }, [allConversions]);
 
   const debouncedName = useDebounce(nameInput, 400);
 
@@ -83,6 +81,8 @@ export default function SearchPage() {
       await Promise.resolve();
 
       const conversions = conversionsRef.current;
+
+      // Build a map of ingredient → its known alternatives (lower-cased)
       const altMap: Record<string, string[]> = {};
       for (const ing of ingredientList) {
         const alts = getAlternativesForIngredient(ing, conversions);
@@ -121,19 +121,17 @@ export default function SearchPage() {
   }, [ingredientResults, ingredientList, loadingIng, mode]);
 
   const nameResults: Recipe[] = debouncedName
-    ? allRecipes.filter((r) =>
-        r.name.toLowerCase().includes(debouncedName.toLowerCase())  
-      )
+    ? allRecipes.filter((r) => r.name.toLowerCase().includes(debouncedName.toLowerCase()))
     : [];
-  //||r.description.toLowerCase().includes(debouncedName.toLowerCase())
+
   const results =
-    mode === 'name' ? nameResults :
-    mode === 'category' ? categoryResults :
+    mode === 'name'        ? nameResults :
+    mode === 'category'    ? categoryResults :
     ingredientResults;
 
   const hasSearched =
-    (mode === 'name' && debouncedName.length > 0) ||
-    (mode === 'category' && !!categoryInput) ||
+    (mode === 'name'        && debouncedName.length > 0) ||
+    (mode === 'category'    && !!categoryInput) ||
     (mode === 'ingredients' && ingredientList.length > 0);
 
   const handleSetMode = (newMode: SearchMode) => {

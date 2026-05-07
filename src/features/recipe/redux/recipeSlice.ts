@@ -1,5 +1,5 @@
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
+import { baseApi } from '../../../api/baseApi';
 import type { Recipe, RecipeCreateDto, RecipeUpdateDto, RecipeCategory } from '../types/recipe.types';
 import { normalizeRecipe, CATEGORY_TO_INT, IMPORTANCE_TO_INT } from '../types/recipe.types';
 
@@ -15,9 +15,6 @@ function serializeForServer(data: RecipeCreateDto | RecipeUpdateDto): any {
   };
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const API_BASE_URL = (import.meta as any).env?.VITE_API_BASE_URL || 'https://localhost:7244/api';
-
 export interface AdvancedSearchResult {
   intent: {
     category: string | null;
@@ -30,19 +27,7 @@ export interface AdvancedSearchResult {
   results: Recipe[];
 }
 
-export const recipesApi = createApi({
-  reducerPath: 'recipesApi',
-  baseQuery: fetchBaseQuery({
-    baseUrl: API_BASE_URL,
-    prepareHeaders: (headers) => {
-      const token = localStorage.getItem('token');
-      if (token) headers.set('Authorization', `Bearer ${token}`);
-      headers.set('Content-Type', 'application/json');
-      return headers;
-    },
-  }),
-  tagTypes: ['Recipes', 'Recipe'],
-
+export const recipesApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     getRecipes: builder.query<Recipe[], void>({
       query: () => '/recipe',
@@ -156,7 +141,7 @@ export const {
   useDeleteRecipeMutation,
 } = recipesApi;
 
-// Recipe Panel Slice
+// ── Recipe Panel UI Slice ──────────────────────────────────────────────────
 
 interface RecipePanelState {
   selectedCategory: RecipeCategory | null;

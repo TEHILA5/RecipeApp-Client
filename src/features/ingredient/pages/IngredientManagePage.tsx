@@ -1,36 +1,32 @@
-import { useEffect, useState } from 'react';
-import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
+import { useState } from 'react';
 import {
-  fetchAllIngredients,
-  createNewIngredient,
-  updateExistingIngredient,
-} from '../redux/ingredientSlice';
+  useGetAllIngredientsQuery,
+  useCreateIngredientMutation,
+  useUpdateIngredientMutation,
+} from '../../../api/ingredientApi';
 import IngredientCard from '../components/IngredientCard';
 import IngredientForm from '../components/IngredientForm';
 import './IngredientManagePage.css';
 
 export default function IngredientManagePage() {
-  const dispatch = useAppDispatch();
-  const { ingredients, loading, error, saving, saveError } = useAppSelector((s) => s.ingredients);
+  const { data: ingredients = [], isLoading } = useGetAllIngredientsQuery();
+  const [createIngredient, { isLoading: creating, error: createError }] = useCreateIngredientMutation();
+  const [updateIngredient] = useUpdateIngredientMutation();
 
   const [search, setSearch] = useState('');
   const [showAddForm, setShowAddForm] = useState(false);
-
-  useEffect(() => {
-    if (ingredients.length === 0) dispatch(fetchAllIngredients());
-  }, [dispatch, ingredients.length]);
 
   const filtered = ingredients.filter((i) =>
     i.name.toLowerCase().includes(search.toLowerCase())
   );
 
   const handleCreate = async (name: string) => {
-    await dispatch(createNewIngredient(name)).unwrap();
+    await createIngredient({ name }).unwrap();
     setShowAddForm(false);
   };
 
   const handleUpdate = async (id: number, name: string) => {
-    await dispatch(updateExistingIngredient({ id, name })).unwrap();
+    await updateIngredient({ id, data: { name } }).unwrap();
   };
 
   return (
@@ -65,19 +61,17 @@ export default function IngredientManagePage() {
         {showAddForm && (
           <div className="add-form-card">
             <p className="add-form-title">🆕 New Ingredient</p>
-            {saveError && <div className="save-error">⚠️ {saveError}</div>}
+            {createError && <div className="save-error">⚠️ Failed to create ingredient</div>}
             <IngredientForm
               onSave={handleCreate}
               onCancel={() => setShowAddForm(false)}
-              saving={saving}
+              saving={creating}
               placeholder="Enter ingredient name..."
             />
           </div>
         )}
 
-        {error && <div className="fetch-error">⚠️ {error}</div>}
-
-        {loading ? (
+        {isLoading ? (
           <div className="spinner-wrap">
             <div className="spinner" />
           </div>
@@ -88,7 +82,7 @@ export default function IngredientManagePage() {
             </div>
 
             <div className="ingredient-list">
-              {filtered
+              {[...filtered]
                 .sort((a, b) => a.name.localeCompare(b.name))
                 .map((ing) => (
                   <IngredientCard key={ing.id} id={ing.id} name={ing.name} onUpdate={handleUpdate} />

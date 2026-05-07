@@ -1,19 +1,13 @@
-import { useEffect, useState } from 'react';
-import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
-import { fetchAllIngredients } from '../redux/ingredientSlice';
+import { useState } from 'react';
+import { useGetAllIngredientsQuery } from '../../../api/ingredientApi';
 import IngredientSearch from '../components/IngredientSearch';
 import './IngredientListPage.css';
 
 export default function IngredientListPage() {
-  const dispatch = useAppDispatch();
-  const { ingredients, loading, error } = useAppSelector((s) => s.ingredients);
+  const { data: ingredients = [], isLoading, error } = useGetAllIngredientsQuery();
   const [search, setSearch] = useState('');
 
-  useEffect(() => {
-    if (ingredients.length === 0) dispatch(fetchAllIngredients());
-  }, [dispatch, ingredients.length]);
-
-  const filtered = ingredients
+  const filtered = [...ingredients]
     .filter((i) => i.name.toLowerCase().includes(search.toLowerCase()))
     .sort((a, b) => a.name.localeCompare(b.name));
 
@@ -28,18 +22,23 @@ export default function IngredientListPage() {
 
       <div className="ilp-content">
         <div className="ilp-search-card">
-          <IngredientSearch value={search} onChange={setSearch} total={ingredients.length} filtered={filtered.length} />
+          <IngredientSearch
+            value={search}
+            onChange={setSearch}
+            total={ingredients.length}
+            filtered={filtered.length}
+          />
         </div>
 
-        {loading && (
+        {isLoading && (
           <div className="ilp-loading">
             <div className="ilp-spinner" />
           </div>
         )}
 
-        {error && <div className="ilp-error">⚠️ {error}</div>}
+        {error && <div className="ilp-error">⚠️ Failed to load ingredients</div>}
 
-        {!loading && (
+        {!isLoading && (
           <div className="ilp-grid">
             {filtered.map((ing) => (
               <div key={ing.id} className="ilp-item">

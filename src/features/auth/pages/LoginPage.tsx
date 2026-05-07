@@ -1,26 +1,34 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
-import { loginUser, clearError } from '../redux/authSlice';
+import { useAppSelector, useAppDispatch } from '../../../redux/hooks';
+import { useLoginMutation } from '../../../api/authApi';
+import { clearError } from '../redux/authSlice';
 import LoginForm from '../components/LoginForm';
 import './LoginPage.css';
 
 export default function LoginPage() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  const { loading, error, isAuthenticated } = useAppSelector((s) => s.auth);
+  const { isAuthenticated } = useAppSelector((s) => s.auth);
+  const [login, { isLoading, error }] = useLoginMutation();
 
   useEffect(() => { dispatch(clearError()); }, [dispatch]);
   useEffect(() => { if (isAuthenticated) navigate('/'); }, [isAuthenticated, navigate]);
 
   const onSubmit = async (data: { email: string; password: string }) => {
     try {
-      await dispatch(loginUser(data)).unwrap();
+      await login(data).unwrap();
       navigate('/');
     } catch {
-      // handled by redux error state
+      // error is handled via RTK Query's error state
     }
   };
+
+  const errorMessage = error
+    ? 'message' in error
+      ? error.message ?? 'Login failed'
+      : 'Login failed'
+    : null;
 
   return (
     <div className="login-page">
@@ -36,7 +44,7 @@ export default function LoginPage() {
           </div>
         </div>
         <div className="login-form-wrapper">
-          <LoginForm onSubmit={onSubmit} loading={loading} error={error} />
+          <LoginForm onSubmit={onSubmit} loading={isLoading} error={errorMessage} />
         </div>
       </div>
     </div>
