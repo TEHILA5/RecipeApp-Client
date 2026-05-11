@@ -5,28 +5,31 @@ import { useUpdateMeMutation } from '../../../api/userApi';
 import type { UserDto, UserUpdateDto } from '../../../api/userApi';
 import './ProfileCard.css';
 
+import avatarIcon  from '../../../assets/icons/profile-avatar.png';
+import editIcon    from '../../../assets/icons/profile-edit.png';
+import successIcon from '../../../assets/icons/profile-success.png';
+import warningIcon from '../../../assets/icons/profile-warning.png';
+import saveIcon    from '../../../assets/icons/profile-save.png';
+import calendarIcon from '../../../assets/icons/profile-calendar.png';
+
 interface ProfileCardProps {
   user: UserDto;
 }
 
 const FIELDS = [
-  { key: 'name',  label: 'Full Name',      type: 'text',  placeholder: 'Your name' },
-  { key: 'email', label: 'Email Address',  type: 'email', placeholder: 'your@email.com' },
-  { key: 'phone', label: 'Phone Number',   type: 'tel',   placeholder: '050-000-0000' },
+  { key: 'name',  label: 'Full Name',     type: 'text',  placeholder: 'Your name'     },
+  { key: 'email', label: 'Email Address', type: 'email', placeholder: 'your@email.com' },
+  { key: 'phone', label: 'Phone Number',  type: 'tel',   placeholder: '050-000-0000'   },
 ] as const;
 
 export default function ProfileCard({ user }: ProfileCardProps) {
   const dispatch = useAppDispatch();
   const [updateMe, { isLoading: saving }] = useUpdateMeMutation();
 
-  const [editing, setEditing] = useState(false);
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
-  const [form, setForm] = useState<UserUpdateDto>({
-    name: user.name,
-    email: user.email,
-    phone: user.phone,
-  });
+  const [editing, setEditing]   = useState(false);
+  const [error, setError]       = useState('');
+  const [success, setSuccess]   = useState('');
+  const [form, setForm]         = useState<UserUpdateDto>({ name: user.name, email: user.email, phone: user.phone });
 
   const handleSave = async () => {
     if (!form.name?.trim()) { setError('Name is required'); return; }
@@ -38,7 +41,7 @@ export default function ProfileCard({ user }: ProfileCardProps) {
     try {
       const updated = await updateMe(form).unwrap();
       dispatch(updateUser({ name: updated.name, email: updated.email, phone: updated.phone }));
-      setSuccess('Profile updated! ✅');
+      setSuccess('Profile updated!');
       setEditing(false);
       setTimeout(() => setSuccess(''), 3000);
     } catch (err: unknown) {
@@ -59,34 +62,45 @@ export default function ProfileCard({ user }: ProfileCardProps) {
   return (
     <div className="profile-card">
       <div className="profile-header">
-        <div className="avatar">👤</div>
+        <img src={avatarIcon} alt="Avatar" className="avatar" style={{ width: '56px', height: '56px', objectFit: 'contain' }} />
         <div>
           <h2>{user.name}</h2>
-          {joinDate && <p>Member since {joinDate}</p>}
+          {joinDate && (
+            <p style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <img src={calendarIcon} alt="Member since" style={{ width: '14px', height: '14px', objectFit: 'contain' }} />
+              Member since {joinDate}
+            </p>
+          )}
         </div>
         {!editing && (
-          <button className="edit-btn" onClick={() => setEditing(true)}>✏️ Edit Profile</button>
+          <button className="edit-btn" onClick={() => setEditing(true)} style={{ display: 'flex', alignItems: 'center', gap: '4px', }}>
+            <img src={editIcon} alt="Edit" style={{ width: '16px', height: '16px', objectFit: 'contain', marginRight: '6px', verticalAlign: 'middle' }} />
+            Edit Profile
+          </button>
         )}
       </div>
 
-      {success && <div className="alert success">{success}</div>}
-      {error   && <div className="alert error">⚠️ {error}</div>}
+      {success && (
+        <div className="alert success" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <img src={successIcon} alt="Success" style={{ width: '18px', height: '18px', objectFit: 'contain' }} />
+          {success}
+        </div>
+      )}
+      {error && (
+        <div className="alert error" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <img src={warningIcon} alt="Warning" style={{ width: '18px', height: '18px', objectFit: 'contain' }} />
+          {error}
+        </div>
+      )}
 
       <div className="profile-fields">
         {FIELDS.map(({ key, label, type, placeholder }) => (
           <div key={key}>
             <label>{label}</label>
             {editing ? (
-              <input
-                type={type}
-                value={form[key] || ''}
-                placeholder={placeholder}
-                onChange={(e) => setForm((f) => ({ ...f, [key]: e.target.value }))}
-              />
+              <input type={type} value={form[key] || ''} placeholder={placeholder} onChange={(e) => setForm((f) => ({ ...f, [key]: e.target.value }))} />
             ) : (
-              <div className="field-value">
-                {user[key] || <span className="not-provided">Not provided</span>}
-              </div>
+              <div className="field-value">{user[key] || <span className="not-provided">Not provided</span>}</div>
             )}
           </div>
         ))}
@@ -95,12 +109,9 @@ export default function ProfileCard({ user }: ProfileCardProps) {
       {editing && (
         <div className="profile-actions">
           <button className="cancel-btn" onClick={handleCancel}>Cancel</button>
-          <button
-            className={`save-btn ${saving ? 'saving' : ''}`}
-            onClick={handleSave}
-            disabled={saving}
-          >
-            {saving ? 'Saving...' : '✨ Save Changes'}
+          <button className={`save-btn ${saving ? 'saving' : ''}`} onClick={handleSave} disabled={saving} style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <img src={saveIcon} alt="Save" style={{ width: '16px', height: '16px', objectFit: 'contain' }} />
+            {saving ? 'Saving...' : 'Save Changes'}
           </button>
         </div>
       )}

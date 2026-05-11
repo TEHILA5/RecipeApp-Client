@@ -22,9 +22,13 @@ export default function EditProfile() {
 
   return (
     <div className="edit-profile-card">
-      <h2>Edit Profile ✏️</h2>
+      <h2 style={{ display: 'flex', alignItems: 'center', gap: '4px', }}>
+        <img src="/src/assets/icons/profile-edit.png" alt="" style={{ width: '20px', height: '20px', objectFit: 'contain', verticalAlign: 'middle' }} />
+        {' '}Edit Profile
+      </h2>
 
-      {saveSuccess && <Alert severity="success" sx={{ mb: 2, borderRadius: '12px' }}>✅ Profile updated successfully!</Alert>}
+      {saveSuccess && <Alert severity="success" sx={{ mb: 2, borderRadius: '12px' }} style={{ display: 'flex', alignItems: 'center', gap: '4px', }}><img src="/src/assets/icons/profile-success.png" alt="" style={{ width: '20px', height: '20px', objectFit: 'contain', verticalAlign: 'middle' }} />
+        {' '}Profile Profile updated successfully!</Alert>}
       {saveError  && <Alert severity="error"   sx={{ mb: 2, borderRadius: '12px' }}>{saveError}</Alert>}
 
       <form onSubmit={handleSubmit(handleSave)} className="edit-profile-form">
@@ -58,8 +62,13 @@ export default function EditProfile() {
           })}
         />
 
-        <button type="submit" disabled={saving} className={`save-btn ${saving ? 'saving' : ''}`}>
-          {saving ? 'Saving...' : '💾 Save Changes'}
+        <button type="submit" disabled={saving} className={`save-btn ${saving ? 'saving' : ''}`} style={{ display: 'flex', alignItems: 'center', gap: '4px', }}>
+          {saving ? 'Saving...' : (
+            <>
+              <img src="/src/assets/icons/profile-save.png" alt="" style={{ width: '20px', height: '20px', objectFit: 'contain', verticalAlign: 'middle' }} />
+              {' '}Save Changes
+            </>
+          )}
         </button>
       </form>
     </div>

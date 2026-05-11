@@ -69,7 +69,9 @@ export default function UserManagement() {
             placeholder="Search by name or email..."
             className="um-search"
           />
-          <span className="um-search-icon">🔍</span>
+          <span className="um-search-icon">
+            <img src="/src/assets/icons/search-icon.png" alt="Search" style={{ width: '30px', height: '30px', objectFit: 'contain' }} />
+          </span>
         </div>
       </div>
 
@@ -155,8 +157,11 @@ export default function UserManagement() {
                             onClick={handleUpdate}
                             disabled={saving}
                             className="um-btn um-btn-save"
-                          >
-                            {saving ? '...' : '✅ Save'}
+                          style={{ display: 'flex', alignItems: 'center', gap: '4px', }}>
+                            {saving ? '...' : (<>
+                              <img src="/src/assets/icons/profile-success.png" alt="" style={{ width: '20px', height: '20px', objectFit: 'contain', verticalAlign: 'middle' }} />
+                              {' '}Save
+                            </>)}
                           </button>
                           <button
                             onClick={() => setEditingUser(null)}
@@ -167,18 +172,17 @@ export default function UserManagement() {
                         </>
                       ) : (
                         <>
-                          <button
-                            onClick={() => setEditingUser(user)}
-                            className="um-btn um-btn-edit"
-                          >
-                            ✏️ Edit
+                          <button onClick={() => setEditingUser(user)} className="um-btn um-btn-edit" style={{ display: 'flex', alignItems: 'center', gap: '4px', }}>
+                            <img src="/src/assets/icons/profile-edit.png" alt="" style={{ width: '20px', height: '20px', objectFit: 'contain', verticalAlign: 'middle' }} />
+                            {' '}Edit
                           </button>
-                          <button
-                            onClick={() => handleDelete(user.id)}
-                            disabled={isDeleting}
-                            className={`um-btn um-btn-delete ${isDeleting ? 'um-btn-delete--busy' : ''}`}
-                          >
-                            {isDeleting ? '...' : '🗑️ Delete'}
+                          <button onClick={() => handleDelete(user.id)} disabled={isDeleting} className={`um-btn um-btn-delete ${isDeleting ? 'um-btn-delete--busy' : ''}`} style={{ display: 'flex', alignItems: 'center', gap: '4px', }}>
+                            {isDeleting ? '...' : (
+                              <>
+                                <img src="/src/assets/icons/action-delete.png" alt="" style={{ width: '20px', height: '20px', objectFit: 'contain', verticalAlign: 'middle' }} />
+                                {' '}Delete
+                              </>
+                            )}
                           </button>
                         </>
                       )}

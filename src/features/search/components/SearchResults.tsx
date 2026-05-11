@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { type Recipe, CATEGORY_EMOJIS, LEVEL_LABELS } from '../../recipe/types/recipe.types';
+import { type Recipe, CATEGORY_IMAGES, LEVEL_LABELS } from '../../recipe/types/recipe.types';
 import { type ConversionDto } from '../../../api/adminApi';
 import StarRating from '../../../shared/components/StarRating';
 import Button from '../../../shared/components/UI/Button';
@@ -23,8 +23,14 @@ interface SearchResultsProps {
 }
 
 function RecipeCardMini({ recipe }: { recipe: Recipe }) {
-  const emoji = CATEGORY_EMOJIS[recipe.category] ?? '🍰';
+  const img = CATEGORY_IMAGES[recipe.category];
   const level = LEVEL_LABELS[recipe.level as 1 | 2 | 3] ?? 'Easy';
+  const levelIcon = recipe.level === 2
+    ? '/src/assets/icons/meta-level-medium.png'
+    : recipe.level === 3
+      ? '/src/assets/icons/meta-level-hard.png'
+      : '/src/assets/icons/meta-level-easy.png';
+  const levelAlt = recipe.level === 2 ? 'Medium' : recipe.level === 3 ? 'Hard' : 'Easy';
   const desc = recipe.description.length > 80
     ? `${recipe.description.substring(0, 80)}...`
     : recipe.description;
@@ -34,7 +40,9 @@ function RecipeCardMini({ recipe }: { recipe: Recipe }) {
       <div className="mini-img">
         {recipe.arrImage
           ? <img src={recipe.arrImage} alt={recipe.name} />
-          : <div className="mini-img-fallback">{emoji}</div>
+          : img
+            ? <img src={img} alt={recipe.category} style={{ width: '30px', height: '30px', objectFit: 'contain', verticalAlign: 'middle' }}/>
+            : <div className="mini-img-fallback">🍰</div>
         }
       </div>
       <div className="mini-body">
@@ -42,8 +50,8 @@ function RecipeCardMini({ recipe }: { recipe: Recipe }) {
         <h3>{recipe.name}</h3>
         <p>{desc}</p>
         <div className="mini-meta">
-          <span>⏱️ {recipe.totalTime}m</span>
-          <span>👨‍🍳 {level}</span>
+          <span style={{ display: 'flex', alignItems: 'center', gap: '4px', }}><img src="/src/assets/icons/meta-time.png" alt="Time" style={{ width: '20px', height: '20px', objectFit: 'contain', verticalAlign: 'middle' }} /> {recipe.totalTime}m</span>
+          <span style={{ display: 'flex', alignItems: 'center', gap: '4px', }}><img src={levelIcon} alt={levelAlt} style={{ width: '20px', height: '20px', objectFit: 'contain', verticalAlign: 'middle' }} /> {level}</span>
           <span className="mini-category">{recipe.category}</span>
         </div>
       </div>
@@ -68,7 +76,7 @@ function ResultCount({ count, color }: { count: number; color?: string }) {
 }
 
 function EmptyState({ emoji, title, subtitle, action }: {
-  emoji: string;
+  emoji: React.ReactNode;
   title: string;
   subtitle?: string;
   action?: React.ReactNode;
@@ -98,7 +106,11 @@ export default function SearchResults({
 
   if (!hasSearched) return (
     <EmptyState
-      emoji={mode === 'name' ? '🔍' : mode === 'category' ? '📂' : '🧂'}
+      emoji={mode === 'name' ? 
+        <img src="/src/assets/icons/search-icon.png" alt="Search" style={{ width: '30px', height: '30px', objectFit: 'contain', verticalAlign: 'middle', placeSelf: 'center' }} />
+        : mode === 'category' ? 
+        <img src="/src/assets/icons/content-folder.png" alt="Category" style={{ width: '30px', height: '30px', objectFit: 'contain', verticalAlign: 'middle', placeSelf: 'center' }} />
+        : <img src="/src/assets/icons/calc-spoon.png" alt="Ingredient" style={{ width: '30px', height: '30px', objectFit: 'contain', verticalAlign: 'middle', placeSelf: 'center' }} />}
       title={mode === 'name' ? 'Type to search...' : mode === 'category' ? 'Select a category' : 'Add ingredients'}
       subtitle={
         mode === 'name' ? 'Start typing to find your favorite dessert' :
@@ -123,14 +135,18 @@ export default function SearchResults({
         <button
           onClick={() => onTabChange('results')}
           className={`tab-btn ${activeResultTab === 'results' ? 'active' : ''}`}
-        >
-          🔍 Results ({results.length})
+          style={{ display: 'flex', alignItems: 'center', gap: '4px', }}> 
+          <img src="/src/assets/icons/search-icon.png" alt="" style={{ width: '20px', height: '20px', objectFit: 'contain', verticalAlign: 'middle' }} />
+          {' '}Results
+          ({results.length})
         </button>
         <button
           onClick={() => onTabChange('alternatives')}
           className={`tab-btn alt ${activeResultTab === 'alternatives' ? 'active' : ''}`}
-        >
-          🔄 Alternatives ({loadingAlternatives ? '...' : alternativeResults.length})
+        style={{ display: 'flex', alignItems: 'center', gap: '4px', }}> 
+          <img src="/src/assets/icons/action-refresh.png" alt="" style={{ width: '20px', height: '20px', objectFit: 'contain', verticalAlign: 'middle' }} />
+          {' '}Alternatives 
+          ({loadingAlternatives ? '...' : alternativeResults.length})
         </button>
       </div>
 
@@ -139,10 +155,11 @@ export default function SearchResults({
           <EmptyState
             emoji="🍰"
             title="No exact matches"
-            subtitle={alternativeResults.length > 0 ? '✨ But we found recipes using ingredient alternatives!' : 'Try different ingredients'}
+            subtitle={alternativeResults.length > 0 ? ' But we found recipes using ingredient alternatives!' : 'Try different ingredients'}
             action={alternativeResults.length > 0 && (
-              <Button onClick={() => onTabChange('alternatives')} style={{ background: 'linear-gradient(135deg, #e8c49a, #c4894a)' }}>
-                🔄 See Alternatives
+              <Button onClick={() => onTabChange('alternatives')} style={{ background: 'linear-gradient(135deg, #e8c49a, #c4894a)',display: 'flex', alignItems: 'center', gap: '4px', }}>
+                <img src="/src/assets/icons/action-refresh.png" alt="" style={{ width: '20px', height: '20px', objectFit: 'contain', verticalAlign: 'middle' }} />
+                {' '} See Alternatives
               </Button>
             )}
           />
@@ -157,7 +174,9 @@ export default function SearchResults({
       {activeResultTab === 'alternatives' && (
         <div>
           <div className="alt-banner">
-            <span>🔄</span>
+            <span>
+              <img src="/src/assets/icons/action-refresh.png" alt="Info" style={{ width: '20px', height: '20px', objectFit: 'contain', verticalAlign: 'middle' }} />
+            </span>
             <div>
               <p>Showing recipes with ingredient alternatives</p>
               <p>Substitutes for: <strong>{ingredientList.join(', ')}</strong></p>
@@ -170,7 +189,7 @@ export default function SearchResults({
               Looking for alternatives...
             </div>
           ) : alternativeResults.length === 0 ? (
-            <EmptyState emoji="🍰" title="No alternatives found" />
+            <EmptyState  emoji={<div style={{ display: 'flex', alignItems: 'center', gap: '4px',placeSelf: 'center' }}><img src="/src/assets/icons/page-about.png" alt="Info" style={{ width: '50px', height: '50px', objectFit: 'contain', verticalAlign: 'middle' }} /></div>} title="No alternatives found" />
           ) : (
             <>
               <ResultCount count={alternativeResults.length} color="#c4894a" />
@@ -229,7 +248,7 @@ export default function SearchResults({
 
   if (mode !== 'ingredients') return (
     results.length === 0 ? (
-      <EmptyState emoji="🍰" title="No recipes found" subtitle="Try a different search term or category" />
+      <EmptyState emoji={<img src="/src/assets/icons/page-about.png" alt="Info" style={{ width: '20px', height: '20px', objectFit: 'contain', verticalAlign: 'middle' }} />} title="No recipes found" subtitle="Try a different search term or category" />
     ) : (
       <>
         <ResultCount count={results.length} />

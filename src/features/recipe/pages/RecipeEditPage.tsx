@@ -2,6 +2,8 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useGetRecipeByIdQuery, useUpdateRecipeMutation } from '../redux/recipeSlice';
 import RecipeForm from '../components/RecipeForm';
 import type { RecipeCreateDto, RecipeUpdateDto } from '../types/recipe.types';
+import pageIcon from '../../../assets/icons/state-confused.png';
+import editIcon from '../../../assets/icons/profile-edit.png';
 import './RecipeEditPage.css';
 
 export default function RecipeEditPage() {
@@ -33,11 +35,9 @@ export default function RecipeEditPage() {
   if (error || !recipe) {
     return (
       <div className="recipe-edit-state">
-        <div className="state-emoji">😕</div>
+        <img src={pageIcon} alt="Not found" className="state-emoji" style={{ width: '80px', height: '80px', objectFit: 'contain' }} />
         <h2>Recipe Not Found</h2>
-        <button className="back-btn" onClick={() => navigate('/recipes')}>
-          ← Back to Recipes
-        </button>
+        <button className="back-btn" onClick={() => navigate('/recipes')}>← Back to Recipes</button>
       </div>
     );
   }
@@ -73,13 +73,14 @@ export default function RecipeEditPage() {
             <span>›</span>
             <span>Edit</span>
           </nav>
-          <h1>Edit <span>{recipe.name}</span> ✏️</h1>
+          <h1>
+            Edit <span>{recipe.name}</span>
+            <img src={editIcon} alt="Edit" style={{ width: '32px', height: '32px', objectFit: 'contain', marginLeft: '10px', verticalAlign: 'middle' }} />
+          </h1>
           <p>Make changes and save your recipe</p>
         </div>
       </div>
 
-      {/* key={recipe.id} remounts RecipeForm with fresh state once data loads,
-          avoiding the setState-in-useEffect anti-pattern entirely */}
       <RecipeForm
         key={recipe.id}
         initialData={initialData}

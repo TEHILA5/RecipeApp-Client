@@ -3,6 +3,7 @@ import { useAppSelector } from '../../../redux/hooks';
 import logo from '../../../assets/images/logoo.png';
 import sweetyTip from '../../../assets/images/sweety-tip.png';
 import starsImg from '../../../assets/images/stars.png';
+import tipIcon from '../../../assets/icons/tool-tip.png';
 
 export default function Hero() {
   const { isAuthenticated } = useAppSelector((s) => s.auth);
@@ -43,7 +44,10 @@ export default function Hero() {
       <section className="tip-bar">
         <img src={sweetyTip} alt="Sweety" className="sweety" />
         <div className="tip-content">
-          <div className="tip-label">💡 Sweety's Tip</div>
+          <div className="tip-label" style={{ display: 'flex',  alignItems: 'center', gap: '4px' ,}}>
+            <img src={tipIcon} alt="Tip" style={{ width: '25px', height: '25px', objectFit: 'contain', verticalAlign: 'middle', marginRight: '8px' }} />
+            Sweety's Tip
+          </div>
           <p className="tip-text">
             Always <em>preheat your oven</em> 15 minutes before baking for the
             best results! A properly heated oven ensures even baking and perfect texture.

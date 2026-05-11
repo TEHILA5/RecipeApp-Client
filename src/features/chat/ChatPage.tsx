@@ -47,8 +47,7 @@ export default function ChatPage() {
       }
     }
   }, [activeMessages]);
-
-  // ✅ מסמן כנקרא כשנכנסים לשיחה
+ 
   useEffect(() => {
     if (mode === 'public') {
       markAsRead('public');
@@ -82,7 +81,9 @@ export default function ChatPage() {
       <div style={{ background: 'linear-gradient(135deg, #d4547a, #e8799a)', padding: '28px 24px', color: 'white' }}>
         <div style={{ maxWidth: '900px', margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px' }}>
           <div>
-            <h1 style={{ fontFamily: "'Dancing Script',cursive", fontSize: '2rem', margin: 0 }}>Sweet Chat 🍰</h1>
+            <h1 style={{ fontFamily: "'Dancing Script',cursive", fontSize: '2rem', margin: 0 ,display: 'flex', alignItems: 'center', gap: '4px',}}>Sweet Chat{' '}
+              <img src="/src/assets/icons/chat-bubble.png" alt="" style={{ width: '50px', height: '50px', objectFit: 'contain', verticalAlign: 'middle' }} />
+            </h1>
             <p style={{ opacity: 0.85, margin: '4px 0 0', fontSize: '0.88rem' }}>Chat with bakers, share tips, ask questions!</p>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'rgba(255,255,255,0.15)', padding: '8px 16px', borderRadius: '999px' }}>
@@ -108,20 +109,22 @@ export default function ChatPage() {
                 color: mode === 'public' ? 'white' : '#6b7280',
                 fontFamily: "'Nunito',sans-serif", fontWeight: 700, fontSize: '0.85rem',
                 cursor: 'pointer', marginBottom: '6px',
-                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
-              🌍 Public Chat
+                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}> 
+              <img src="/src/assets/icons/content-globe.png" alt="" style={{ width: '25px', height: '25px', objectFit: 'contain', verticalAlign: 'middle' }} />
+              {' '}Public Chat
               {mode !== 'public' && <Badge count={publicUnread} />}
             </button>
 
             {/* Private button */}
             <button onClick={() => setMode('private')} disabled={onlineUsers.length === 0}
-              style={{ width: '100%', padding: '10px', borderRadius: '10px', border: 'none',
+              style={{ width: '100%', padding: '10px', borderRadius: '10px', border: 'none', display: 'flex', alignItems: 'center', gap: '4px',justifyContent: 'center',
                 background: mode === 'private' ? 'linear-gradient(135deg, #7c3aed, #a78bfa)' : '#f9fafb',
                 color: mode === 'private' ? 'white' : '#6b7280',
                 fontFamily: "'Nunito',sans-serif", fontWeight: 700, fontSize: '0.85rem',
                 cursor: onlineUsers.length === 0 ? 'not-allowed' : 'pointer',
                 opacity: onlineUsers.length === 0 ? 0.5 : 1 }}>
-              🔒 Private Chat
+              <img src="/src/assets/icons/page-privacy.png" alt="" style={{ width: '25px', height: '25px', objectFit: 'contain', verticalAlign: 'middle' }} />
+              {' '} Private Chat
             </button>
           </div>
 
@@ -173,7 +176,9 @@ export default function ChatPage() {
           <div style={{ background: 'white', borderRadius: '16px', padding: '14px 20px', boxShadow: '0 2px 12px rgba(212,84,122,0.08)', display: 'flex', alignItems: 'center', gap: '10px' }}>
             {mode === 'public' ? (
               <>
-                <span style={{ fontSize: '1.2rem' }}>🌍</span>
+                <span style={{ fontSize: '1.2rem' }}>
+                  <img src="/src/assets/icons/content-globe.png" alt="" style={{ width: '25px', height: '25px', objectFit: 'contain', verticalAlign: 'middle' }} />
+                </span>
                 <span style={{ fontWeight: 800, color: '#374151' }}>Public Chat</span>
                 <span style={{ color: '#9ca3af', fontSize: '0.82rem' }}>— everyone can see this</span>
                 {/* ✅ Badge בצ'אט הכללי */}
@@ -185,7 +190,9 @@ export default function ChatPage() {
               </>
             ) : (
               <>
-                <span style={{ fontSize: '1.2rem' }}>🔒</span>
+                <span style={{ fontSize: '1.2rem' }}>
+                  <img src="/src/assets/icons/page-privacy.png" alt="" style={{ width: '25px', height: '25px', objectFit: 'contain', verticalAlign: 'middle' }} />
+                </span>
                 <span style={{ fontWeight: 800, color: '#7c3aed' }}>
                   {selectedUser ? `Private with ${selectedUser}` : 'Select a user to chat'}
                 </span>
@@ -200,8 +207,9 @@ export default function ChatPage() {
 
           {/* Error */}
           {error && (
-            <div style={{ background: '#fef2f2', border: '1px solid #fca5a5', borderRadius: '12px', padding: '10px 16px', color: '#ef4444', fontSize: '0.85rem', fontWeight: 600 }}>
-              ⚠️ {error}
+            <div style={{ background: '#fef2f2', border: '1px solid #fca5a5', borderRadius: '12px', padding: '10px 16px', color: '#ef4444', fontSize: '0.85rem', fontWeight: 600 ,display: 'flex', alignItems: 'center', gap: '4px',}}>
+              <img src="/src/assets/icons/profile-warning.png" alt="" style={{ width: '20px', height: '20px', objectFit: 'contain', verticalAlign: 'middle' }} />
+              {error}
             </div>
           )}
 
@@ -210,7 +218,11 @@ export default function ChatPage() {
             {activeMessages.length === 0 ? (
               <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', color: '#9ca3af' }}>
                 <div style={{ fontSize: '3rem', marginBottom: '12px' }}>
-                  {mode === 'public' ? '🍰' : '💬'}
+                  {mode === 'public' ? 
+                  <img src="/src/assets/icons/chat-bubble.png" alt="" style={{ width: '50px', height: '50px', objectFit: 'contain', verticalAlign: 'middle' }} />
+                   : 
+                   <img src="/src/assets/icons/chat-empty.png" alt="" style={{ width: '50px', height: '50px', objectFit: 'contain', verticalAlign: 'middle' }} />
+          }
                 </div>
                 <p style={{ fontWeight: 600, margin: 0 }}>
                   {mode === 'public'
@@ -258,17 +270,18 @@ export default function ChatPage() {
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                   onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && handleSend()}
-                  placeholder={mode === 'public' ? 'Say something sweet... 🍰' : `Message ${selectedUser}...`}
+                  placeholder={mode === 'public' ? 'Say something sweet... ' : `Message ${selectedUser}...`}
                   disabled={!connected}
                   style={{ flex: 1, padding: '10px 14px', border: '2px solid #fce7f3', borderRadius: '12px', fontFamily: "'Nunito',sans-serif", fontSize: '0.92rem', outline: 'none', color: '#374151' }}
                 />
                 <button onClick={handleSend} disabled={!connected || !input.trim()}
                   style={{ padding: '10px 20px', borderRadius: '12px', border: 'none',
                     background: mode === 'public' ? 'linear-gradient(135deg, #d4547a, #e8799a)' : 'linear-gradient(135deg, #7c3aed, #a78bfa)',
-                    color: 'white', fontFamily: "'Nunito',sans-serif", fontWeight: 700, fontSize: '0.9rem',
+                    color: 'white', fontFamily: "'Nunito',sans-serif", fontWeight: 700, fontSize: '0.9rem',display: 'flex', alignItems: 'center', gap: '4px',
                     cursor: !connected || !input.trim() ? 'not-allowed' : 'pointer',
                     opacity: !connected || !input.trim() ? 0.6 : 1, whiteSpace: 'nowrap' }}>
-                  Send 🚀
+                  <img src="/src/assets/icons/newsletter-sending.png" alt="" style={{ width: '30px', height: '30px', objectFit: 'contain', verticalAlign: 'middle' }} />
+                  {' '}Send
                 </button>
               </>
             )}

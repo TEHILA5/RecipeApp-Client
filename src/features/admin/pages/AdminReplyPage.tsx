@@ -56,7 +56,9 @@ export default function AdminReplyPage() {
     return (
       <div className="reply-page">
         <div className="success-box">
-          <div className="big-icon">✅</div>
+          <div className="big-icon">
+            <img src="/src/assets/icons/profile-success.png" alt="Success" style={{ width: '64px', height: '64px', objectFit: 'contain', placeSelf: 'center' }} />
+          </div>
           <h2>Reply Sent!</h2>
           <button onClick={reset} className="primary-btn">
             Send Another Reply
@@ -69,7 +71,10 @@ export default function AdminReplyPage() {
   return (
     <div className="reply-page">
       <div className="reply-card">
-        <h1 className="title">Reply to Contact 💌</h1>
+        <h1 className="title" style={{ display: 'flex', alignItems: 'center', gap: '4px', }}>
+          Reply to Contact{' '}
+          <img src="/src/assets/icons/page-contact.png" alt="" style={{ width: '2em', height: '2em', objectFit: 'contain', verticalAlign: 'middle' }} />
+        </h1>
 
         <input
           placeholder="Name"

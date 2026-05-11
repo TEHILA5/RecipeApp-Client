@@ -3,6 +3,11 @@ import { useClickOutside } from '../../../shared/hooks/useClickOutside';
 import type { RecipeCategory, DifficultyLevel } from '../types/recipe.types';
 import { CATEGORY_IMAGES } from '../types/recipe.types';
 
+import filtersIcon  from '../../../assets/icons/filters-icon.png';
+import levelEasy    from '../../../assets/icons/meta-level-easy.png';
+import levelMedium  from '../../../assets/icons/meta-level-medium.png';
+import levelHard    from '../../../assets/icons/meta-level-hard.png';
+
 interface Filters {
   category: RecipeCategory | null;
   level: DifficultyLevel | null;
@@ -51,15 +56,15 @@ const MORE_CATEGORIES: { value: RecipeCategory; label: string }[] = [
   { value: 'TraditionalDesserts', label: 'Traditional'       },
 ];
 
-const LEVELS: { value: DifficultyLevel; label: string; emoji: string }[] = [
-  { value: 1, label: 'Easy',   emoji: '🟢' },
-  { value: 2, label: 'Medium', emoji: '🟡' },
-  { value: 3, label: 'Hard',   emoji: '🔴' },
+const LEVELS: { value: DifficultyLevel; label: string; icon: string }[] = [
+  { value: 1, label: 'Easy',   icon: levelEasy   },
+  { value: 2, label: 'Medium', icon: levelMedium },
+  { value: 3, label: 'Hard',   icon: levelHard   },
 ];
 
 const TIME_OPTIONS = [
-  { value: 30,  label: 'Under 30 min' },
-  { value: 60,  label: 'Under 1 hour' },
+  { value: 30,  label: 'Under 30 min'  },
+  { value: 60,  label: 'Under 1 hour'  },
   { value: 120, label: 'Under 2 hours' },
 ];
 
@@ -71,8 +76,8 @@ function CategoryChip({ value, label, active, onClick }: {
     <button onClick={onClick} className={`filter-chip ${active ? 'active' : ''}`}>
       {img
         ? <img src={img} alt={label} style={{ width: '74.4px', height: '90.4px', objectFit: 'cover', overflow: 'hidden', display: 'block' }} />
-        : '🍰'
-      } 
+        : label
+      }
     </button>
   );
 }
@@ -102,7 +107,8 @@ export default function RecipeFilters({ filters, onFilterChange, onClear }: Reci
   return (
     <div className="recipe-filters">
       <button className="filters-toggle" onClick={() => setIsExpanded(!isExpanded)}>
-        <span>🎯 Filters</span>
+        <img src={filtersIcon} alt="Filters" style={{ width: '18px', height: '18px', objectFit: 'contain', verticalAlign: 'middle', marginRight: '6px' }} />
+        <span>Filters</span>
         {activeCount > 0 && <span className="filter-count">{activeCount}</span>}
         <span className={`toggle-icon ${isExpanded ? 'expanded' : ''}`}>▼</span>
       </button>
@@ -112,23 +118,11 @@ export default function RecipeFilters({ filters, onFilterChange, onClear }: Reci
           <h4 className="filter-title">Category</h4>
           <div className="filter-options">
             {POPULAR_CATEGORIES.map(({ value, label }) => (
-              <CategoryChip
-                key={value}
-                value={value}
-                label={label}
-                active={filters.category === value}
-                onClick={() => setCategory(value)}
-              />
+              <CategoryChip key={value} value={value} label={label} active={filters.category === value} onClick={() => setCategory(value)} />
             ))}
 
             {showMoreCategories && MORE_CATEGORIES.map(({ value, label }) => (
-              <CategoryChip
-                key={value}
-                value={value}
-                label={label}
-                active={filters.category === value}
-                onClick={() => setCategory(value)}
-              />
+              <CategoryChip key={value} value={value} label={label} active={filters.category === value} onClick={() => setCategory(value)} />
             ))}
 
             <button className="filter-chip dashed" onClick={() => setShowMore((v) => !v)}>
@@ -140,13 +134,14 @@ export default function RecipeFilters({ filters, onFilterChange, onClear }: Reci
         <div className="filter-group">
           <h4 className="filter-title">Difficulty</h4>
           <div className="filter-options">
-            {LEVELS.map(({ value, label, emoji }) => (
+            {LEVELS.map(({ value, label, icon }) => (
               <button
                 key={value}
                 onClick={() => setLevel(value)}
                 className={`filter-chip ${filters.level === value ? 'active' : ''}`}
               >
-                <span>{emoji}</span> {label}
+                <img src={icon} alt={label} style={{ width: '22px', height: '22px', objectFit: 'contain', verticalAlign: 'middle', marginRight: '6px' }} />
+                {label}
               </button>
             ))}
           </div>

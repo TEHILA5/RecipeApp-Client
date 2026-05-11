@@ -1,6 +1,21 @@
 import { useState } from 'react';
 import { useSubscribeNewsletterMutation } from '../../../api/contactApi';
-import { labelStyle, inputStyle } from './StaticPageHelpers';
+import { labelStyle, inputStyle } from './staticStyles';
+
+import mailboxIcon   from '../../../assets/icons/newsletter-mailbox.png';
+import celebrateIcon from '../../../assets/icons/newsletter-celebrate.png';
+import sendingIcon   from '../../../assets/icons/newsletter-sending.png';
+import featuredIcon  from '../../../assets/icons/newsletter-featured.png';
+import chefTipIcon   from '../../../assets/icons/newsletter-chef-tip.png';
+import searchIcon    from '../../../assets/icons/search-icon.png';
+import seasonalIcon  from '../../../assets/icons/newsletter-seasonal.png';
+
+const WHATS_INSIDE = [
+  { icon: featuredIcon, title: 'Featured Recipes', desc: '3 hand-picked recipes every month' },
+  { icon: chefTipIcon,  title: 'Baking Tip',        desc: 'One pro secret to level up your baking' },
+  { icon: searchIcon,   title: 'Smart Search',       desc: 'Learn how to find recipes by description' },
+  { icon: seasonalIcon, title: 'Seasonal Picks',     desc: 'What to bake right now, this season' },
+];
 
 export default function NewsletterPage() {
   const [name, setName] = useState('');
@@ -12,16 +27,10 @@ export default function NewsletterPage() {
   const handleSubmit = async () => {
     if (!email.trim()) { setErrorMsg('Email is required'); return; }
     if (!email.includes('@')) { setErrorMsg('Please enter a valid email'); return; }
-
     setErrorMsg('');
     try {
-      await subscribeNewsletter({
-        email: email.trim(),
-        name: name.trim() || 'Sweet Lover',
-      }).unwrap();
-    } catch {
-      setErrorMsg('Something went wrong. Please try again.');
-    }
+      await subscribeNewsletter({ email: email.trim(), name: name.trim() || 'Sweet Lover' }).unwrap();
+    } catch { setErrorMsg('Something went wrong. Please try again.'); }
   };
 
   return (
@@ -29,7 +38,7 @@ export default function NewsletterPage() {
 
       {/* Header */}
       <div style={{ background: 'linear-gradient(135deg, #d4547a, #e8799a)', padding: '64px 24px', textAlign: 'center', color: 'white' }}>
-        <div style={{ fontSize: '4rem', marginBottom: '16px' }}>💌</div>
+        <img src={mailboxIcon} alt="Newsletter" style={{ width: '90px', height: '90px', objectFit: 'contain', marginBottom: '16px', placeSelf: 'center' }} />
         <h1 style={{ fontFamily: "'Dancing Script',cursive", fontSize: 'clamp(2.2rem, 4vw, 3rem)', marginBottom: '12px', color: 'white' }}>
           Sweet&Treat Newsletter
         </h1>
@@ -41,9 +50,8 @@ export default function NewsletterPage() {
       <div style={{ maxWidth: '560px', margin: '0 auto', padding: '48px 24px' }}>
 
         {isSuccess ? (
-          /* ── Success State ── */
           <div style={{ background: 'white', borderRadius: '24px', padding: '48px 32px', textAlign: 'center', boxShadow: '0 8px 32px rgba(212,84,122,0.12)' }}>
-            <div style={{ fontSize: '4rem', marginBottom: '16px' }}>🎉</div>
+            <img src={celebrateIcon} alt="Subscribed!" style={{ width: '80px', height: '80px', objectFit: 'contain', marginBottom: '16px', placeSelf: 'center' }} />
             <h2 style={{ fontFamily: "'Dancing Script',cursive", fontSize: '2rem', color: '#d4547a', marginBottom: '12px' }}>
               You're subscribed!
             </h2>
@@ -55,10 +63,9 @@ export default function NewsletterPage() {
             </p>
           </div>
         ) : (
-          /* ── Form ── */
           <div style={{ background: 'white', borderRadius: '24px', padding: '40px 32px', boxShadow: '0 8px 32px rgba(212,84,122,0.1)' }}>
             <h2 style={{ fontFamily: "'Dancing Script',cursive", fontSize: '1.8rem', color: '#d4547a', marginBottom: '8px', textAlign: 'center' }}>
-              Join the Sweet Side 🍰
+              Join the Sweet Side
             </h2>
             <p style={{ color: '#9ca3af', textAlign: 'center', marginBottom: '32px', fontSize: '0.9rem' }}>
               Get our newsletter instantly — featuring this month's top recipes, a baking tip, and more.
@@ -67,40 +74,19 @@ export default function NewsletterPage() {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
               <div>
                 <label style={labelStyle}>Your Name</label>
-                <input
-                  type="text"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  placeholder="e.g. Sarah"
-                  style={inputStyle}
-                />
+                <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. Sarah" style={inputStyle} />
               </div>
               <div>
                 <label style={labelStyle}>Email Address *</label>
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => { setEmail(e.target.value); setErrorMsg(''); }}
-                  onKeyDown={(e) => e.key === 'Enter' && handleSubmit()}
-                  placeholder="hello@example.com"
-                  style={{ ...inputStyle, borderColor: errorMsg ? '#ef4444' : '#fce7f3' }}
-                />
+                <input type="email" value={email} onChange={(e) => { setEmail(e.target.value); setErrorMsg(''); }} onKeyDown={(e) => e.key === 'Enter' && handleSubmit()} placeholder="hello@example.com" style={{ ...inputStyle, borderColor: errorMsg ? '#ef4444' : '#fce7f3' }} />
                 {errorMsg && <p style={{ color: '#ef4444', fontSize: '0.82rem', marginTop: '6px' }}>{errorMsg}</p>}
               </div>
 
-              <button
-                onClick={handleSubmit}
-                disabled={isLoading}
-                style={{
-                  padding: '14px', borderRadius: '999px', border: 'none',
-                  background: 'linear-gradient(135deg, #d4547a, #e8799a)',
-                  color: 'white', fontFamily: "'Nunito',sans-serif", fontWeight: 700,
-                  fontSize: '1rem', cursor: isLoading ? 'not-allowed' : 'pointer',
-                  opacity: isLoading ? 0.7 : 1,
-                  boxShadow: '0 4px 16px rgba(212,84,122,0.3)',
-                  marginTop: '8px',
-                }}>
-                {isLoading ? '📨 Sending...' : '💌 Send Me the Newsletter'}
+              <button onClick={handleSubmit} disabled={isLoading} style={{ padding: '14px', borderRadius: '999px', border: 'none', background: 'linear-gradient(135deg, #d4547a, #e8799a)', color: 'white', fontFamily: "'Nunito',sans-serif", fontWeight: 700, fontSize: '1rem', cursor: isLoading ? 'not-allowed' : 'pointer', opacity: isLoading ? 0.7 : 1, boxShadow: '0 4px 16px rgba(212,84,122,0.3)', marginTop: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+                {isLoading
+                  ? <><img src={sendingIcon} alt="Sending" style={{ width: '32px', height: '32px', objectFit: 'contain' }} /> Sending...</>
+                  : 'Send Me the Newsletter'
+                }
               </button>
 
               <p style={{ color: '#9ca3af', fontSize: '0.78rem', textAlign: 'center', marginTop: '4px' }}>
@@ -110,20 +96,15 @@ export default function NewsletterPage() {
           </div>
         )}
 
-        {/* What's inside preview */}
+        {/* What's inside */}
         <div style={{ marginTop: '40px' }}>
           <h3 style={{ fontFamily: "'Dancing Script',cursive", fontSize: '1.5rem', color: '#d4547a', textAlign: 'center', marginBottom: '20px' }}>
-            What's Inside 📬
+            What's Inside
           </h3>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px' }}>
-            {[
-              { emoji: '🍰', title: 'Featured Recipes', desc: '3 hand-picked recipes every month' },
-              { emoji: '👩‍🍳', title: 'Baking Tip', desc: 'One pro secret to level up your baking' },
-              { emoji: '🔍', title: 'Smart Search', desc: 'Learn how to find recipes by description' },
-              { emoji: '🎉', title: 'Seasonal Picks', desc: 'What to bake right now, this season' },
-            ].map((item) => (
+            {WHATS_INSIDE.map((item) => (
               <div key={item.title} style={{ background: 'white', borderRadius: '16px', padding: '18px', boxShadow: '0 2px 12px rgba(212,84,122,0.07)', textAlign: 'center' }}>
-                <div style={{ fontSize: '1.8rem', marginBottom: '8px' }}>{item.emoji}</div>
+                <img src={item.icon} alt={item.title} style={{ width: '40px', height: '40px', objectFit: 'contain', marginBottom: '8px', placeSelf: 'center' }} />
                 <div style={{ fontWeight: 800, color: '#374151', fontSize: '0.88rem', marginBottom: '4px' }}>{item.title}</div>
                 <div style={{ color: '#9ca3af', fontSize: '0.78rem' }}>{item.desc}</div>
               </div>

@@ -49,9 +49,11 @@ function RegisterPage() {
             <h2 className="visual-title">Join Sweet&amp;Treat!</h2>
             <p className="visual-desc">
               Create your free account and start your delicious journey.
-              Discover thousands of amazing dessert recipes crafted with love! 🍰
+              Discover thousands of amazing dessert recipes crafted with love! 
             </p>
-            <div className="visual-emoji">✨🧁🍪🎂</div>
+            <div className="visual-emoji">
+              <img src="/src/assets/images/sweety.png" alt="Logo" style={{ width: '70px', height: '70px', objectFit: 'contain', placeSelf: 'center' }} />
+            </div>
           </div>
         </div>
         <div className="login-form-wrapper">

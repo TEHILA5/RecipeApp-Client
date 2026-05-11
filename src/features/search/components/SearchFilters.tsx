@@ -1,5 +1,5 @@
 import type { RecipeCategory } from '../../recipe/types/recipe.types';
-import { CATEGORY_EMOJIS, CATEGORY_IMAGES } from '../../recipe/types/recipe.types';
+import { CATEGORY_IMAGES } from '../../recipe/types/recipe.types';
 import './SearchFilters.css';
 
 type SearchMode = 'name' | 'category' | 'ingredients';
@@ -107,7 +107,7 @@ export default function SearchFilters({
         <div className="ingredient-tags">
           {ingredientList.map((ing) => (
             <span key={ing} className="ingredient-tag">
-              🧂 {ing}
+              <img src="/src/assets/icons/calc-spoon.png" alt={ing} style={{ width: '20px', height: '20px', objectFit: 'contain', verticalAlign: 'middle' }} /> {ing}
               <button onClick={() => onRemoveIngredient(ing)}>×</button>
             </span>
           ))}

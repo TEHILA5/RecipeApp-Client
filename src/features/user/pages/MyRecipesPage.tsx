@@ -22,7 +22,10 @@ export default function MyRecipesPage() {
           </div>
 
           <div className="tabs">
-            <div className="tab active">🔖 Saved Recipes</div>
+            <div className="tab active" style={{ display: 'flex', alignItems: 'center', gap: '4px', }}>
+              <img src="/src/assets/icons/recipe-bookmark.png" alt="Saved" style={{ width: '20px', height: '20px', objectFit: 'contain' }} />
+              {' '} Saved Recipes
+            </div>
           </div>
         </div>
       </div>

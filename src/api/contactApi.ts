@@ -17,7 +17,7 @@ export interface NewsletterSubscribeDto {
 export const contactApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     sendContactMessage: builder.mutation<void, ContactMessageDto>({
-      query: (body) => ({ url: '/contact', method: 'POST', body }),
+      query: (body) => ({ url: '/contact/send', method: 'POST', body }),
     }),
 
     subscribeNewsletter: builder.mutation<void, NewsletterSubscribeDto>({

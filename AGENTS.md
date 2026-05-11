@@ -113,6 +113,18 @@ const isAdminFromToken = (token: string): boolean => {
 - **Normalization**: `normalizeRecipe()` defined in [src/features/recipe/types/recipe.types.ts](src/features/recipe/types/recipe.types.ts)
 - **Serialization**: `serializeForServer()` defined in [src/features/recipe/redux/recipeSlice.ts](src/features/recipe/redux/recipeSlice.ts) (private)
 - **Usage**: Auto-applied in RTK Query hooks via `transformResponse`; must manually apply in non-RTK contexts
+- **Constant Maps**: `RECIPE_CATEGORIES_MAP` (string→number), `INT_TO_CATEGORY` (number→string) in recipe.types.ts
+
+**Ingredient Importance Mapping** (Similar Pattern):
+- Backend returns importance as `number` (1=Essential, 2=Recommended, 3=Optional)
+- Frontend uses importance `string` for display
+- **Mappings**: `INT_TO_IMPORTANCE`, `IMPORTANCE_TO_INT` in ingredient types
+- **Auto-converted**: In `normalizeRecipe()` for recipe ingredient lists
+
+**Tags & JSON Parsing**:
+- Backend stores tags as JSON string in recipe
+- Automatically parsed by `normalizeRecipe()` into `string[]`
+- When sending to server, stringify back to JSON format
 
 **Validation**:
 - Centralized rules in [src/shared/utils/validation.ts](src/shared/utils/validation.ts)
@@ -153,6 +165,20 @@ const dispatch = useAppDispatch();
 const { user, isAuthenticated } = useAppSelector(state => state.auth);
 ```
 
+### Feature-Specific Hooks
+Each feature may expose custom hooks for managing feature state and API interactions:
+
+| Hook | Location | Purpose |
+|------|----------|---------|  
+| `useRecipes()` | `features/recipe/hooks/` | Search, filter, sort recipes with debouncing |
+| `useRecipeSearch()` | `features/recipe/hooks/` | Multi-mode search (name/category/ingredients) |
+| `useRecipeDetail()` | `features/recipe/hooks/` | Single recipe operations & mutations |
+| `useAuth()` | `features/auth/hooks/` | Auth state, login/logout, token refresh |
+| `useUserProfile()` | `features/user/hooks/` | Profile save/delete with optimistic updates |
+| `useChat()` | `features/chat/hooks/` | SignalR connection lifecycle & messaging |
+
+**Usage**: Import from `features/[name]/hooks/` and use to encapsulate feature logic.
+
 ### Utility Functions (`src/shared/utils/`)
 
 **formatting.ts**:
@@ -161,7 +187,9 @@ const { user, isAuthenticated } = useAppSelector(state => state.auth);
 - `unique(array, key?)` — Deduplicate array
 - `sleep(ms)` — Promise-based sleep utility
 - `truncate(str, length)` — Truncate string to length
-- `formatShortDate(date)` — Format date in Hebrew locale
+- `formatDate(str)` — Format date in US locale (en-US)
+- `formatShortDate(date)` — Format date in Hebrew locale (he-IL)
+- `formatTime(minutes)` — Format duration as "1h 30m" or "45m"
 - `formatRating(rating)` — Format rating for display
 
 **helpers.ts**:
@@ -234,11 +262,47 @@ Use CSS variables for colors: `color: var(--primary-pink);`
 
 For MUI-specific styling, customize in [muiTheme.ts](src/styles/themes/muiTheme.ts)
 
+## Error Handling Patterns
+
+The app uses **inconsistent error handling** by design (no central error boundary yet). Common patterns:
+
+1. **Local Component State** (Pages & Forms):
+   ```typescript
+   const [error, setError] = useState('');
+   try {
+     await someAction().unwrap();
+   } catch (err) {
+     setError('User-friendly message');
+   }
+   ```
+
+2. **Redux Slice State** (Auth, Admin):
+   ```typescript
+   // In slice
+   extraReducers: (builder) => {
+     builder.addCase(loginUser.rejected, (state, action) => {
+       state.error = action.payload || 'Login failed';
+     });
+   }
+   ```
+
+3. **Console & No UI Feedback** (Less critical operations):
+   ```typescript
+   try {
+     await deleteItem().unwrap();
+   } catch (err) {
+     console.error('Failed to delete:', err);
+   }
+   ```
+
+**Future improvement**: Add error boundaries and centralized toast/snackbar notifications for critical errors.
+
 ## Important Conventions & Gotchas
 
 | Issue | Details | Fix |
 |-------|---------|-----|
 | **Recipe data mismatch** | Backend sends category as `number`; frontend expects `string` | Apply `normalizeRecipe()` to all recipe queries |
+| **Ingredient importance not transformed** | Importance field returns as number but needs string for display | Also handled by `normalizeRecipe()` |
 | **Session lost on refresh** | Auth state not persisted | Ensure `restoreAuth()` called on app init (see [App.tsx](src/App.tsx)) |
 | **Type errors in Redux** | Non-serializable function in middleware | UI slice disables serialization check for modal callbacks; acceptable here |
 | **Form validation fails** | Custom rules not applied | Check [validation.ts](src/shared/utils/validation.ts) for available validators |
@@ -246,13 +310,55 @@ For MUI-specific styling, customize in [muiTheme.ts](src/styles/themes/muiTheme.
 | **CSS not applying** | CSS file not imported in component | Always import `.css` at top of component: `import './ComponentName.css';` |
 | **CSS files are optional** | Not all components have `.css` pairs | Use MUI `sx` or Tailwind if `.css` not needed |
 | **Admin role missing** | JWT not properly parsed | Check `isAdminFromToken()` in [authSlice.ts](src/features/auth/redux/authSlice.ts) |
+| **Unused dependency** | `yup` validator in package.json but not used | App uses React Hook Form inline rules instead; safe to remove |
+
+### Redux Slices Reference
+
+All Redux state is centralized in [src/app/store.ts](src/app/store.ts). Key slices:
+
+| Slice | Location | Purpose |
+|-------|----------|---------|  
+| `auth` | `features/auth/redux/` | User, token, isAdmin, error state |
+| `ui` | `src/redux/slices/` | Modals, toasts, theme, sidebar, loading states |
+| `ingredients` | `features/ingredient/redux/` | Filter & selection state for ingredients |
+| `recipe` (recipePanel) | `features/recipe/redux/` | Recipe CRUD panel & form state |
+| `search` | `features/search/redux/` | Search filters & results state |
+| `admin` | `features/admin/redux/` | Admin conversion & user selection state |
+| `user` | `features/user/redux/` | User profile state |
+
+**Note**: Some slices store non-serializable functions (e.g., `ui.modal.onConfirm`). This is intentional—middleware has explicit ignore rules configured.
 
 ## Type System
 
 - **DTOs** (API contracts): Defined inline in `src/api/*Api.ts`
 - **Domain Models** (UI logic): In `features/*/types/*Types.ts`
-- **Mappings**: Constants in type files (e.g., `RECIPE_CATEGORIES_MAP`, `INT_TO_CATEGORY`)
-- **Avoid `any`**: Use TypeScript strict mode for safety
+- **Mappings**: Constants in type files (e.g., `RECIPE_CATEGORIES_MAP`, `INT_TO_CATEGORY`, `INT_TO_IMPORTANCE`)
+- **TypeScript Config**: `noImplicitAny`, `noUnusedLocals`, `noUnusedParameters` are **disabled** (not strict); this is intentional for flexibility
+
+## API Endpoints Reference
+
+### Admin API (`src/api/adminApi.ts`)
+
+| Endpoint | Purpose |
+|----------|---------|  
+| `getAllConversions()` | Fetch all ingredient conversion ratios |
+| `createConversion()` | Create new ingredient conversion |
+| `updateConversion()` | Update existing conversion |
+| `deleteConversion()` | Delete conversion |
+| `getAllIngredientsAdminQuery()` | Fetch all ingredients for admin UI |
+| `getWeeklyStatsQuery()` | Fetch weekly category view statistics |
+| `sendAdminReplyMutation()` | Send email reply to contact form |
+
+**Usage**: [AdminDashboard.tsx](src/features/admin/pages/AdminDashboard.tsx) demonstrates conversion CRUD & analytics.
+
+### Other API Files
+- `authApi.ts` → Login, register, token refresh
+- `ingredientApi.ts` → Ingredient CRUD & search
+- `userApi.ts` → User profile, settings
+- `recipeApi.ts` → Recipe CRUD, search (integrated in recipeSlice.ts)
+- `chatApi.ts` → Chat initialization, history
+- `contactApi.ts` → Contact form submission
+- `userActionApi.ts` → User interactions (favorites, ratings)
 
 ## Real-Time Features
 
@@ -260,9 +366,10 @@ For MUI-specific styling, customize in [muiTheme.ts](src/styles/themes/muiTheme.
 - **Framework**: SignalR WebSocket via `@microsoft/signalr`
 - **Component**: [SweetieChat.tsx](src/features/chat/SweetieChat.tsx)
 - **Features**: Real-time chat, AI recipe suggestions, recipe analysis
-- **Connection Management**: HubConnection lifecycle in chat hooks
+- **Connection Management**: HubConnection lifecycle in chat hooks (auto-reconnection)
 - **API**: See [src/api/chatApi.ts](src/api/chatApi.ts) for endpoints
 - **State**: Chat messages managed in Redux
+- **Hub URL**: Derived from `VITE_API_BASE_URL` with `/api` suffix removed
 
 ## Key Files by Use Case
 
@@ -308,7 +415,9 @@ For MUI-specific styling, customize in [muiTheme.ts](src/styles/themes/muiTheme.
 ## Known Issues & Limitations
 
 - **No test framework**: Jest, Vitest, or testing utilities are not set up. Any test additions are experimental.
-- **Error handling patterns**: Mostly use `console.error()` and Redux error state. Consider adding error boundaries for unhandled exceptions.
+- **Error handling**: Inconsistent across features. No centralized error boundary or toast notification system yet (see error patterns above).
+- **TypeScript strictness**: `noImplicitAny`, `noUnusedLocals`, `noUnusedParameters` disabled for flexibility. Not as strict as typical TS projects.
+- **Unused dependency**: `yup` in package.json is not used anywhere (app uses React Hook Form inline validation instead).
 - **Environment config**: `.env` file exists with `VITE_API_BASE_URL=https://localhost:7244/api` for local development.
 
 ---

@@ -1,10 +1,10 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, ReactNode } from 'react';
 import './ImageLazyLoad.css';
 
 interface ImageLazyLoadProps {
   src: string;
   alt: string;
-  fallback?: string;
+  fallback?: ReactNode;
   className?: string;
   style?: React.CSSProperties;
 }

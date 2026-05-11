@@ -1,4 +1,8 @@
 import { Link } from 'react-router-dom';
+import instagramIcon from '../../../assets/icons/social-instagram.png';
+import pinterestIcon from '../../../assets/icons/social-pinterest.png';
+import tiktokIcon from '../../../assets/icons/social-tiktok.png';
+import heartIcon from '../../../assets/icons/footer-heart.png';
 import './Footer.css';
 
 export default function Footer() {
@@ -15,11 +19,16 @@ export default function Footer() {
               dessert-making — with love, sugar, and a sprinkle of magic.
             </p>
 
-            {/* ✔️ אייקונים בלי קישורים */}
             <div className="social-links">
-              <span className="social-icon" aria-label="Instagram">📸</span>
-              <span className="social-icon" aria-label="Pinterest">📌</span>
-              <span className="social-icon" aria-label="TikTok">🎵</span>
+              <span className="social-icon" aria-label="Instagram">
+                <img src={instagramIcon} alt="Instagram" style={{ width: '24px', height: '24px', objectFit: 'contain' }} />
+              </span>
+              <span className="social-icon" aria-label="Pinterest">
+                <img src={pinterestIcon} alt="Pinterest" style={{ width: '24px', height: '24px', objectFit: 'contain' }} />
+              </span>
+              <span className="social-icon" aria-label="TikTok">
+                <img src={tiktokIcon} alt="TikTok" style={{ width: '24px', height: '24px', objectFit: 'contain' }} />
+              </span>
             </div>
           </div>
 
@@ -55,7 +64,10 @@ export default function Footer() {
         </div>
 
         <div className="footer-bottom">
-          <p className="copyright">© 2026 Sweet&amp;Treat — Made with 💕</p>
+          <p className="copyright" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '4px', textAlign: 'center',}}>
+            © 2026 Sweet&amp;Treat — Made with{' '}
+            <img src={heartIcon} alt="love" style={{ width: '20px', height: '20px', objectFit: 'contain',}} />
+          </p>
         </div>
       </div>
     </footer>

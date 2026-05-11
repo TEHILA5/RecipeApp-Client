@@ -1,8 +1,9 @@
 import { StaticPage, Section } from './StaticPageHelpers';
+import pageIcon from '../../../assets/icons/page-privacy.png';
 
 export default function PrivacyPage() {
   return (
-    <StaticPage emoji="🔒" title="Privacy Policy" subtitle="Last updated: January 2026">
+    <StaticPage icon={pageIcon} title="Privacy Policy" subtitle="Last updated: January 2026">
       <Section title="Information We Collect">
         We collect only the information you provide when creating an account (name, email)
         and the actions you take on the platform (recipes viewed, saved, rated).

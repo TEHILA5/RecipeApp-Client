@@ -1,5 +1,6 @@
 import RecipeCard from './RecipeCard';
 import type { Recipe } from '../types/recipe.types';
+import emptyIcon from '../../../assets/icons/page-about.png';
 
 interface RecipeListProps {
   recipes: Recipe[];
@@ -11,7 +12,7 @@ export default function RecipeList({ recipes, loading, emptyMessage }: RecipeLis
   if (loading) {
     return (
       <div className="loading-state">
-        <div className="spinner-large"></div>
+        <div className="spinner-large" />
         <p>Loading recipes...</p>
       </div>
     );
@@ -20,7 +21,7 @@ export default function RecipeList({ recipes, loading, emptyMessage }: RecipeLis
   if (recipes.length === 0) {
     return (
       <div className="no-results">
-        <div className="no-results-icon">🍰</div>
+        <img src={emptyIcon} alt="No recipes" className="no-results-icon" style={{ width: '80px', height: '80px', objectFit: 'contain' }} />
         <h3>No recipes found</h3>
         <p>{emptyMessage || 'Try adjusting your search or filters'}</p>
       </div>

@@ -24,9 +24,11 @@ export default function RegisterForm({ onSubmit, loading, error }: RegisterFormP
 
   return (
     <div className="login-form-content">
-      <div className="form-logo">
+      <div className="form-logo" style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
         <span className="logo-text">Sweet&amp;Treat</span>
-        <span className="logo-emoji">🍰</span>
+        <span className="logo-emoji">
+          <img src="/src/assets/images/sweety.png" alt="Logo" style={{ width: '32px', height: '32px', objectFit: 'contain' }} />
+        </span>
       </div>
 
       <h1 className="form-title">Create Account</h1>

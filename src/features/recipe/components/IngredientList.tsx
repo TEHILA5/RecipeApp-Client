@@ -27,7 +27,9 @@ export default function IngredientList({ ingredients }: IngredientListProps) {
       {ingredients.map((ing, i) => (
         <div key={i} className="il-item">
           <div className="il-left">
-            <span className="il-icon">🥄</span>
+            <span className="il-icon">
+              <img src="/src/assets/icons/calc-spoon.png" alt="Ingredient" style={{ width: '24px', height: '24px', objectFit: 'contain' }} />
+            </span>
             <span className="il-name">{ing.ingredientName || `Ingredient #${ing.ingredientId}`}</span>
           </div>
           <div className="il-right">

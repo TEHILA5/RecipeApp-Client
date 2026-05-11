@@ -24,11 +24,11 @@ import './SearchPage.css';
 type SearchMode = 'name' | 'category' | 'ingredients' | 'advanced';
 type BaseSearchMode = 'name' | 'category' | 'ingredients';
 
-const TABS: { key: SearchMode; label: string; emoji: string }[] = [
-  { key: 'name',        label: 'By Name',        emoji: '🔤' },
-  { key: 'category',    label: 'By Category',    emoji: '📂' },
-  { key: 'ingredients', label: 'By Ingredients', emoji: '🧂' },
-  { key: 'advanced',    label: 'Smart Search',   emoji: '🔮' },
+const TABS: { key: SearchMode; label: string; emoji: React.ReactNode }[] = [
+  { key: 'name',        label: 'By Name',        emoji: <img src="/src/assets/icons/content-text.png" alt="Name" style={{ width: 20, height: 20 }} /> },
+  { key: 'category',    label: 'By Category',    emoji: <img src="/src/assets/icons/content-folder.png" alt="Category" style={{ width: 20, height: 20 }} /> },
+  { key: 'ingredients', label: 'By Ingredients', emoji: <img src="/src/assets/icons/calc-spoon.png" alt="Ingredients" style={{ width: 20, height: 20 }} /> },
+  { key: 'advanced',    label: 'Smart Search',   emoji: <img src="/src/assets/icons/ai-crystal-ball.png" alt="Advanced" style={{ width: 20, height: 20 }} /> },
 ];
 
 export default function SearchPage() {
@@ -187,7 +187,7 @@ export default function SearchPage() {
               key={key}
               onClick={() => handleSetMode(key)}
               className={`search-tab ${activeTab === key ? 'active' : ''} ${key === 'advanced' ? 'ai' : ''}`}
-            >
+            style={{ display: 'flex', alignItems: 'center', gap: '4px', }}>
               {emoji} {label}
             </button>
           ))}

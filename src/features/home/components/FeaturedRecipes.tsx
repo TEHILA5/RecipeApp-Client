@@ -1,13 +1,19 @@
 import { Link } from 'react-router-dom';
 import { useAppSelector } from '../../../redux/hooks';
 import { useGetRecommendedRecipesQuery } from '../../recipe/redux/recipeSlice';
-import { type Recipe, LEVEL_LABELS, CATEGORY_EMOJIS } from '../../recipe/types/recipe.types';
+import { type Recipe, LEVEL_LABELS, CATEGORY_IMAGES } from '../../recipe/types/recipe.types';
 import StarRating from '../../../shared/components/StarRating';
-import './FeaturedRecipes.css';
+import './FeaturedRecipes.css'; 
 
 function RecipeCard({ recipe }: { recipe: Recipe }) {
-  const emoji = CATEGORY_EMOJIS[recipe.category] ?? '🍰';
+  const image = CATEGORY_IMAGES[recipe.category] ?? '🍰';
   const level = LEVEL_LABELS[recipe.level as 1 | 2 | 3] ?? 'Easy';
+  const levelIcon = recipe.level === 2
+    ? '/src/assets/icons/meta-level-medium.png'
+    : recipe.level === 3
+      ? '/src/assets/icons/meta-level-hard.png'
+      : '/src/assets/icons/meta-level-easy.png';
+  const levelAlt = recipe.level === 2 ? 'Medium' : recipe.level === 3 ? 'Hard' : 'Easy';
 
   return (
     <Link to={`/recipes/${recipe.id}`} className="recipe-card">
@@ -26,9 +32,12 @@ function RecipeCard({ recipe }: { recipe: Recipe }) {
           />
         ) : null}
         <div className={`card-img card-img-fallback ${recipe.arrImage ? 'hidden' : ''}`}>
-          {emoji}
+          <img src={image} alt={recipe.category} style={{ width: '48px', height: '48px', objectFit: 'contain' }} />
         </div>
-        <div className="card-badge">⭐ Featured</div>
+        <div className="card-badge" style={{ display: 'flex', alignItems: 'center', gap: '4px', }}> 
+          <img src="/src/assets/icons/rank-star.png" alt="" style={{ width: '20px', height: '20px', objectFit: 'contain', verticalAlign: 'middle' }} />
+          {' '}Featured
+        </div>
       </div>
 
       <div className="card-body">
@@ -36,9 +45,15 @@ function RecipeCard({ recipe }: { recipe: Recipe }) {
         <h3 className="card-title">{recipe.name}</h3>
         <p className="card-desc">{recipe.description}</p>
         <div className="card-meta">
-          <span className="meta-item"><span>⏱️</span> {recipe.totalTime} min</span>
-          <span className="meta-item"><span>👨‍🍳</span> {level}</span>
-          <span className="meta-item"><span>🍽️</span> {recipe.servings}</span>
+          <span className="meta-item"><span>
+            <img src="/src/assets/icons/meta-time.png" alt="Time" style={{ width: '16px', height: '16px', objectFit: 'contain', verticalAlign: 'middle' }} />  
+          </span> {recipe.totalTime} min</span>
+          <span className="meta-item"><span>
+            <img src={levelIcon} alt={levelAlt} style={{ width: '16px', height: '16px', objectFit: 'contain', verticalAlign: 'middle' }} />
+          </span> {level}</span>
+          <span className="meta-item"><span>
+            <img src="/src/assets/icons/meta-servings.png" alt="Servings" style={{ width: '16px', height: '16px', objectFit: 'contain', verticalAlign: 'middle' }} />  
+          </span> {recipe.servings}</span>
         </div>
       </div>
     </Link>

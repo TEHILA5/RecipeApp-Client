@@ -55,7 +55,9 @@ export default function ForgotPassword() {
 
         {step === 'email' && (
           <>
-            <div className="forgot-icon">🔑</div>
+            <div className="forgot-icon">
+              <img src="/src/assets/icons/page-privacy.png" alt="Search" style={{ width: '40px', height: '40px', objectFit: 'contain', placeSelf: 'center' }} />
+            </div>
             <h1 className="forgot-title">Reset <span>Password</span></h1>
             <p className="forgot-subtitle">Enter the email address linked to your account</p>
 
@@ -86,7 +88,9 @@ export default function ForgotPassword() {
 
         {step === 'password' && (
           <>
-            <div className="forgot-icon">🔒</div>
+            <div className="forgot-icon">
+              <img src="/src/assets/icons/page-privacy.png" alt="Search" style={{ width: '30px', height: '30px', objectFit: 'contain', placeSelf: 'center' }} />
+            </div>
             <h1 className="forgot-title">New <span>Password</span></h1>
             <p className="forgot-subtitle">Choose a strong password for <strong>{email}</strong></p>
 
@@ -115,7 +119,10 @@ export default function ForgotPassword() {
               />
               <Button type="submit" variant="contained" fullWidth size="large" disabled={passSubmitting}
                 startIcon={passSubmitting ? <CircularProgress size={18} color="inherit" /> : null}>
-                {passSubmitting ? 'Saving...' : '✨ Set New Password'}
+                {passSubmitting ? 'Saving...' :(<>
+                  <img src="/src/assets/icons/ai-sparkle.png" alt="" style={{ width: '30px', height: '30px', objectFit: 'contain', verticalAlign: 'middle' }} />
+                  {' '}Set New Password
+                </>)}
               </Button>
             </form>
 
@@ -127,7 +134,9 @@ export default function ForgotPassword() {
 
         {step === 'success' && (
           <div className="forgot-success">
-            <div className="forgot-icon">🎉</div>
+            <div className="forgot-icon">
+              <img src="/src/assets/icons/newsletter-celebrate.png" alt="Search" style={{ width: '30px', height: '30px', objectFit: 'contain' }} />
+            </div>
             <h1 className="forgot-title">Password <span>Reset!</span></h1>
             <p className="forgot-subtitle">
               Your password has been updated successfully. You can now log in with your new password.

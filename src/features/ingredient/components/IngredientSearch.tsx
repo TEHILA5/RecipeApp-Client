@@ -17,7 +17,9 @@ export default function IngredientSearch({ value, onChange, total, filtered }: I
           onChange={(e) => onChange(e.target.value)}
           placeholder="Search ingredients..."
         />
-        <span>🔍</span>
+        <span>
+          <img src="/src/assets/icons/search-icon.png" alt="Search" style={{ width: '20px', height: '20px', objectFit: 'contain' }} />
+        </span>
       </div>
 
       <span className="search-count">

@@ -7,6 +7,9 @@ import RecipeFilters from '../components/RecipeFilters';
 import type { RecipeCategory } from '../types/recipe.types';
 import './RecipeListPage.css';
 
+import searchIcon  from '../../../assets/icons/search-icon.png';
+import emptyIcon   from '../../../assets/icons/page-about.png';
+
 type SortOption = 'newest' | 'rating' | 'time' | 'name';
 
 export default function RecipeListPage() {
@@ -19,15 +22,9 @@ export default function RecipeListPage() {
     setSearchTerm, setSortBy, setFilters, resetFilters,
   } = useRecipes();
 
-  // ✅ תיקון כאן
   useEffect(() => {
     const cat = searchParams.get('category') as RecipeCategory | null;
-
-    setFilters({
-      ...filters,
-      category: cat || null,
-    });
-
+    setFilters({ ...filters, category: cat || null });
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams]);
 
@@ -72,7 +69,7 @@ export default function RecipeListPage() {
             onChange={(e) => setSearchTerm(e.target.value)}
             className="search-input"
           />
-          <span className="search-icon">🔍</span>
+          <img src={searchIcon} alt="Search" className="search-icon" style={{ width: '33px', height: '33px', objectFit: 'contain' }} />
         </div>
 
         <RecipeFilters filters={filters} onFilterChange={handleFilterChange} onClear={handleClearFilters} />
@@ -119,7 +116,13 @@ export default function RecipeListPage() {
         </div>
       )}
 
-      {errorMessage && <div className="error-message"><span>⚠️</span> {errorMessage}</div>}
+      {errorMessage && (
+        <div className="error-message">
+          <span>
+             <img src="/src/assets/icons/profile-warning.png" alt="Error" className="error-icon" style={{ width: '30px', height: '30px', objectFit: 'contain' }} />  
+          </span> {errorMessage}
+        </div>
+      )}
 
       {isLoading && (
         <div className="loading-state">
@@ -136,7 +139,7 @@ export default function RecipeListPage() {
 
       {!isLoading && recipes.length === 0 && !error && (
         <div className="no-results">
-          <div className="no-results-icon">🍰</div>
+          <img src={emptyIcon} alt="No recipes" className="no-results-icon" style={{ width: '80px', height: '80px', objectFit: 'contain' }} />
           <h3>No recipes found</h3>
           <p>Try adjusting your filters or search term</p>
           <button onClick={handleClearFilters} className="btn-outline">Clear Filters</button>

@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { useGetRecipesQuery } from '../../recipe/redux/recipeSlice';
 import { useGetMySavedRecipesQuery, useRemoveBookmarkMutation } from '../../../api/userActionApi';
-import { CATEGORY_EMOJIS, LEVEL_LABELS } from '../../recipe/types/recipe.types';
+import { CATEGORY_IMAGES, LEVEL_LABELS } from '../../recipe/types/recipe.types';
 import StarRating from '../../../shared/components/StarRating';
 import Loading from '../../../shared/components/UI/Loading';
 import ErrorMessage from '../../../shared/components/UI/ErrorMessage';
@@ -17,7 +17,14 @@ export default function MyFavorites() {
 
   if (saved.length === 0) return (
     <div className="favorites-empty">
-      <div>🔖</div>
+      <div>
+        <img
+          src="/src/assets/icons/recipe-bookmark.png"
+          alt="No favorites"
+          className="favorites-empty-img"
+          style={{ width: '50px', height: '50px', objectFit: 'contain', verticalAlign: 'middle',placeSelf: 'center' }} 
+        />
+      </div>
       <h3>No saved recipes yet</h3>
       <p>Browse recipes and tap the bookmark to save your favorites!</p>
       <Link to="/recipes" className="browse-btn">Browse Recipes →</Link>
@@ -28,8 +35,14 @@ export default function MyFavorites() {
     <div className="favorites-grid">
       {saved.map((item) => {
         const recipe = recipes.find((r) => r.id === item.recipeId);
-        const emoji = CATEGORY_EMOJIS[recipe?.category as keyof typeof CATEGORY_EMOJIS] ?? '🍰';
+        const img = CATEGORY_IMAGES[recipe?.category as keyof typeof CATEGORY_IMAGES] ?? '/src/assets/images/recipe-placeholder.png';
         const level = LEVEL_LABELS[recipe?.level as 1 | 2 | 3] ?? 'Easy';
+        const levelIcon = recipe?.level === 2
+          ? '/src/assets/icons/meta-level-medium.png'
+          : recipe?.level === 3
+            ? '/src/assets/icons/meta-level-hard.png'
+            : '/src/assets/icons/meta-level-easy.png';
+        const levelAlt = recipe?.level === 2 ? 'Medium' : recipe?.level === 3 ? 'Hard' : 'Easy';
         const isRemoving = removing;
         const imgSrc = recipe?.arrImage || item.recipeImageUrl;
         const desc = recipe?.description
@@ -51,7 +64,7 @@ export default function MyFavorites() {
                     }}
                   />
                 ) : null}
-                <div className={`favorite-img-fallback ${imgSrc ? 'hidden' : ''}`}>{emoji}</div>
+                <div className={`favorite-img-fallback ${imgSrc ? 'hidden' : ''}`}><img src={img} alt={item.recipeName} style={{ width: '20px', height: '20px', objectFit: 'contain', verticalAlign: 'middle' }} /></div>
               </div>
 
               <div className="favorite-body">
@@ -59,9 +72,9 @@ export default function MyFavorites() {
                 <h3>{item.recipeName}</h3>
                 {desc && <p>{desc}</p>}
                 <div className="favorite-meta">
-                  {recipe?.totalTime && <span>⏱️ {recipe.totalTime} min</span>}
-                  {recipe?.level    && <span>👨‍🍳 {level}</span>}
-                  {recipe?.servings && <span>🍽️ {recipe.servings}</span>}
+                  {recipe?.totalTime && <span style={{ display: 'flex', alignItems: 'center', gap: '4px', }}><img src="/src/assets/icons/meta-time.png" alt="Time" style={{ width: '20px', height: '20px', objectFit: 'contain', verticalAlign: 'middle' }} /> {recipe.totalTime} min</span>}
+                  {recipe?.level && <span style={{ display: 'flex', alignItems: 'center', gap: '4px', }}><img src={levelIcon} alt={levelAlt} style={{ width: '20px', height: '20px', objectFit: 'contain', verticalAlign: 'middle' }} /> {level}</span>}
+                  {recipe?.servings && <span style={{ display: 'flex', alignItems: 'center', gap: '4px', }}><img src="/src/assets/icons/meta-servings.png" alt="Servings" style={{ width: '20px', height: '20px', objectFit: 'contain', verticalAlign: 'middle' }} /> {recipe.servings}</span>}
                 </div>
               </div>
             </Link>
@@ -71,8 +84,10 @@ export default function MyFavorites() {
                 onClick={() => removeBookmark(item.recipeId!)}
                 disabled={isRemoving}
                 className={`remove-btn ${isRemoving ? 'removing' : ''}`}
-              >
-                {isRemoving ? 'Removing...' : '🔖 Remove from Saved'}
+              style={{ display: 'flex', alignItems: 'center', gap: '4px', }}>
+                {isRemoving ? 'Removing...' : <>
+                <img src="/src/assets/icons/recipe-bookmark.png" alt="" style={{ width: '20px', height: '20px', objectFit: 'contain', verticalAlign: 'middle' }} />
+                {' '}Remove from Saved </>}
               </button>
             </div>
           </div>

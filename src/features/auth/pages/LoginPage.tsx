@@ -38,9 +38,11 @@ export default function LoginPage() {
             <h2 className="visual-title">Welcome Back!</h2>
             <p className="visual-desc">
               Continue your sweet journey with us. Log in to access your
-              favorite recipes and discover new delicious creations! 🍰
+              favorite recipes and discover new delicious creations! 
             </p>
-            <div className="visual-emoji">🧁✨🍪</div>
+            <div className="visual-emoji">
+              <img src="/src/assets/images/sweety.png" alt="Logo" style={{ width: '70px', height: '70px', objectFit: 'contain', placeSelf: 'center' }} />
+            </div>
           </div>
         </div>
         <div className="login-form-wrapper">

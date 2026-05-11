@@ -17,12 +17,30 @@ import IngredientList from './IngredientList';
 import Modal from '../../../shared/components/UI/Modal';
 import './RecipeDetail.css';
 
+import timeIcon      from '../../../assets/icons/meta-time.png';
+import servingsIcon  from '../../../assets/icons/meta-servings.png';
+import levelEasyIcon from '../../../assets/icons/meta-level-easy.png';
+import levelMedIcon  from '../../../assets/icons/meta-level-medium.png';
+import levelHardIcon from '../../../assets/icons/meta-level-hard.png';
+import bookmarkOn    from '../../../assets/icons/recipe-bookmark.png';
+import bookmarkOff   from '../../../assets/icons/footer-heart.png';
+import recipeBookIcon from '../../../assets/icons/recipe-book.png';
+import editIcon      from '../../../assets/icons/profile-edit.png';
+import deleteIcon    from '../../../assets/icons/action-delete.png';
+import saveIcon      from '../../../assets/icons/profile-save.png';
+
+const LEVEL_ICONS: Record<number, string> = {
+  1: levelEasyIcon,
+  2: levelMedIcon,
+  3: levelHardIcon,
+};
+
+const LEVEL_COLORS: Record<number, string> = { 1: '#22c55e', 2: '#f59e0b', 3: '#ef4444' };
+
 interface RecipeDetailProps {
   recipe: Recipe;
   onCommentAdded?: () => void;
 }
-
-const LEVEL_COLORS: Record<number, string> = { 1: '#22c55e', 2: '#f59e0b', 3: '#ef4444' };
 
 function Stars({ rating, interactive = false, onChange }: { rating: number; interactive?: boolean; onChange?: (r: number) => void }) {
   return (
@@ -50,19 +68,11 @@ export default function RecipeDetail({ recipe, onCommentAdded }: RecipeDetailPro
   const [addComment, { isLoading: submittingComment }] = useAddCommentMutation();
   const [addHistory] = useAddHistoryMutation();
 
-  // Fetch comments via RTK Query
-  const {
-    data: comments = [],
-    isLoading: loadingComments,
-  } = useGetRecipeCommentsQuery(recipe.id);
-
-  // Fetch saved recipes to derive bookmark status
+  const { data: comments = [], isLoading: loadingComments } = useGetRecipeCommentsQuery(recipe.id);
   const { data: savedRecipes = [] } = useGetMySavedRecipesQuery(undefined, { skip: !isLoggedIn });
 
   const isBookmarked = savedRecipes.some((a) => a.recipeId === recipe.id);
-  const hasCommented = isLoggedIn
-    ? comments.some((c) => c.userName === user?.name)
-    : false;
+  const hasCommented = isLoggedIn ? comments.some((c) => c.userName === user?.name) : false;
 
   const [deletingRecipe, setDeletingRecipe] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
@@ -72,10 +82,9 @@ export default function RecipeDetail({ recipe, onCommentAdded }: RecipeDetailPro
 
   const categoryImg = CATEGORY_IMAGES[recipe.category];
   const levelLabel = LEVEL_LABELS[recipe.level as 1 | 2 | 3] ?? 'Easy';
+  const levelIcon = LEVEL_ICONS[recipe.level] ?? levelEasyIcon;
   const bookmarkLoading = addingBookmark || removingBookmark;
 
-  // Record history once on mount (fire-and-forget)
-  // Using a ref to prevent double-firing in StrictMode
   const historyRecorded = useState(false);
   if (isLoggedIn && !historyRecorded[0]) {
     historyRecorded[1](true);
@@ -87,9 +96,7 @@ export default function RecipeDetail({ recipe, onCommentAdded }: RecipeDetailPro
     try {
       if (isBookmarked) await removeBookmark(recipe.id).unwrap();
       else              await addBookmark(recipe.id).unwrap();
-    } catch {
-      // bookmark errors are silent; cache invalidation handles UI update
-    }
+    } catch { /* silent */ }
   };
 
   const handleSubmitComment = async () => {
@@ -97,11 +104,7 @@ export default function RecipeDetail({ recipe, onCommentAdded }: RecipeDetailPro
     if (!commentForm.content.trim()) { setCommentError('Please write a comment'); return; }
     setCommentError('');
     try {
-      const dto: CommentCreateDto = {
-        recipeId: recipe.id,
-        content: commentForm.content.trim(),
-        rating: commentForm.rating,
-      };
+      const dto: CommentCreateDto = { recipeId: recipe.id, content: commentForm.content.trim(), rating: commentForm.rating };
       await addComment(dto).unwrap();
       setCommentForm({ content: '', rating: 5 });
       onCommentAdded?.();
@@ -121,6 +124,12 @@ export default function RecipeDetail({ recipe, onCommentAdded }: RecipeDetailPro
     }
   };
 
+  const TABS: { key: 'ingredients' | 'instructions' | 'comments'; label: string; icon: string }[] = [
+    { key: 'ingredients',  label: `Ingredients (${recipe.ingredients?.length ?? 0})`, icon: recipeBookIcon },
+    { key: 'instructions', label: 'Instructions',                                      icon: recipeBookIcon },
+    { key: 'comments',     label: `Comments (${comments.length})`,                     icon: recipeBookIcon },
+  ];
+
   return (
     <div className="rd-wrap">
 
@@ -132,7 +141,7 @@ export default function RecipeDetail({ recipe, onCommentAdded }: RecipeDetailPro
             : <div className="rd-img-emoji">
                 {categoryImg
                   ? <img src={categoryImg} alt={recipe.category} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
-                  : '🍰'
+                  : <img src={recipeBookIcon} alt="recipe" style={{ width: '80px', height: '80px', objectFit: 'contain' }} />
                 }
               </div>
           }
@@ -140,13 +149,25 @@ export default function RecipeDetail({ recipe, onCommentAdded }: RecipeDetailPro
 
           {isAdmin && (
             <div className="rd-admin-btns">
-              <button onClick={() => navigate(`/recipes/${recipe.id}/edit`)} className="rd-btn-edit">✏️ Edit</button>
-              <button onClick={() => setShowDeleteConfirm(true)} className="rd-btn-delete-hero">🗑️ Delete</button>
+              <button onClick={() => navigate(`/recipes/${recipe.id}/edit`)} className="rd-btn-edit">
+                <img src={editIcon} alt="Edit" style={{ width: '24px', height: '24px', objectFit: 'contain', marginRight: '0px', verticalAlign: 'middle' }} />
+              </button>
+              <button onClick={() => setShowDeleteConfirm(true)} className="rd-btn-delete-hero">
+                <img src={deleteIcon} alt="Delete" style={{ width: '24px', height: '24px', objectFit: 'contain', marginRight: '0px', verticalAlign: 'middle' }}/>
+              </button>
             </div>
           )}
 
-          <button onClick={handleBookmark} disabled={bookmarkLoading} className={`rd-bookmark ${isBookmarked ? 'rd-bookmark--active' : ''}`}>
-            {isBookmarked ? '🔖' : '🤍'}
+          <button
+            onClick={handleBookmark}
+            disabled={bookmarkLoading}
+            className={`rd-bookmark ${isBookmarked ? 'rd-bookmark--active' : ''}`}
+          >
+            <img
+              src={isBookmarked ? bookmarkOn : bookmarkOff}
+              alt={isBookmarked ? 'Saved' : 'Save'}
+              style={{ width: '30px', height: '30px', objectFit: 'contain', filter: isBookmarked ? 'brightness(0) invert(1)' : 'none' }}
+            />
           </button>
 
           <div className="rd-img-footer">
@@ -155,13 +176,24 @@ export default function RecipeDetail({ recipe, onCommentAdded }: RecipeDetailPro
           </div>
         </div>
 
+        {/* Meta bar */}
         <div className="rd-meta-bar">
-          <div className="rd-meta-item"><span>⏱️</span> Prep: <strong>{recipe.prepTime}m</strong></div>
-          <div className="rd-meta-item"><span>⏰</span> Total: <strong>{recipe.totalTime}m</strong></div>
-          <div className="rd-meta-item"><span>🍽️</span> Servings: <strong>{recipe.servings}</strong></div>
           <div className="rd-meta-item">
-            <span className="rd-level-badge" style={{ background: LEVEL_COLORS[recipe.level] + '22', color: LEVEL_COLORS[recipe.level] }}>
-              👨‍🍳 {levelLabel}
+            <img src={timeIcon} alt="Prep time" style={{ width: '20px', height: '20px', objectFit: 'contain' }} />
+            Prep: <strong>{recipe.prepTime}m</strong>
+          </div>
+          <div className="rd-meta-item">
+            <img src={timeIcon} alt="Total time" style={{ width: '20px', height: '20px', objectFit: 'contain' }} />
+            Total: <strong>{recipe.totalTime}m</strong>
+          </div>
+          <div className="rd-meta-item">
+            <img src={servingsIcon} alt="Servings" style={{ width: '20px', height: '20px', objectFit: 'contain' }} />
+            Servings: <strong>{recipe.servings}</strong>
+          </div>
+          <div className="rd-meta-item">
+            <span className="rd-level-badge" style={{ background: LEVEL_COLORS[recipe.level] + '22', color: LEVEL_COLORS[recipe.level], display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <img src={levelIcon} alt={levelLabel} style={{ width: '20px', height: '20px', objectFit: 'contain' }} />
+              {levelLabel}
             </span>
           </div>
           {recipe.averageRating !== undefined && recipe.averageRating > 0 && (
@@ -179,11 +211,9 @@ export default function RecipeDetail({ recipe, onCommentAdded }: RecipeDetailPro
       {/* Tabs */}
       <div className="rd-tabs-wrap">
         <div className="rd-tabs">
-          {(['ingredients', 'instructions', 'comments'] as const).map((tab) => (
-            <button key={tab} onClick={() => setActiveTab(tab)} className={`rd-tab ${activeTab === tab ? 'rd-tab--active' : ''}`}>
-              {tab === 'ingredients'  && `🧂 Ingredients (${recipe.ingredients?.length ?? 0})`}
-              {tab === 'instructions' && '📋 Instructions'}
-              {tab === 'comments'     && `💬 Comments (${comments.length})`}
+          {TABS.map(({ key, label }) => (
+            <button key={key} onClick={() => setActiveTab(key)} className={`rd-tab ${activeTab === key ? 'rd-tab--active' : ''}`}>
+              {label}
             </button>
           ))}
         </div>
@@ -221,12 +251,20 @@ export default function RecipeDetail({ recipe, onCommentAdded }: RecipeDetailPro
                     className="rd-textarea"
                   />
                   {commentError && <p className="rd-comment-error">{commentError}</p>}
-                  <button onClick={handleSubmitComment} disabled={submittingComment} className={`rd-submit-btn ${submittingComment ? 'rd-submit-btn--busy' : ''}`}>
-                    {submittingComment ? 'Submitting...' : '✨ Submit Review'}
+                  <button
+                    onClick={handleSubmitComment}
+                    disabled={submittingComment}
+                    className={`rd-submit-btn ${submittingComment ? 'rd-submit-btn--busy' : ''}`}
+                    style={{ display: 'flex', alignItems: 'center', gap: '6px' }}
+                  >
+                    <img src={saveIcon} alt="Submit" style={{ width: '20px', height: '20px', objectFit: 'contain' }} />
+                    {submittingComment ? 'Submitting...' : 'Submit Review'}
                   </button>
                 </div>
               ) : isLoggedIn && hasCommented ? (
-                <div className="rd-already-reviewed">✅ You already reviewed this recipe</div>
+                <div className="rd-already-reviewed">
+                  You already reviewed this recipe
+                </div>
               ) : (
                 <div className="rd-sign-in-prompt">
                   <p>Sign in to leave a review</p>
@@ -241,7 +279,7 @@ export default function RecipeDetail({ recipe, onCommentAdded }: RecipeDetailPro
                 </div>
               ) : comments.length === 0 ? (
                 <div className="rd-no-comments">
-                  <div className="rd-no-comments-icon">💬</div>
+                  <img src={recipeBookIcon} alt="No comments" className="rd-no-comments-icon" style={{ width: '48px', height: '48px', objectFit: 'contain' }} />
                   <p>No comments yet. Be the first to review!</p>
                 </div>
               ) : (
@@ -268,7 +306,7 @@ export default function RecipeDetail({ recipe, onCommentAdded }: RecipeDetailPro
         </div>
       </div>
 
-      <Modal isOpen={showDeleteConfirm} onClose={() => setShowDeleteConfirm(false)} title="🗑️ Delete Recipe?">
+      <Modal isOpen={showDeleteConfirm} onClose={() => setShowDeleteConfirm(false)} title="Delete Recipe?">
         <p className="rd-modal-text">
           Are you sure you want to delete <strong>"{recipe.name}"</strong>? This action cannot be undone.
         </p>

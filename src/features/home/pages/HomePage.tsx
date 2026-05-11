@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { useAppSelector } from '../../../redux/hooks';
 import { useGetRecipesQuery } from '../../recipe/redux/recipeSlice';
-import { type Recipe, LEVEL_LABELS, CATEGORY_EMOJIS } from '../../recipe/types/recipe.types';
+import { type Recipe, LEVEL_LABELS, CATEGORY_IMAGES } from '../../recipe/types/recipe.types';
 import StarRating from '../../../shared/components/StarRating';
 import Hero from '../components/Hero';
 import CategoryGrid from '../components/CategoryGrid';
@@ -10,7 +10,7 @@ import RecipeCard from '../../recipe/components/RecipeCard';
 import './HomePage.css';
 
 function FeaturedCard({ recipe }: { recipe: Recipe }) {
-  const emoji = CATEGORY_EMOJIS[recipe.category] ?? '🍰';
+  const image = CATEGORY_IMAGES[recipe.category] ?? '🍰';
   const levelLabel = LEVEL_LABELS[recipe.level as 1 | 2 | 3] ?? 'Easy';
   return (
     <div className="featured-wrap">
@@ -21,12 +21,15 @@ function FeaturedCard({ recipe }: { recipe: Recipe }) {
         ) : (
           <div className="featured-img"
             style={{ background: 'linear-gradient(135deg, #e8799a, #c4894a)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '150px' }}>
-            {emoji}
+            <img src={image} alt={recipe.category} style={{ width: '48px', height: '48px', objectFit: 'contain' }} />
           </div>
         )}
       </div>
       <div className="featured-body">
-        <div className="featured-badge">⭐ Featured</div>
+        <div className="featured-badge" style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '1.25em' }}>
+          <img src="/src/assets/icons/rank-star.png" alt="" style={{ width: '30px', height: '30px', objectFit: 'contain', verticalAlign: 'middle' }} />
+          {' '}Featured
+        </div>
         <h3 className="featured-title">{recipe.name}</h3>
         <p className="featured-desc">{recipe.description}</p>
         <div className="featured-stats">
@@ -90,13 +93,24 @@ export default function HomePage() {
           {loading ? (
             <><RecipeSkeleton /><RecipeSkeleton /><RecipeSkeleton /></>
           ) : popularRecipes.length > 0 ? (
-            popularRecipes.map((recipe, i) => (
-              <RecipeCard key={recipe.id} recipe={recipe}
-                badge={i === 0 ? '🏆 Top Rated' : `⭐ ${recipe.averageRating?.toFixed(1) || '—'}`} />
-            ))
+            popularRecipes.map((recipe, i) => {
+              const badge = i === 0 ? (
+                <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>  
+                  <img src="/src/assets/icons/profile-trophy.png" alt="" style={{ width: '20px', height: '20px', objectFit: 'contain', verticalAlign: 'middle' }} />
+                  {' '}Top Rated  
+                </div>
+              ) : (
+                <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                  <img src="/src/assets/icons/rank-star.png" alt="" style={{ width: '20px', height: '20px', objectFit: 'contain', verticalAlign: 'middle' }} />
+                  {recipe.averageRating?.toFixed(1) || '—'}
+                </div>
+              );
+              return <RecipeCard key={recipe.id} recipe={recipe} badge={badge} />;
+            })
           ) : (
-            <div style={{ gridColumn: '1/-1', textAlign: 'center', padding: '40px', color: 'var(--mid)' }}>
-              No recipes available yet. Check back soon! 🍰
+            <div style={{ display: 'flex', alignItems: 'center', gap: '4px', gridColumn: '1/-1', textAlign: 'center', padding: '40px', color: 'var(--mid)' }}>
+              No recipes available yet. Check back soon! {' '}
+              <img src="/src/assets/icons/state-empty.png" alt="No recipes" style={{ width: '30px', height: '30px', objectFit: 'contain', verticalAlign: 'middle' }} />
             </div>
           )}
         </div>
@@ -116,7 +130,12 @@ export default function HomePage() {
           </div>
           <div className="recipes-grid">
             {newestRecipes.map((recipe, i) => (
-              <RecipeCard key={recipe.id} recipe={recipe} badge={i === 0 ? '🆕 Just Added' : 'New'} />
+              <RecipeCard key={recipe.id} recipe={recipe} badge={i === 0 ?
+              <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>  
+                  <img src="/src/assets/icons/action-new.png" alt="" style={{ width: '30px', height: '30px', objectFit: 'contain', verticalAlign: 'middle' }} />
+                  {' '}Just Added  
+              </div>
+              : 'New'} />
             ))}
           </div>
         </section>
@@ -142,7 +161,10 @@ export default function HomePage() {
               <div className="featured-img" style={{ background: 'linear-gradient(135deg, #e8799a, #c4894a)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '150px' }}>🍓</div>
             </div>
             <div className="featured-body">
-              <div className="featured-badge">⭐ Featured</div>
+              <div className="featured-badge" style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '1.25em' }}>
+                <img src="/src/assets/icons/rank-star.png" alt="" style={{ width: '20px', height: '20px', objectFit: 'contain', verticalAlign: 'middle' }} />
+                {' '}Featured
+              </div>
               <h3 className="featured-title">No recipes yet</h3>
               <p className="featured-desc">Be the first to discover amazing dessert recipes!</p>
               {!isAuthenticated && <Link to="/register" className="btn-pink">Get Started Free →</Link>}
@@ -154,7 +176,10 @@ export default function HomePage() {
       {!isAuthenticated && (
         <section className="cta-section">
           <div className="cta-content">
-            <h2>Ready to Start Baking? 🍰</h2>
+            <h2 style={{ display: 'flex', alignItems: 'center', gap: '4px', placeSelf: 'center' }}>
+              <img src="/src/assets/icons/sweet.png" alt="" style={{ width: '100px', height: '100px', objectFit: 'contain', verticalAlign: 'middle' }} />
+              {' '}Ready to Start Baking?
+            </h2>
             <p>Join thousands of home bakers and discover your next favorite recipe!</p>
             <Link to="/register" className="btn-pink btn-large">Create Free Account</Link>
           </div>

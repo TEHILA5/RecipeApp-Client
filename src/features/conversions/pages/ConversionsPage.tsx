@@ -57,14 +57,19 @@ export default function ConversionsPage() {
       <div className="conversions-header">
         <div className="conversions-header-inner">
           <div className="header-eyebrow">✦ Ingredient Conversions</div>
-          <h1>Substitution <span>Guide</span> 🔄</h1>
+          <h1 style={{ display: 'flex', alignItems: 'center',placeSelf: 'center', gap: '4px', }}>Substitution <span>Guide</span>
+          <img src="/src/assets/icons/action-refresh.png" alt="" style={{ width: '55px', height: '55px', objectFit: 'contain', verticalAlign: 'middle' }} />
+          </h1>
           <p>Find ingredient substitutes and calculate exact amounts</p>
         </div>
       </div>
 
       <div className="conversions-body">
         <div className="calc-card">
-          <h2>🧮 Quick Calculator</h2>
+          <h2 style={{ display: 'flex', alignItems: 'center', gap: '4px', }}> 
+            <img src="/src/assets/icons/calc-calculator.png" alt="" style={{ width: '35px', height: '35px', objectFit: 'contain', verticalAlign: 'middle' }} />
+            {' '}Quick Calculator
+            </h2>
           <p>Enter an ingredient and amount to see all its substitutes</p>
 
           <div className="calc-inputs">
@@ -95,7 +100,10 @@ export default function ConversionsPage() {
           </div>
 
           {calcFrom && calcAmount && calcResults.length === 0 && (
-            <div className="calc-empty">😔 No conversions found for "{calcFrom}"</div>
+            <div className="calc-empty" style={{ display: 'flex', alignItems: 'center', gap: '4px', }}> 
+            <img src="/src/assets/icons/state-empty.png" alt="" style={{ width: '20px', height: '20px', objectFit: 'contain', verticalAlign: 'middle' }} />
+            {' '}No conversions found for "{calcFrom}"
+            </div>
           )}
 
           {calcResults.length > 0 && (
@@ -103,7 +111,9 @@ export default function ConversionsPage() {
               {calcResults.map(({ to, amount, ratio }) => (
                 <div key={to} className="calc-result-row">
                   <div className="calc-result-left">
-                    <span>🔄</span>
+                    <span>
+                      <img src="/src/assets/icons/action-refresh.png" alt="" style={{ width: '30px', height: '30px', objectFit: 'contain', verticalAlign: 'middle' }} /> 
+                    </span>
                     <div>
                       <strong>{calcAmount} </strong>
                       <span className="ingredient-name">{calcFrom}</span>
@@ -129,7 +139,9 @@ export default function ConversionsPage() {
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Search ingredient..."
               />
-              <span>🔍</span>
+              <span>
+                <img src="/src/assets/icons/search-icon.png" alt="Search" style={{ width: '35px', height: '35px', objectFit: 'contain' }} />
+              </span>
             </div>
           </div>
 
@@ -137,7 +149,9 @@ export default function ConversionsPage() {
             <Loading message="Loading..." color="#7c3aed" />
           ) : filtered.length === 0 ? (
             <div className="table-empty">
-              <div>🔄</div>
+              <div>
+                <img src="/src/assets/icons/action-refresh.png" alt="" style={{ width: '30px', height: '30px', objectFit: 'contain', verticalAlign: 'middle' }} /> 
+              </div>
               <p>{search ? 'No results found' : 'No conversions available yet'}</p>
             </div>
           ) : (
@@ -156,10 +170,12 @@ export default function ConversionsPage() {
                       <td className="ingredient-cell">{conv.ingredient1Name}</td>
                       <td className="arrow-cell">{conv.isBidirectional ? '↔' : '→'}</td>
                       <td className="ingredient-cell">{conv.ingredient2Name}</td>
-                      <td><span className="ratio-mono">×{conv.conversionRatio}</span></td>
+                      <td><span className="ratio-mono" style={{ display: 'flex', alignItems: 'center', gap: '4px', }}><img src="/src/assets/icons/cancel-x.png" alt="" style={{ width: '10px', height: '10px', objectFit: 'contain', verticalAlign: 'middle' }} /> 
+                    {conv.conversionRatio}</span></td>
                       <td>
-                        <span className={`direction-badge ${conv.isBidirectional ? 'both' : 'one'}`}>
-                          {conv.isBidirectional ? '↔ Both ways' : '→ One-way'}
+                        <span className={`direction-badge ${conv.isBidirectional ? 'both' : 'one'}`} style={{ display: 'flex', alignItems: 'center', gap: '4px', }}>
+                          {conv.isBidirectional ? <><img src="/src/assets/icons/arrow2.png" alt="↔" style={{ width: '20px', height: '20px', objectFit: 'contain', verticalAlign: 'middle' }} />{' '}Both</>
+                            : <><img src="/src/assets/icons/arrow1.png" alt="->" style={{ width: '20px', height: '20px', objectFit: 'contain', verticalAlign: 'middle' }} />{' '}One-way</>}
                         </span>
                       </td>
                     </tr>

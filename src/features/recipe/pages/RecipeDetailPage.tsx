@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import Loading from '../../../shared/components/UI/Loading';
 import { useRecipeDetail } from '../hooks/useRecipeDetail';
 import RecipeDetail from '../components/RecipeDetail';
+import pageIcon from '../../../assets/icons/state-empty.png';
 import './RecipeDetailPage.css';
 
 export default function RecipeDetailPage() {
@@ -12,7 +13,7 @@ export default function RecipeDetailPage() {
   if (error || !recipe) {
     return (
       <div className="rdp-not-found">
-        <div className="rdp-not-found-icon">😕</div>
+        <img src={pageIcon} alt="Not found" className="rdp-not-found-icon" style={{ width: '80px', height: '80px', objectFit: 'contain' }} />
         <h2 className="rdp-not-found-title">Recipe Not Found</h2>
         <button onClick={() => navigate('/recipes')} className="rdp-back-btn">← Back to Recipes</button>
       </div>

@@ -3,6 +3,7 @@ import { useSendChatMessageMutation } from '../../api/chatApi';
 import type { ChatMessage } from '../../api/chatApi';
 import sweety from '../../assets/images/sweety.png';
 import sweetyTip from '../../assets/images/sweety-tip.png';
+import userIcon from '../../assets/icons/profile-avatar.png';
 import './SweetieChat.css';
 
 const SUGGESTIONS = [
@@ -52,9 +53,9 @@ export default function SweetieChat() {
 
     try {
       const result = await sendChatMessage({ messages: updated }).unwrap();
-      setMessages([...updated, { role: "assistant", content: result.reply || "Something went wrong 🍰" }]);
+      setMessages([...updated, { role: "assistant", content: result.reply || "Something went wrong" }]);
     } catch {
-      setMessages([...updated, { role: "assistant", content: "Connection error. Please try again 🍰" }]);
+      setMessages([...updated, { role: "assistant", content: "Connection error. Please try again" }]);
     } finally {
       setTimeout(() => inputRef.current?.focus(), 100);
     }
@@ -100,18 +101,24 @@ export default function SweetieChat() {
           const isUser = msg.role === "user";
           return (
             <div key={i} className={`sc-msg-row sweetie-msg ${isUser ? 'sc-msg-row--user' : ''}`}>
-              {!isUser && <div className="sc-bot-icon">🍰</div>}
+              {!isUser && <div className="sc-bot-icon">
+                <img src={sweety} alt="Sweety" className="sc-bot-icon-img" />
+              </div>}
               <div className={`sc-bubble ${isUser ? 'sc-bubble--user' : 'sc-bubble--bot'}`}>
                 {msg.content}
               </div>
-              {isUser && <div className="sc-user-icon">👤</div>}
+              {isUser && <div className="sc-user-icon">
+                <img src={userIcon} alt="User" className="sc-user-icon-img" />
+              </div>}
             </div>
           );
         })}
 
         {isLoading && (
           <div className="sc-msg-row sweetie-msg">
-            <div className="sc-bot-icon">🍰</div>
+            <div className="sc-bot-icon">
+              <img src={sweety} alt="Sweety" className="sc-bot-icon-img" />
+            </div>
             <div className="sc-bubble sc-bubble--bot sc-bubble--typing">
               <TypingDots />
             </div>

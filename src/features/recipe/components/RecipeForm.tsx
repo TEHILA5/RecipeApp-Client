@@ -62,7 +62,7 @@ const defaultForm: RecipeFormData = {
   ingredients: [], tags: [],
 };
 
-function SectionTitle({ icon, title }: { icon: string; title: string }) {
+function SectionTitle({ icon, title }: { icon: React.ReactNode; title: string }) {
   return <h3 className="rf-section-title">{icon} {title}</h3>;
 }
 
@@ -156,7 +156,7 @@ export default function RecipeForm({ initialData, onSubmit, loading = false, sub
 
       {/* Basic Info */}
       <div className="rf-section">
-        <SectionTitle icon="📝" title="Basic Info" />
+        <SectionTitle icon={<img src="/src/assets/icons/content-notes.png" alt="Basic Info" style={{ width: '30px', height: '30px', objectFit: 'contain' }} />} title="Basic Info" />
         <div className="rf-grid">
           <div>
             <label className="rf-label">Recipe Name *</label>
@@ -196,7 +196,7 @@ export default function RecipeForm({ initialData, onSubmit, loading = false, sub
 
       {/* Tags */}
       <div className="rf-section">
-        <SectionTitle icon="🏷️" title="Tags" />
+        <SectionTitle icon={<img src="/src/assets/icons/recipe-bookmark.png" alt="Tags" style={{ width: '30px', height: '30px', objectFit: 'contain' }} />} title="Tags" />
         <p className="rf-hint">Add tags to help with smart search — e.g. "frozen", "chocolate", "quick"</p>
 
         {form.tags.length > 0 && (
@@ -233,7 +233,7 @@ export default function RecipeForm({ initialData, onSubmit, loading = false, sub
 
       {/* Time & Servings */}
       <div className="rf-section">
-        <SectionTitle icon="⏱️" title="Time & Servings" />
+        <SectionTitle icon={<img src="/src/assets/icons/meta-time.png" alt="Time & Servings" style={{ width: '30px', height: '30px', objectFit: 'contain' }} />} title="Time & Servings" />
         <div className="rf-grid-3">
           {[
             { label: 'Prep Time (min) *', field: 'prepTime' as const, error: errors.prepTime },
@@ -253,7 +253,7 @@ export default function RecipeForm({ initialData, onSubmit, loading = false, sub
       {/* Ingredients */}
       <div className="rf-section">
         <div className="rf-section-header">
-          <SectionTitle icon="🧂" title="Ingredients" />
+          <SectionTitle icon={<img src="/src/assets/icons/calc-spoon.png" alt="Ingredients" style={{ width: '30px', height: '30px', objectFit: 'contain' }} />} title="Ingredients" />
           <Button variant="outline" size="sm" onClick={() => { setShowNewIngredientModal(true); setNewIngredientError(''); setNewIngredientName(''); }}>
             New Ingredient
           </Button>
@@ -310,7 +310,7 @@ export default function RecipeForm({ initialData, onSubmit, loading = false, sub
 
       {/* Instructions */}
       <div className="rf-section">
-        <SectionTitle icon="📋" title="Instructions" />
+        <SectionTitle icon={<img src="/src/assets/icons/content-clipboard.png" alt="Instructions" style={{ width: '30px', height: '30px', objectFit: 'contain' }} />} title="Instructions" />
         <label className="rf-label">Step-by-step instructions *</label>
         <p className="rf-hint rf-hint--tight">Write each step on a new line</p>
         <textarea
@@ -321,10 +321,11 @@ export default function RecipeForm({ initialData, onSubmit, loading = false, sub
       </div>
 
       <div className="rf-submit-row">
-        <Button onClick={handleSubmit} loading={loading} size="lg">✨ {submitLabel}</Button>
+        <Button onClick={handleSubmit} loading={loading} size="lg"><img src="/src/assets/icons/ai-sparkle.png" alt="Submit" style={{ width: '20px', height: '20px', objectFit: 'contain' }} /> 
+        {submitLabel}</Button>
       </div>
 
-      <Modal isOpen={showNewIngredientModal} onClose={() => setShowNewIngredientModal(false)} title="🧂 Add New Ingredient">
+      <Modal isOpen={showNewIngredientModal} onClose={() => setShowNewIngredientModal(false)} title="Add New Ingredient">
         <label className="rf-label">Ingredient Name *</label>
         <input
           autoFocus type="text" value={newIngredientName}
