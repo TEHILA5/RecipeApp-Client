@@ -113,3 +113,38 @@
   grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
   gap: 20px;
 }
+
+.as-ranked-list { display: flex; flex-direction: column; gap: 24px; }
+
+.as-ranked-item {
+  border: 1px solid #f3d6e4;
+  border-radius: 16px;
+  overflow: hidden;
+  background: #fff;
+}
+
+.as-match-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background: #fdf2f8;
+  border-bottom: 1px solid #f3d6e4;
+}
+
+.as-match-label { font-weight: 700; font-size: 0.9rem; color: #b5476e; }
+
+.as-criteria { display: flex; flex-wrap: wrap; gap: 6px; }
+
+.as-criteria-hit {
+  background: #f0fdf4; color: #16a34a;
+  border-radius: 20px; padding: 2px 10px;
+  font-size: 0.78rem; font-weight: 500;
+}
+
+.as-criteria-miss {
+  background: #fff7ed; color: #c2410c;
+  border-radius: 20px; padding: 2px 10px;
+  font-size: 0.78rem; font-weight: 500;
+}

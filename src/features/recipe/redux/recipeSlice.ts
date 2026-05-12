@@ -14,6 +14,14 @@ function serializeForServer(data: RecipeCreateDto | RecipeUpdateDto): any {
     })),
   };
 }
+ 
+export interface RankedRecipe {
+  recipe: Recipe;
+  matchScore: number;
+  matchLabel: string;
+  matchedCriteria: string[];
+  missedCriteria: string[];
+}
 
 export interface AdvancedSearchResult {
   intent: {
@@ -24,8 +32,8 @@ export interface AdvancedSearchResult {
     keywords: string[];
     originalText: string;
   };
-  results: Recipe[];
-}
+  results: RankedRecipe[]; 
+} 
 
 export const recipesApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
@@ -60,15 +68,19 @@ export const recipesApi = baseApi.injectEndpoints({
       query: (tags) => ({ url: '/recipe/search-by-tags', method: 'POST', body: tags }),
       transformResponse: (raw: unknown[]) => raw.map(normalizeRecipe),
     }),
-
+    
     analyzeAndSearch: builder.query<AdvancedSearchResult, string>({
       query: (text) => ({ url: '/search/advanced', method: 'POST', body: JSON.stringify(text) }),
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       transformResponse: (raw: any) => ({
-        intent: raw.intent,
-        results: raw.results.map(normalizeRecipe),
+      intent: raw.intent,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      results: raw.results.map((r: any) => ({
+        ...r,
+        recipe: normalizeRecipe(r.recipe),  
+          })),
+        }),
       }),
-    }),
 
     createRecipe: builder.mutation<Recipe, RecipeCreateDto>({
       query: (newRecipe) => ({ url: '/recipe', method: 'POST', body: serializeForServer(newRecipe) }),

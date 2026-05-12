@@ -82,7 +82,7 @@ function EmptyState({ emoji, title, subtitle, action }: {
   action?: React.ReactNode;
 }) {
   return (
-    <div className="empty-state">
+    <div className="empty-state" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px', textAlign: 'center' }}>
       <div className="empty-emoji">{emoji}</div>
       <h3>{title}</h3>
       {subtitle && <p>{subtitle}</p>}
@@ -126,7 +126,7 @@ export default function SearchResults({
   );
 
   if (mode === 'ingredients' && results.length === 0 && alternativeResults.length === 0 && !loadingAlternatives) return (
-    <EmptyState emoji="🍰" title="No recipes found" subtitle="No recipes or alternatives found for these ingredients" />
+    <EmptyState emoji={<img src="/src/assets/icons/page-about.png" alt="Info" style={{ width: '60px', height: '60px', objectFit: 'contain', verticalAlign: 'middle' }} />} title="No recipes found" subtitle="No recipes or alternatives found for these ingredients" />
   );
 
   if (mode === 'ingredients' && (results.length > 0 || alternativeResults.length > 0)) return (
@@ -248,7 +248,7 @@ export default function SearchResults({
 
   if (mode !== 'ingredients') return (
     results.length === 0 ? (
-      <EmptyState emoji={<img src="/src/assets/icons/page-about.png" alt="Info" style={{ width: '20px', height: '20px', objectFit: 'contain', verticalAlign: 'middle' }} />} title="No recipes found" subtitle="Try a different search term or category" />
+      <EmptyState emoji={<img src="/src/assets/icons/page-about.png" alt="Info" style={{ width: '60px', height: '60px', objectFit: 'contain', verticalAlign: 'middle' }} />} title="No recipes found" subtitle="Try a different search term or category" />
     ) : (
       <>
         <ResultCount count={results.length} />

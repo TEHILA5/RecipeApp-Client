@@ -79,9 +79,26 @@ export default function AdvancedSearch() {
 
         {data && data.results.length > 0 && (
           <>
-            <p className="as-count">{data.results.length} recipe{data.results.length !== 1 ? 's' : ''} found</p>
-            <div className="as-grid">
-              {data.results.map((recipe) => <RecipeCard key={recipe.id} recipe={recipe} />)}
+            <p className="as-count">
+              {data.results.length} recipe{data.results.length !== 1 ? 's' : ''} found
+            </p>
+            <div className="as-ranked-list">
+              {data.results.map(({ recipe, matchLabel, matchedCriteria, missedCriteria }) => (
+                <div key={recipe.id} className="as-ranked-item">
+                  <div className="as-match-header">
+                    <span className="as-match-label">{matchLabel}</span>
+                    <div className="as-criteria">
+                      {matchedCriteria.map(c => (
+                        <span key={c} className="as-criteria-hit">✔ {c}</span>
+                      ))}
+                      {missedCriteria.map(c => (
+                        <span key={c} className="as-criteria-miss">✘ {c}</span>
+                      ))}
+                    </div>
+                  </div>
+                  <RecipeCard recipe={recipe} />
+                </div>
+              ))}
             </div>
           </>
         )}
