@@ -27,8 +27,9 @@ import bookmarkOff   from '../../../assets/icons/footer-heart.png';
 import recipeBookIcon from '../../../assets/icons/recipe-book.png';
 import editIcon      from '../../../assets/icons/profile-edit.png';
 import deleteIcon    from '../../../assets/icons/action-delete.png';
-import saveIcon      from '../../../assets/icons/profile-save.png';
-
+import saveIcon      from '../../../assets/icons/profile-save.png'; 
+import RecipeVoiceReader, { RecipeIngredientDto } from './Recipevoicereader';
+import RecipePrintButton from './RecipePrintButton';
 const LEVEL_ICONS: Record<number, string> = {
   1: levelEasyIcon,
   2: levelMedIcon,
@@ -175,6 +176,7 @@ export default function RecipeDetail({ recipe, onCommentAdded }: RecipeDetailPro
             <h1 className="rd-title">{recipe.name}</h1>
           </div>
         </div>
+        <RecipePrintButton recipe={recipe} />
 
         {/* Meta bar */}
         <div className="rd-meta-bar">
@@ -225,7 +227,17 @@ export default function RecipeDetail({ recipe, onCommentAdded }: RecipeDetailPro
           {activeTab === 'instructions' && (
             !recipe.instructions
               ? <p className="rd-empty">No instructions available.</p>
-              : <div className="rd-steps">
+              : <>
+                {/* ← Add voice reader here */}
+                <RecipeVoiceReader
+                  recipe={{
+                    name: recipe.name,
+                    instructions: recipe.instructions,
+                    recipeIngredients: (recipe.ingredients ?? []) as RecipeIngredientDto[],
+                  }}
+                />
+                
+               <div className="rd-steps">
                   {recipe.instructions.split('\n').filter(Boolean).map((step, i) => (
                     <div key={i} className="rd-step">
                       <div className="rd-step-num">{i + 1}</div>
@@ -233,7 +245,8 @@ export default function RecipeDetail({ recipe, onCommentAdded }: RecipeDetailPro
                     </div>
                   ))}
                 </div>
-          )}
+              </>
+            )}
 
           {activeTab === 'comments' && (
             <div>
