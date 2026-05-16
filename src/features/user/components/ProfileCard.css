@@ -5,7 +5,6 @@
   box-shadow: 0 4px 24px rgba(212, 84, 122, 0.09);
 }
 
-/* Header */
 .profile-header {
   display: flex;
   align-items: center;
@@ -15,8 +14,9 @@
 }
 
 .avatar {
-  width: 72px;
-  height: 72px;
+  width: 56px;
+  height: 56px;
+  object-fit: contain;
   border-radius: 50%;
   background: linear-gradient(135deg, #e8799a, #d4547a);
   display: flex;
@@ -35,13 +35,26 @@
   line-height: 1;
 }
 
-.profile-header p {
+.profile-join-date {
+  display: flex;
+  align-items: center;
+  gap: 6px;
   font-size: 0.78rem;
   color: #9ca3af;
   font-weight: 600;
 }
 
+.profile-join-date__icon {
+  width: 14px;
+  height: 14px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
 .edit-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
   margin-left: auto;
   padding: 9px 22px;
   border-radius: 999px;
@@ -59,8 +72,17 @@
   background: #fce7f3;
 }
 
-/* Alerts */
+.edit-btn__icon {
+  width: 16px;
+  height: 16px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
 .alert {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   padding: 12px 16px;
   border-radius: 12px;
   margin-bottom: 20px;
@@ -80,7 +102,13 @@
   color: #991b1b;
 }
 
-/* Fields */
+.alert__icon {
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
 .profile-fields {
   display: flex;
   flex-direction: column;
@@ -127,7 +155,6 @@
   color: #d1d5db;
 }
 
-/* Actions */
 .profile-actions {
   display: flex;
   gap: 12px;
@@ -148,6 +175,10 @@
 }
 
 .save-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
   flex: 2;
   padding: 12px;
   border-radius: 999px;
@@ -167,4 +198,11 @@
   color: #9ca3af;
   cursor: not-allowed;
   box-shadow: none;
+}
+
+.save-btn__icon {
+  width: 16px;
+  height: 16px;
+  object-fit: contain;
+  flex-shrink: 0;
 }

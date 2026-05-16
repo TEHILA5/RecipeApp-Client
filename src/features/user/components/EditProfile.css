@@ -5,11 +5,36 @@
   box-shadow: 0 4px 20px rgba(212, 84, 122, 0.07);
 }
 
-.edit-profile-card h2 {
+.edit-profile-heading {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   font-family: 'Dancing Script', cursive;
   font-size: 1.8rem;
   color: #d4547a;
   margin-bottom: 24px;
+}
+
+.edit-profile-heading__icon {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+  vertical-align: middle;
+  flex-shrink: 0;
+}
+
+.edit-profile-alert {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.edit-profile-alert__icon {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+  vertical-align: middle;
+  flex-shrink: 0;
 }
 
 .edit-profile-form {
@@ -19,6 +44,9 @@
 }
 
 .save-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   padding: 14px 32px;
   border-radius: 999px;
   border: none;
@@ -38,4 +66,12 @@
   color: #9ca3af;
   cursor: not-allowed;
   box-shadow: none;
+}
+
+.save-btn__icon {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+  vertical-align: middle;
+  flex-shrink: 0;
 }

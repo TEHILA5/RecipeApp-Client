@@ -1,5 +1,6 @@
 import { StaticPage } from './StaticPageHelpers';
 import pageIcon from '../../../assets/icons/page-faq.png';
+import './FAQPage.css';
 
 const faqs = [
   { q: 'Can I submit my own recipes?',          a: "Yes! You can now send your own recipe ideas and suggestions directly to the admin through the contact form." },
@@ -13,13 +14,11 @@ const faqs = [
 export default function FAQPage() {
   return (
     <StaticPage icon={pageIcon} title="FAQ" subtitle="Frequently Asked Questions">
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+      <div className="faq-list">
         {faqs.map((item, i) => (
-          <div key={i} style={{ background: '#fdf2f8', borderRadius: '16px', padding: '20px 24px', borderLeft: '4px solid #d4547a' }}>
-            <h3 style={{ fontFamily: "'Nunito',sans-serif", fontWeight: 800, color: '#d4547a', marginBottom: '8px', fontSize: '1rem' }}>
-              {item.q}
-            </h3>
-            <p style={{ color: '#6b7280', lineHeight: 1.6, margin: 0 }}>{item.a}</p>
+          <div key={i} className="faq-item">
+            <h3 className="faq-question">{item.q}</h3>
+            <p className="faq-answer">{item.a}</p>
           </div>
         ))}
       </div>

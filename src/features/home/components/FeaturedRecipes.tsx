@@ -3,7 +3,7 @@ import { useAppSelector } from '../../../redux/hooks';
 import { useGetRecommendedRecipesQuery } from '../../recipe/redux/recipeSlice';
 import { type Recipe, LEVEL_LABELS, CATEGORY_IMAGES } from '../../recipe/types/recipe.types';
 import StarRating from '../../../shared/components/StarRating';
-import './FeaturedRecipes.css'; 
+import './FeaturedRecipes.css';
 
 function RecipeCard({ recipe }: { recipe: Recipe }) {
   const image = CATEGORY_IMAGES[recipe.category] ?? '🍰';
@@ -32,11 +32,11 @@ function RecipeCard({ recipe }: { recipe: Recipe }) {
           />
         ) : null}
         <div className={`card-img card-img-fallback ${recipe.arrImage ? 'hidden' : ''}`}>
-          <img src={image} alt={recipe.category} style={{ width: '48px', height: '48px', objectFit: 'contain' }} />
+          <img src={image} alt={recipe.category} className="card-img-fallback-icon" />
         </div>
-        <div className="card-badge" style={{ display: 'flex', alignItems: 'center', gap: '4px', }}> 
-          <img src="/src/assets/icons/rank-star.png" alt="" style={{ width: '20px', height: '20px', objectFit: 'contain', verticalAlign: 'middle' }} />
-          {' '}Featured
+        <div className="card-badge">
+          <img src="/src/assets/icons/rank-star.png" alt="" className="card-badge-icon" />
+          Featured
         </div>
       </div>
 
@@ -45,15 +45,18 @@ function RecipeCard({ recipe }: { recipe: Recipe }) {
         <h3 className="card-title">{recipe.name}</h3>
         <p className="card-desc">{recipe.description}</p>
         <div className="card-meta">
-          <span className="meta-item"><span>
-            <img src="/src/assets/icons/meta-time.png" alt="Time" style={{ width: '16px', height: '16px', objectFit: 'contain', verticalAlign: 'middle' }} />  
-          </span> {recipe.totalTime} min</span>
-          <span className="meta-item"><span>
-            <img src={levelIcon} alt={levelAlt} style={{ width: '16px', height: '16px', objectFit: 'contain', verticalAlign: 'middle' }} />
-          </span> {level}</span>
-          <span className="meta-item"><span>
-            <img src="/src/assets/icons/meta-servings.png" alt="Servings" style={{ width: '16px', height: '16px', objectFit: 'contain', verticalAlign: 'middle' }} />  
-          </span> {recipe.servings}</span>
+          <span className="meta-item">
+            <img src="/src/assets/icons/meta-time.png" alt="Time" className="meta-icon" />
+            {recipe.totalTime} min
+          </span>
+          <span className="meta-item">
+            <img src={levelIcon} alt={levelAlt} className="meta-icon" />
+            {level}
+          </span>
+          <span className="meta-item">
+            <img src="/src/assets/icons/meta-servings.png" alt="Servings" className="meta-icon" />
+            {recipe.servings}
+          </span>
         </div>
       </div>
     </Link>
@@ -90,9 +93,9 @@ export default function FeaturedRecipes() {
         <div className="section-divider" />
       </div>
 
-      {error && !isLoading && (
+      {Boolean(error) && !isLoading && (
         <p className="featured-error">
-          Could not load recommendations.{' '}
+          Could not load recommendations.{" "}
           <Link to="/recipes" className="btn-outline inline">Browse all recipes →</Link>
         </p>
       )}

@@ -6,21 +6,21 @@ import EditProfile from '../components/EditProfile';
 import Modal from '../../../shared/components/UI/Modal';
 import './ProfilePage.css';
 
-import avatarIcon  from '../../../assets/icons/profile-avatar.png';
-import statsIcon   from '../../../assets/icons/profile-stats.png';
-import accountIcon from '../../../assets/icons/profile-account.png';
-import trophyIcon  from '../../../assets/icons/profile-trophy.png';
-import calendarIcon from '../../../assets/icons/profile-calendar.png';
+import avatarIcon       from '../../../assets/icons/profile-avatar.png';
+import statsIcon        from '../../../assets/icons/profile-stats.png';
+import accountIcon      from '../../../assets/icons/profile-account.png';
+import trophyIcon       from '../../../assets/icons/profile-trophy.png';
+import calendarIcon     from '../../../assets/icons/profile-calendar.png';
 import totalRecipesIcon from '../../../assets/icons/profile-total-recipes.png';
-import deleteIcon  from '../../../assets/icons/profile-delete.png';
-import warningIcon from '../../../assets/icons/profile-warning.png';
+import deleteIcon       from '../../../assets/icons/profile-delete.png';
+import warningIcon      from '../../../assets/icons/profile-warning.png';
 
 type ActiveTab = 'info' | 'stats' | 'danger';
 
 const TABS: { key: ActiveTab; label: string; icon: string }[] = [
-  { key: 'info',   label: 'My Info',  icon: avatarIcon  },
-  { key: 'stats',  label: 'Stats',    icon: statsIcon   },
-  { key: 'danger', label: 'Account',  icon: accountIcon },
+  { key: 'info',   label: 'My Info', icon: avatarIcon  },
+  { key: 'stats',  label: 'Stats',   icon: statsIcon   },
+  { key: 'danger', label: 'Account', icon: accountIcon },
 ];
 
 export default function ProfilePage() {
@@ -54,7 +54,7 @@ export default function ProfilePage() {
                 onClick={() => setActiveTab(key)}
                 className={`profile-tab ${activeTab === key ? 'active' : ''}`}
               >
-                <img src={icon} alt={label} style={{ width: '18px', height: '18px', objectFit: 'contain', marginRight: '6px', verticalAlign: 'middle' }} />
+                <img src={icon} alt={label} className="profile-tab-icon" />
                 {label}
               </button>
             ))}
@@ -68,13 +68,13 @@ export default function ProfilePage() {
         {activeTab === 'stats' && (
           <div className="stats-card">
             <h2>
-              <img src={statsIcon} alt="Stats" style={{ width: '28px', height: '28px', objectFit: 'contain', marginRight: '8px', verticalAlign: 'middle' }} />
+              <img src={statsIcon} alt="Stats" className="section-heading-icon" />
               Your Stats
             </h2>
             <div className="stats-grid">
               {stats.map(({ label, value, icon }) => (
                 <div key={label} className="stat-item">
-                  <img src={icon} alt={label} className="stat-emoji" style={{ width: '40px', height: '40px', objectFit: 'contain' }} />
+                  <img src={icon} alt={label} className="stat-emoji stat-icon" />
                   <div className="stat-value">{value}</div>
                   <div className="stat-label">{label}</div>
                 </div>
@@ -86,7 +86,7 @@ export default function ProfilePage() {
         {activeTab === 'danger' && (
           <div className="danger-card">
             <h2>
-              <img src={warningIcon} alt="Warning" style={{ width: '28px', height: '28px', objectFit: 'contain', marginRight: '8px', verticalAlign: 'middle' }} />
+              <img src={warningIcon} alt="Warning" className="section-heading-icon" />
               Account Settings
             </h2>
 
@@ -103,8 +103,8 @@ export default function ProfilePage() {
                 <p className="danger-title red">Delete Account</p>
                 <p className="danger-desc">Permanently delete your account. This cannot be undone.</p>
               </div>
-              <button className="delete-btn" onClick={() => setDeleteConfirm(true)} style={{ display: 'flex', alignItems: 'center', gap: '6px', }}>
-                <img src={deleteIcon} alt="Delete" style={{ width: '25px', height: '25px', objectFit: 'contain', marginRight: '6px', verticalAlign: 'middle' }} />
+              <button className="delete-btn" onClick={() => setDeleteConfirm(true)}>
+                <img src={deleteIcon} alt="Delete" className="delete-btn-icon" />
                 Delete
               </button>
             </div>

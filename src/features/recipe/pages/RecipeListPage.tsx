@@ -69,7 +69,7 @@ export default function RecipeListPage() {
             onChange={(e) => setSearchTerm(e.target.value)}
             className="search-input"
           />
-          <img src={searchIcon} alt="Search" className="search-icon" style={{ width: '33px', height: '33px', objectFit: 'contain' }} />
+          <img src={searchIcon} alt="Search" className="search-icon" />
         </div>
 
         <RecipeFilters filters={filters} onFilterChange={handleFilterChange} onClear={handleClearFilters} />
@@ -119,7 +119,7 @@ export default function RecipeListPage() {
       {errorMessage && (
         <div className="error-message">
           <span>
-             <img src="/src/assets/icons/profile-warning.png" alt="Error" className="error-icon" style={{ width: '30px', height: '30px', objectFit: 'contain' }} />  
+            <img src="/src/assets/icons/profile-warning.png" alt="Error" className="error-icon" />
           </span> {errorMessage}
         </div>
       )}
@@ -139,7 +139,7 @@ export default function RecipeListPage() {
 
       {!isLoading && recipes.length === 0 && !error && (
         <div className="no-results">
-          <img src={emptyIcon} alt="No recipes" className="no-results-icon" style={{ width: '80px', height: '80px', objectFit: 'contain' }} />
+          <img src={emptyIcon} alt="No recipes" className="no-results-icon" />
           <h3>No recipes found</h3>
           <p>Try adjusting your filters or search term</p>
           <button onClick={handleClearFilters} className="btn-outline">Clear Filters</button>

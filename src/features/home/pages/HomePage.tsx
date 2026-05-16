@@ -19,16 +19,15 @@ function FeaturedCard({ recipe }: { recipe: Recipe }) {
           <img src={recipe.arrImage} alt={recipe.name} className="featured-img"
             onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
         ) : (
-          <div className="featured-img"
-            style={{ background: 'linear-gradient(135deg, #e8799a, #c4894a)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '150px' }}>
-            <img src={image} alt={recipe.category} style={{ width: '48px', height: '48px', objectFit: 'contain' }} />
+          <div className="featured-img featured-img--fallback">
+            <img src={image} alt={recipe.category} className="featured-fallback-icon" />
           </div>
         )}
       </div>
       <div className="featured-body">
-        <div className="featured-badge" style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '1.25em' }}>
-          <img src="/src/assets/icons/rank-star.png" alt="" style={{ width: '30px', height: '30px', objectFit: 'contain', verticalAlign: 'middle' }} />
-          {' '}Featured
+        <div className="featured-badge featured-badge--lg">
+          <img src="/src/assets/icons/rank-star.png" alt="" className="featured-badge-icon" />
+          Featured
         </div>
         <h3 className="featured-title">{recipe.name}</h3>
         <p className="featured-desc">{recipe.description}</p>
@@ -58,12 +57,12 @@ function FeaturedCard({ recipe }: { recipe: Recipe }) {
 
 function RecipeSkeleton() {
   return (
-    <div className="recipe-card" style={{ pointerEvents: 'none' }}>
-      <div style={{ width: '100%', aspectRatio: '4/3', background: 'linear-gradient(90deg, #f9e4ec 25%, #fdf0f5 50%, #f9e4ec 75%)', backgroundSize: '200% 100%', animation: 'shimmer 1.5s infinite' }} />
+    <div className="recipe-card recipe-card--skeleton">
+      <div className="skeleton-img-block" />
       <div className="card-body">
-        <div style={{ height: 12, width: '60%', background: '#f9e4ec', borderRadius: 8, marginBottom: 12 }} />
-        <div style={{ height: 20, width: '80%', background: '#f9e4ec', borderRadius: 8, marginBottom: 8 }} />
-        <div style={{ height: 14, width: '100%', background: '#f9e4ec', borderRadius: 8 }} />
+        <div className="skeleton-line skeleton-line--short" />
+        <div className="skeleton-line skeleton-line--medium" />
+        <div className="skeleton-line skeleton-line--full" />
       </div>
     </div>
   );
@@ -72,6 +71,7 @@ function RecipeSkeleton() {
 export default function HomePage() {
   const { isAuthenticated } = useAppSelector((s) => s.auth);
   const { data: recipes = [], isLoading: loading, error } = useGetRecipesQuery();
+  const errorMessage = typeof error === 'string' ? error : error ? 'Failed to load recipes' : '';
 
   const byRating = [...recipes].sort((a, b) => (b.averageRating || 0) - (a.averageRating || 0));
   const popularRecipes = byRating.slice(0, 3);
@@ -88,34 +88,34 @@ export default function HomePage() {
           <h2 className="section-title">Popular <span>Recipes</span></h2>
           <div className="section-divider" />
         </div>
-        {error && <div style={{ textAlign: 'center', color: 'var(--deep-pink)', marginBottom: 24 }}>Failed to load recipes</div>}
+        {error ? <div className="hp-error">{errorMessage}</div> : null}
         <div className="recipes-grid">
           {loading ? (
             <><RecipeSkeleton /><RecipeSkeleton /><RecipeSkeleton /></>
           ) : popularRecipes.length > 0 ? (
             popularRecipes.map((recipe, i) => {
               const badge = i === 0 ? (
-                <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>  
-                  <img src="/src/assets/icons/profile-trophy.png" alt="" style={{ width: '20px', height: '20px', objectFit: 'contain', verticalAlign: 'middle' }} />
-                  {' '}Top Rated  
+                <div className="hp-badge">
+                  <img src="/src/assets/icons/profile-trophy.png" alt="" className="hp-badge-icon" />
+                  Top Rated
                 </div>
               ) : (
-                <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                  <img src="/src/assets/icons/rank-star.png" alt="" style={{ width: '20px', height: '20px', objectFit: 'contain', verticalAlign: 'middle' }} />
+                <div className="hp-badge">
+                  <img src="/src/assets/icons/rank-star.png" alt="" className="hp-badge-icon" />
                   {recipe.averageRating?.toFixed(1) || '—'}
                 </div>
               );
               return <RecipeCard key={recipe.id} recipe={recipe} badge={badge} />;
             })
           ) : (
-            <div style={{ display: 'flex', alignItems: 'center', gap: '4px', gridColumn: '1/-1', textAlign: 'center', padding: '40px', color: 'var(--mid)' }}>
-              No recipes available yet. Check back soon! {' '}
-              <img src="/src/assets/icons/state-empty.png" alt="No recipes" style={{ width: '30px', height: '30px', objectFit: 'contain', verticalAlign: 'middle' }} />
+            <div className="hp-empty">
+              No recipes available yet. Check back soon!
+              <img src="/src/assets/icons/state-empty.png" alt="No recipes" className="hp-empty-icon" />
             </div>
           )}
         </div>
         {recipes.length > 3 && (
-          <div style={{ textAlign: 'center', marginTop: 40 }}>
+          <div className="hp-see-all">
             <Link to="/recipes" className="btn-outline">See All {recipes.length} Recipes →</Link>
           </div>
         )}
@@ -130,12 +130,12 @@ export default function HomePage() {
           </div>
           <div className="recipes-grid">
             {newestRecipes.map((recipe, i) => (
-              <RecipeCard key={recipe.id} recipe={recipe} badge={i === 0 ?
-              <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>  
-                  <img src="/src/assets/icons/action-new.png" alt="" style={{ width: '30px', height: '30px', objectFit: 'contain', verticalAlign: 'middle' }} />
-                  {' '}Just Added  
-              </div>
-              : 'New'} />
+              <RecipeCard key={recipe.id} recipe={recipe} badge={i === 0 ? (
+                <div className="hp-badge">
+                  <img src="/src/assets/icons/action-new.png" alt="" className="hp-badge-icon--lg" />
+                  Just Added
+                </div>
+              ) : 'New'} />
             ))}
           </div>
         </section>
@@ -152,18 +152,18 @@ export default function HomePage() {
           <div className="section-divider" />
         </div>
         {loading ? (
-          <div style={{ textAlign: 'center', padding: '60px', color: 'var(--mid)' }}>Loading...</div>
+          <div className="hp-loading">Loading...</div>
         ) : featuredRecipe ? (
           <FeaturedCard recipe={featuredRecipe} />
         ) : (
           <div className="featured-wrap">
             <div className="featured-img-wrap">
-              <div className="featured-img" style={{ background: 'linear-gradient(135deg, #e8799a, #c4894a)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '150px' }}>🍓</div>
+              <div className="featured-img featured-img--fallback">🍓</div>
             </div>
             <div className="featured-body">
-              <div className="featured-badge" style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '1.25em' }}>
-                <img src="/src/assets/icons/rank-star.png" alt="" style={{ width: '20px', height: '20px', objectFit: 'contain', verticalAlign: 'middle' }} />
-                {' '}Featured
+              <div className="featured-badge featured-badge--lg">
+                <img src="/src/assets/icons/rank-star.png" alt="" className="featured-badge-icon" />
+                Featured
               </div>
               <h3 className="featured-title">No recipes yet</h3>
               <p className="featured-desc">Be the first to discover amazing dessert recipes!</p>
@@ -176,9 +176,9 @@ export default function HomePage() {
       {!isAuthenticated && (
         <section className="cta-section">
           <div className="cta-content">
-            <h2 style={{ display: 'flex', alignItems: 'center', gap: '4px', placeSelf: 'center' }}>
-              <img src="/src/assets/icons/sweet.png" alt="" style={{ width: '100px', height: '100px', objectFit: 'contain', verticalAlign: 'middle' }} />
-              {' '}Ready to Start Baking?
+            <h2 className="cta-title">
+              <img src="/src/assets/icons/sweet.png" alt="" className="cta-title-icon" />
+              Ready to Start Baking?
             </h2>
             <p>Join thousands of home bakers and discover your next favorite recipe!</p>
             <Link to="/register" className="btn-pink btn-large">Create Free Account</Link>

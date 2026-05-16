@@ -41,7 +41,7 @@ function RecipeCardMini({ recipe }: { recipe: Recipe }) {
         {recipe.arrImage
           ? <img src={recipe.arrImage} alt={recipe.name} />
           : img
-            ? <img src={img} alt={recipe.category} style={{ width: '30px', height: '30px', objectFit: 'contain', verticalAlign: 'middle' }}/>
+            ? <img src={img} alt={recipe.category} className="mini-img-category" />
             : <div className="mini-img-fallback">🍰</div>
         }
       </div>
@@ -50,8 +50,14 @@ function RecipeCardMini({ recipe }: { recipe: Recipe }) {
         <h3>{recipe.name}</h3>
         <p>{desc}</p>
         <div className="mini-meta">
-          <span style={{ display: 'flex', alignItems: 'center', gap: '4px', }}><img src="/src/assets/icons/meta-time.png" alt="Time" style={{ width: '20px', height: '20px', objectFit: 'contain', verticalAlign: 'middle' }} /> {recipe.totalTime}m</span>
-          <span style={{ display: 'flex', alignItems: 'center', gap: '4px', }}><img src={levelIcon} alt={levelAlt} style={{ width: '20px', height: '20px', objectFit: 'contain', verticalAlign: 'middle' }} /> {level}</span>
+          <span className="mini-meta-item">
+            <img src="/src/assets/icons/meta-time.png" alt="Time" className="mini-meta-icon" />
+            {recipe.totalTime}m
+          </span>
+          <span className="mini-meta-item">
+            <img src={levelIcon} alt={levelAlt} className="mini-meta-icon" />
+            {level}
+          </span>
           <span className="mini-category">{recipe.category}</span>
         </div>
       </div>
@@ -70,7 +76,7 @@ function ResultsGrid({ results }: { results: Recipe[] }) {
 function ResultCount({ count, color }: { count: number; color?: string }) {
   return (
     <p className="result-count">
-      Found <span style={{ color: color ?? '#d4547a' }}>{count}</span> recipe{count !== 1 ? 's' : ''}
+      Found <span className={color === '#c4894a' ? 'result-count-alt' : 'result-count-main'}>{count}</span> recipe{count !== 1 ? 's' : ''}
     </p>
   );
 }
@@ -82,7 +88,7 @@ function EmptyState({ emoji, title, subtitle, action }: {
   action?: React.ReactNode;
 }) {
   return (
-    <div className="empty-state" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px', textAlign: 'center' }}>
+    <div className="empty-state empty-state-flex">
       <div className="empty-emoji">{emoji}</div>
       <h3>{title}</h3>
       {subtitle && <p>{subtitle}</p>}
@@ -106,11 +112,13 @@ export default function SearchResults({
 
   if (!hasSearched) return (
     <EmptyState
-      emoji={mode === 'name' ? 
-        <img src="/src/assets/icons/search-icon.png" alt="Search" style={{ width: '30px', height: '30px', objectFit: 'contain', verticalAlign: 'middle', placeSelf: 'center' }} />
-        : mode === 'category' ? 
-        <img src="/src/assets/icons/content-folder.png" alt="Category" style={{ width: '30px', height: '30px', objectFit: 'contain', verticalAlign: 'middle', placeSelf: 'center' }} />
-        : <img src="/src/assets/icons/calc-spoon.png" alt="Ingredient" style={{ width: '30px', height: '30px', objectFit: 'contain', verticalAlign: 'middle', placeSelf: 'center' }} />}
+      emoji={
+        mode === 'name'
+          ? <img src="/src/assets/icons/search-icon.png" alt="Search" className="empty-icon" />
+          : mode === 'category'
+            ? <img src="/src/assets/icons/content-folder.png" alt="Category" className="empty-icon" />
+            : <img src="/src/assets/icons/calc-spoon.png" alt="Ingredient" className="empty-icon" />
+      }
       title={mode === 'name' ? 'Type to search...' : mode === 'category' ? 'Select a category' : 'Add ingredients'}
       subtitle={
         mode === 'name' ? 'Start typing to find your favorite dessert' :
@@ -126,7 +134,11 @@ export default function SearchResults({
   );
 
   if (mode === 'ingredients' && results.length === 0 && alternativeResults.length === 0 && !loadingAlternatives) return (
-    <EmptyState emoji={<img src="/src/assets/icons/page-about.png" alt="Info" style={{ width: '60px', height: '60px', objectFit: 'contain', verticalAlign: 'middle' }} />} title="No recipes found" subtitle="No recipes or alternatives found for these ingredients" />
+    <EmptyState
+      emoji={<img src="/src/assets/icons/page-about.png" alt="Info" className="empty-icon-lg" />}
+      title="No recipes found"
+      subtitle="No recipes or alternatives found for these ingredients"
+    />
   );
 
   if (mode === 'ingredients' && (results.length > 0 || alternativeResults.length > 0)) return (
@@ -135,18 +147,16 @@ export default function SearchResults({
         <button
           onClick={() => onTabChange('results')}
           className={`tab-btn ${activeResultTab === 'results' ? 'active' : ''}`}
-          style={{ display: 'flex', alignItems: 'center', gap: '4px', }}> 
-          <img src="/src/assets/icons/search-icon.png" alt="" style={{ width: '20px', height: '20px', objectFit: 'contain', verticalAlign: 'middle' }} />
-          {' '}Results
-          ({results.length})
+        >
+          <img src="/src/assets/icons/search-icon.png" alt="" className="tab-btn-icon" />
+          Results ({results.length})
         </button>
         <button
           onClick={() => onTabChange('alternatives')}
           className={`tab-btn alt ${activeResultTab === 'alternatives' ? 'active' : ''}`}
-        style={{ display: 'flex', alignItems: 'center', gap: '4px', }}> 
-          <img src="/src/assets/icons/action-refresh.png" alt="" style={{ width: '20px', height: '20px', objectFit: 'contain', verticalAlign: 'middle' }} />
-          {' '}Alternatives 
-          ({loadingAlternatives ? '...' : alternativeResults.length})
+        >
+          <img src="/src/assets/icons/action-refresh.png" alt="" className="tab-btn-icon" />
+          Alternatives ({loadingAlternatives ? '...' : alternativeResults.length})
         </button>
       </div>
 
@@ -155,11 +165,11 @@ export default function SearchResults({
           <EmptyState
             emoji="🍰"
             title="No exact matches"
-            subtitle={alternativeResults.length > 0 ? ' But we found recipes using ingredient alternatives!' : 'Try different ingredients'}
+            subtitle={alternativeResults.length > 0 ? 'But we found recipes using ingredient alternatives!' : 'Try different ingredients'}
             action={alternativeResults.length > 0 && (
-              <Button onClick={() => onTabChange('alternatives')} style={{ background: 'linear-gradient(135deg, #e8c49a, #c4894a)',display: 'flex', alignItems: 'center', gap: '4px', }}>
-                <img src="/src/assets/icons/action-refresh.png" alt="" style={{ width: '20px', height: '20px', objectFit: 'contain', verticalAlign: 'middle' }} />
-                {' '} See Alternatives
+              <Button onClick={() => onTabChange('alternatives')}>
+                <img src="/src/assets/icons/action-refresh.png" alt="" className="tab-btn-icon" />
+                See Alternatives
               </Button>
             )}
           />
@@ -175,7 +185,7 @@ export default function SearchResults({
         <div>
           <div className="alt-banner">
             <span>
-              <img src="/src/assets/icons/action-refresh.png" alt="Info" style={{ width: '20px', height: '20px', objectFit: 'contain', verticalAlign: 'middle' }} />
+              <img src="/src/assets/icons/action-refresh.png" alt="Info" className="alt-banner-icon" />
             </span>
             <div>
               <p>Showing recipes with ingredient alternatives</p>
@@ -189,7 +199,10 @@ export default function SearchResults({
               Looking for alternatives...
             </div>
           ) : alternativeResults.length === 0 ? (
-            <EmptyState  emoji={<div style={{ display: 'flex', alignItems: 'center', gap: '4px',placeSelf: 'center' }}><img src="/src/assets/icons/page-about.png" alt="Info" style={{ width: '50px', height: '50px', objectFit: 'contain', verticalAlign: 'middle' }} /></div>} title="No alternatives found" />
+            <EmptyState
+              emoji={<img src="/src/assets/icons/page-about.png" alt="Info" className="empty-icon-md" />}
+              title="No alternatives found"
+            />
           ) : (
             <>
               <ResultCount count={alternativeResults.length} color="#c4894a" />
@@ -248,7 +261,11 @@ export default function SearchResults({
 
   if (mode !== 'ingredients') return (
     results.length === 0 ? (
-      <EmptyState emoji={<img src="/src/assets/icons/page-about.png" alt="Info" style={{ width: '60px', height: '60px', objectFit: 'contain', verticalAlign: 'middle' }} />} title="No recipes found" subtitle="Try a different search term or category" />
+      <EmptyState
+        emoji={<img src="/src/assets/icons/page-about.png" alt="Info" className="empty-icon-lg" />}
+        title="No recipes found"
+        subtitle="Try a different search term or category"
+      />
     ) : (
       <>
         <ResultCount count={results.length} />

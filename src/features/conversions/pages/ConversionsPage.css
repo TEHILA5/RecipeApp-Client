@@ -5,7 +5,6 @@
   font-family: 'Nunito', sans-serif;
 }
 
-/* Header */
 .conversions-header {
   background: linear-gradient(135deg, rgba(124, 58, 237, 0.08), rgba(167, 139, 250, 0.08));
   padding: 48px 24px 36px;
@@ -27,15 +26,19 @@
   margin-bottom: 10px;
 }
 
-.conversions-header h1 {
+.conversions-h1 {
   font-family: 'Dancing Script', cursive;
   font-size: clamp(2.2rem, 4vw, 3rem);
   color: #1f2937;
   margin-bottom: 10px;
   line-height: 1.1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
 }
 
-.conversions-header h1 span {
+.conversions-h1 span {
   color: #7c3aed;
 }
 
@@ -45,14 +48,12 @@
   font-weight: 500;
 }
 
-/* Body */
 .conversions-body {
   max-width: 860px;
   margin: 0 auto;
   padding: 32px 24px;
 }
 
-/* Calculator card */
 .calc-card {
   background: white;
   border-radius: 24px;
@@ -62,11 +63,14 @@
   margin-bottom: 32px;
 }
 
-.calc-card h2 {
+.calc-card-title {
   font-family: 'Dancing Script', cursive;
   font-size: 1.6rem;
   color: #7c3aed;
   margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
 
 .calc-card > p {
@@ -125,6 +129,12 @@
   font-weight: 600;
 }
 
+.calc-empty--flex {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
 .calc-results {
   display: flex;
   flex-direction: column;
@@ -174,7 +184,6 @@
   border: 1px solid #ede9fe;
 }
 
-/* Table card */
 .table-card {
   background: white;
   border-radius: 24px;
@@ -296,11 +305,23 @@ tbody tr:hover { background: #f5f3ff; }
   font-size: 0.9rem;
 }
 
+.ratio-mono--flex {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
 .direction-badge {
   font-size: 0.8rem;
   font-weight: 700;
   padding: 4px 12px;
   border-radius: 999px;
+}
+
+.direction-badge--flex {
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
 
 .direction-badge.both {
@@ -312,3 +333,10 @@ tbody tr:hover { background: #f5f3ff; }
   background: #f3f4f6;
   color: #6b7280;
 }
+
+.conv-icon-xxs { width: 10px;  height: 10px;  object-fit: contain; vertical-align: middle; }
+.conv-icon-xs  { width: 20px;  height: 20px;  object-fit: contain; vertical-align: middle; }
+.conv-icon-sm  { width: 20px;  height: 20px;  object-fit: contain; vertical-align: middle; }
+.conv-icon-md  { width: 30px;  height: 30px;  object-fit: contain; vertical-align: middle; }
+.conv-icon-lg  { width: 35px;  height: 35px;  object-fit: contain; vertical-align: middle; }
+.conv-icon-xl  { width: 55px;  height: 55px;  object-fit: contain; vertical-align: middle; }

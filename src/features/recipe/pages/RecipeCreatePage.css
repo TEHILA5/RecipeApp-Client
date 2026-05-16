@@ -18,6 +18,9 @@
 }
 
 .recipe-create-header h1 {
+  display: flex;
+  align-items: center;
+  gap: 4px;
   font-family: 'Dancing Script', cursive;
   font-size: clamp(2rem, 4vw, 3rem);
   color: #1f2937;
@@ -27,6 +30,12 @@
 
 .recipe-create-header h1 span {
   color: #d4547a;
+}
+
+.recipe-create-header-icon {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
 }
 
 .recipe-create-header p {

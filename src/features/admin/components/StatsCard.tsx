@@ -12,7 +12,7 @@ export default function StatsCard({ icon, value, label, color }: StatsCardProps)
   return (
     <Card>
       <div className="sc-emoji">
-        <img src={icon} alt="" style={{ width: '2em', height: '2em', objectFit: 'contain' }} />
+        <img src={icon} alt="" className="sc-icon" />
       </div>
       <div className="sc-value" style={{ color }}>{value}</div>
       <div className="sc-label">{label}</div>

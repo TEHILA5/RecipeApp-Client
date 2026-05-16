@@ -1,11 +1,5 @@
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
 
-// adminSlice manages local UI state only.
-// All API calls are handled via adminApi (RTK Query) in src/api/adminApi.ts:
-//   useGetAllConversionsQuery, useGetAllUsersQuery, useGetWeeklyStatsQuery
-//   useCreateConversionMutation, useUpdateConversionMutation, useDeleteConversionMutation
-//   useGetAllUsersQuery, useUpdateUserMutation, useDeleteUserMutation
-
 interface AdminUIState {
   selectedConversionId: number | null;
   selectedUserId: number | null;

@@ -21,13 +21,13 @@ export default function Footer() {
 
             <div className="social-links">
               <span className="social-icon" aria-label="Instagram">
-                <img src={instagramIcon} alt="Instagram" style={{ width: '24px', height: '24px', objectFit: 'contain' }} />
+                <img src={instagramIcon} alt="Instagram" className="social-icon-img" />
               </span>
               <span className="social-icon" aria-label="Pinterest">
-                <img src={pinterestIcon} alt="Pinterest" style={{ width: '24px', height: '24px', objectFit: 'contain' }} />
+                <img src={pinterestIcon} alt="Pinterest" className="social-icon-img" />
               </span>
               <span className="social-icon" aria-label="TikTok">
-                <img src={tiktokIcon} alt="TikTok" style={{ width: '24px', height: '24px', objectFit: 'contain' }} />
+                <img src={tiktokIcon} alt="TikTok" className="social-icon-img" />
               </span>
             </div>
           </div>
@@ -64,9 +64,9 @@ export default function Footer() {
         </div>
 
         <div className="footer-bottom">
-          <p className="copyright" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '4px', textAlign: 'center',}}>
+          <p className="copyright">
             © 2026 Sweet&amp;Treat — Made with{' '}
-            <img src={heartIcon} alt="love" style={{ width: '20px', height: '20px', objectFit: 'contain',}} />
+            <img src={heartIcon} alt="love" className="footer-heart-icon" />
           </p>
         </div>
       </div>

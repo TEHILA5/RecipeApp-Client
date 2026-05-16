@@ -4,6 +4,7 @@ import logo from '../../../assets/images/logoo.png';
 import sweetyTip from '../../../assets/images/sweety-tip.png';
 import starsImg from '../../../assets/images/stars.png';
 import tipIcon from '../../../assets/icons/tool-tip.png';
+import './Hero.css';
 
 export default function Hero() {
   const { isAuthenticated } = useAppSelector((s) => s.auth);
@@ -44,8 +45,8 @@ export default function Hero() {
       <section className="tip-bar">
         <img src={sweetyTip} alt="Sweety" className="sweety" />
         <div className="tip-content">
-          <div className="tip-label" style={{ display: 'flex',  alignItems: 'center', gap: '4px' ,}}>
-            <img src={tipIcon} alt="Tip" style={{ width: '25px', height: '25px', objectFit: 'contain', verticalAlign: 'middle', marginRight: '8px' }} />
+          <div className="tip-label">
+            <img src={tipIcon} alt="Tip" className="tip-icon" />
             Sweety's Tip
           </div>
           <p className="tip-text">

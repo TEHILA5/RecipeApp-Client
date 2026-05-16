@@ -33,7 +33,6 @@ export interface ReplyDto {
 
 export const adminApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
-    // ── Conversions ──
     getAllConversions: builder.query<ConversionDto[], void>({
       query: () => '/conversion',
       providesTags: ['Conversions'],
@@ -58,8 +57,7 @@ export const adminApi = baseApi.injectEndpoints({
       query: (id) => ({ url: `/conversion/${id}`, method: 'DELETE' }),
       invalidatesTags: ['Conversions'],
     }),
-
-    // ── Users (admin) ──
+ 
     getAllUsers: builder.query<UserAdminDto[], void>({
       query: () => '/user',
       providesTags: ['Users'],
@@ -75,19 +73,16 @@ export const adminApi = baseApi.injectEndpoints({
       invalidatesTags: ['Users'],
     }),
 
-    // ── Stats ──
     getWeeklyStats: builder.query<WeeklyCategoryStats[], void>({
       query: () => '/userAction/stats/weekly-categories',
       providesTags: ['WeeklyStats'],
     }),
 
-    // ── Ingredients (for admin dropdowns) ──
     getAllIngredientsAdmin: builder.query<{ id: number; name: string }[], void>({
       query: () => '/ingredient',
       providesTags: ['Ingredients'],
     }),
 
-    // ── Contact Reply ──
     sendReply: builder.mutation<void, ReplyDto>({
       query: (body) => ({ url: '/contact/reply', method: 'POST', body }),
     }),

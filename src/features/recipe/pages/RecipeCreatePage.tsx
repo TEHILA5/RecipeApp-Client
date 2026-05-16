@@ -21,8 +21,9 @@ export default function RecipeCreatePage() {
     <div className="recipe-create-page">
       <div className="recipe-create-header">
         <div className="recipe-create-header-inner">
-          <h1 style={{ display: 'flex', alignItems: 'center', gap: '4px', }}>Create a New <span>Recipe</span> 
-          <img src="/src/assets/icons/ai-sparkle.png" alt="Sparkle" style={{ width: '40px', height: '40px', objectFit: 'contain' }} />
+          <h1>
+            Create a New <span>Recipe</span>
+            <img src="/src/assets/icons/ai-sparkle.png" alt="Sparkle" className="recipe-create-header-icon" />
           </h1>
           <p>Share your delicious creation with the Sweet&amp;Treat community</p>
         </div>

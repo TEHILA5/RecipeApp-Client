@@ -23,7 +23,7 @@ export default function LoginForm({ onSubmit, loading, error }: LoginFormProps) 
       <div className="form-logo">
         <span className="logo-text">Sweet&amp;Treat</span>
         <span className="logo-emoji">
-          <img src="/src/assets/images/sweety.png" alt="Logo" style={{ width: '32px', height: '32px', objectFit: 'contain' }} />
+          <img src="/src/assets/images/sweety.png" alt="Logo" className="form-logo-img" />
         </span>
       </div>
 

@@ -21,7 +21,7 @@ function TypingDots() {
   return (
     <div className="typing-dots">
       {[0, 1, 2].map((i) => (
-        <div key={i} className="typing-dot" style={{ animationDelay: `${i * 0.2}s` }} />
+        <div key={i} className="typing-dot" data-index={i} />
       ))}
     </div>
   );

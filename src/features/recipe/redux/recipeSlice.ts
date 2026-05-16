@@ -153,8 +153,6 @@ export const {
   useDeleteRecipeMutation,
 } = recipesApi;
 
-// ── Recipe Panel UI Slice ──────────────────────────────────────────────────
-
 interface RecipePanelState {
   selectedCategory: RecipeCategory | null;
   searchTerm: string;

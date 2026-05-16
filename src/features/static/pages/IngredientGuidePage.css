@@ -1,0 +1,38 @@
+.ingredient-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.ingredient-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  background: white;
+  border-radius: 16px;
+  padding: 18px 20px;
+  box-shadow: 0 2px 12px rgba(212, 84, 122, 0.06);
+  border: 1px solid #fce7f3;
+}
+
+.ingredient-card__icon {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.ingredient-card__name {
+  font-family: 'Nunito', sans-serif;
+  font-weight: 800;
+  color: #d4547a;
+  margin: 0 0 4px;
+  font-size: 0.95rem;
+}
+
+.ingredient-card__tip {
+  color: #6b7280;
+  line-height: 1.5;
+  font-size: 0.88rem;
+  margin: 0;
+}

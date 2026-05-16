@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { CATEGORY_IMAGES, type RecipeCategory } from '../../recipe/types/recipe.types';
+import './AnalyticsTab.css';
 
 export interface WeeklyCategoryStats {
   week: string;
@@ -18,13 +19,6 @@ const CATEGORY_COLORS: Record<string, string> = {
 
 const getColor = (cat: string) => CATEGORY_COLORS[cat] ?? '#9ca3af';
 
-function CategoryIcon({ name }: { name: string }) {
-  const img = CATEGORY_IMAGES[name as RecipeCategory];
-  return img
-    ? <img src={img} alt={name} style={{ width: '24px', height: '30px', objectFit: 'contain' }} />
-    : <span>🧁</span>;
-}
-
 const medals = [
   '/src/assets/icons/rank-gold-medal.png',
   '/src/assets/icons/rank-silver-medal.png',
@@ -32,6 +26,13 @@ const medals = [
   '/src/assets/icons/4th-medal.png',
   '/src/assets/icons/5th-medal.png',
 ];
+
+function CategoryIcon({ name }: { name: string }) {
+  const img = CATEGORY_IMAGES[name as RecipeCategory];
+  return img
+    ? <img src={img} alt={name} className="at-cat-icon-img" />
+    : <span>🧁</span>;
+}
 
 interface AnalyticsTabProps {
   weeklyStats: WeeklyCategoryStats[];
@@ -61,7 +62,7 @@ export default function AnalyticsTab({ weeklyStats, loading }: AnalyticsTabProps
     return (
       <div className="at-empty">
         <div className="at-empty-icon">
-          <img src="/src/assets/icons/rank-chart.png" alt="" style={{ width: '64px', height: '64px', objectFit: 'contain' }} />
+          <img src="/src/assets/icons/rank-chart.png" alt="" className="at-empty-chart-img" />
         </div>
         <h3 className="at-empty-title">No data yet</h3>
         <p className="at-empty-text">Category views will appear here once users start browsing recipes.</p>
@@ -73,9 +74,9 @@ export default function AnalyticsTab({ weeklyStats, loading }: AnalyticsTabProps
     <div className="at-wrap">
       <div className="at-header">
         <div>
-          <h3 className="at-title" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-            <img src="/src/assets/icons/rank-chart.png" alt="" style={{ width: '30px', height: '30px', objectFit: 'contain', verticalAlign: 'middle' }} />
-            {' '}Weekly Category Views
+          <h3 className="at-title">
+            <img src="/src/assets/icons/rank-chart.png" alt="" className="at-title-icon" />
+            Weekly Category Views
           </h3>
           <p className="at-subtitle">
             Showing <strong>{weekLabel}</strong> — {weekData.reduce((s, d) => s + d.viewCount, 0)} total views
@@ -88,7 +89,7 @@ export default function AnalyticsTab({ weeklyStats, loading }: AnalyticsTabProps
               <button
                 key={w}
                 onClick={() => setSelectedWeek(w)}
-                className={`at-week-btn ${w === activeWeek ? 'at-week-btn--active' : ''}`}
+                className={`at-week-btn${w === activeWeek ? ' at-week-btn--active' : ''}`}
               >
                 {label}
               </button>
@@ -108,7 +109,11 @@ export default function AnalyticsTab({ weeklyStats, loading }: AnalyticsTabProps
                 <div className="at-bar-track">
                   <div
                     className="at-bar"
-                    style={{ height: `${pct}%`, background: `linear-gradient(to top, ${color}, ${color}99)`, boxShadow: `0 4px 12px ${color}40` }}
+                    style={{
+                      height: `${pct}%`,
+                      background: `linear-gradient(to top, ${color}, ${color}99)`,
+                      boxShadow: `0 4px 12px ${color}40`,
+                    }}
                     title={`${item.categoryName}: ${item.viewCount} views`}
                   />
                 </div>
@@ -123,9 +128,9 @@ export default function AnalyticsTab({ weeklyStats, loading }: AnalyticsTabProps
       </div>
 
       <div className="at-top5">
-        <h4 className="at-section-title" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-          <img src="/src/assets/icons/profile-trophy.png" alt="" style={{ width: '30px', height: '30px', objectFit: 'contain', verticalAlign: 'middle' }} />
-          {' '}Top Categories — {weekLabel}
+        <h4 className="at-section-title">
+          <img src="/src/assets/icons/profile-trophy.png" alt="" className="at-section-title-icon" />
+          Top Categories — {weekLabel}
         </h4>
         <div className="at-top5-list">
           {weekData.slice(0, 5).map((item, idx) => {
@@ -133,7 +138,7 @@ export default function AnalyticsTab({ weeklyStats, loading }: AnalyticsTabProps
             const color = getColor(item.categoryName);
             return (
               <div key={item.categoryName} className="at-top5-row">
-                <img src={medals[idx]} alt={`#${idx + 1}`} style={{ width: '1.4em', height: '1.4em', objectFit: 'contain', verticalAlign: 'middle' }} className="at-medal" />
+                <img src={medals[idx]} alt={`#${idx + 1}`} className="at-medal" />
                 <CategoryIcon name={item.categoryName} />
                 <div className="at-top5-info">
                   <div className="at-top5-meta">
@@ -141,7 +146,13 @@ export default function AnalyticsTab({ weeklyStats, loading }: AnalyticsTabProps
                     <span className="at-top5-views" style={{ color }}>{item.viewCount} views</span>
                   </div>
                   <div className="at-progress-track">
-                    <div className="at-progress-bar" style={{ width: `${pct}%`, background: `linear-gradient(to right, ${color}, ${color}99)` }} />
+                    <div
+                      className="at-progress-bar"
+                      style={{
+                        width: `${pct}%`,
+                        background: `linear-gradient(to right, ${color}, ${color}99)`,
+                      }}
+                    />
                   </div>
                 </div>
               </div>
@@ -152,9 +163,9 @@ export default function AnalyticsTab({ weeklyStats, loading }: AnalyticsTabProps
 
       {weeks.length > 1 && (
         <div className="at-trend">
-          <h4 className="at-section-title" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-            <img src="/src/assets/icons/rank-chart.png" alt="" style={{ width: '25px', height: '25px', objectFit: 'contain', verticalAlign: 'middle' }} />
-            {' '}Trend Overview — All Weeks
+          <h4 className="at-section-title">
+            <img src="/src/assets/icons/rank-chart.png" alt="" className="at-section-title-icon at-section-title-icon--sm" />
+            Trend Overview — All Weeks
           </h4>
           <div className="at-trend-wrap">
             <table className="at-trend-table">
@@ -169,7 +180,7 @@ export default function AnalyticsTab({ weeklyStats, loading }: AnalyticsTabProps
               </thead>
               <tbody>
                 {categories.map((cat, idx) => (
-                  <tr key={cat} className={`at-trend-row ${idx % 2 === 0 ? '' : 'at-trend-row--odd'}`}>
+                  <tr key={cat} className={`at-trend-row${idx % 2 !== 0 ? ' at-trend-row--odd' : ''}`}>
                     <td className="at-trend-cat">
                       <CategoryIcon name={cat} />
                       <span style={{ color: getColor(cat) }}>{cat}</span>
@@ -177,7 +188,14 @@ export default function AnalyticsTab({ weeklyStats, loading }: AnalyticsTabProps
                     {weeks.map((w) => {
                       const val = weeklyStats.find((s) => s.week === w && s.categoryName === cat)?.viewCount ?? 0;
                       return (
-                        <td key={w} className="at-trend-val" style={{ fontWeight: val > 0 ? 700 : 400, color: val > 0 ? getColor(cat) : '#d1d5db' }}>
+                        <td
+                          key={w}
+                          className="at-trend-val"
+                          style={{
+                            fontWeight: val > 0 ? 700 : 400,
+                            color: val > 0 ? getColor(cat) : '#d1d5db',
+                          }}
+                        >
                           {val > 0 ? val : '—'}
                         </td>
                       );

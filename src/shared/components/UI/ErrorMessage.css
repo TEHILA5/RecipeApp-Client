@@ -15,3 +15,5 @@
 .rf-ingredient-error {
   margin-top: 8px;
 }
+
+.cp-icon-xs { width: 20px; height: 20px; object-fit: contain; vertical-align: middle; }

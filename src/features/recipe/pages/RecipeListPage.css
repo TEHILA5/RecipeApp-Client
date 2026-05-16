@@ -91,7 +91,9 @@
   right: 20px;
   top: 50%;
   transform: translateY(-50%);
-  font-size: 1.2rem;
+  width: 33px;
+  height: 33px;
+  object-fit: contain;
   pointer-events: none;
 }
 
@@ -131,7 +133,7 @@
   cursor: pointer;
   transition: all 0.2s;
   padding: 0;
-  overflow: hidden;         /* חותך את הרקע הלבן של התמונה */
+  overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -345,8 +347,21 @@
   gap: 10px;
 }
 
+.error-icon {
+  width: 30px;
+  height: 30px;
+  object-fit: contain;
+}
+
 .no-results { text-align: center; padding: 80px 20px; color: var(--mid); }
-.no-results-icon { font-size: 80px; margin-bottom: 20px; }
+
+.no-results-icon {
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+  margin-bottom: 20px;
+}
+
 .no-results h3 { font-family: 'Dancing Script', cursive; font-size: 2rem; color: var(--text); margin-bottom: 12px; }
 .no-results p  { font-size: 1rem; margin-bottom: 24px; }
 

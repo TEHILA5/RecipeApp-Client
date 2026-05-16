@@ -10,7 +10,8 @@ export default function ErrorMessage({ message, className }: ErrorMessageProps) 
 
   return (
     <div className={`error-message ${className ?? ''}`}>
-      ⚠️ {message}
+      <img src="/src/assets/icons/profile-warning.png" alt="" className="cp-icon-xs" />
+      {message} 
     </div>
   );
 }

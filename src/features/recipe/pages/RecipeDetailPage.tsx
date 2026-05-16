@@ -13,7 +13,7 @@ export default function RecipeDetailPage() {
   if (error || !recipe) {
     return (
       <div className="rdp-not-found">
-        <img src={pageIcon} alt="Not found" className="rdp-not-found-icon" style={{ width: '80px', height: '80px', objectFit: 'contain' }} />
+        <img src={pageIcon} alt="Not found" className="rdp-not-found-icon" />
         <h2 className="rdp-not-found-title">Recipe Not Found</h2>
         <button onClick={() => navigate('/recipes')} className="rdp-back-btn">← Back to Recipes</button>
       </div>

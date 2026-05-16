@@ -57,8 +57,9 @@ export default function ConversionsPage() {
       <div className="conversions-header">
         <div className="conversions-header-inner">
           <div className="header-eyebrow">✦ Ingredient Conversions</div>
-          <h1 style={{ display: 'flex', alignItems: 'center',placeSelf: 'center', gap: '4px', }}>Substitution <span>Guide</span>
-          <img src="/src/assets/icons/action-refresh.png" alt="" style={{ width: '55px', height: '55px', objectFit: 'contain', verticalAlign: 'middle' }} />
+          <h1 className="conversions-h1">
+            Substitution <span>Guide</span>
+            <img src="/src/assets/icons/action-refresh.png" alt="" className="conv-icon-xl" />
           </h1>
           <p>Find ingredient substitutes and calculate exact amounts</p>
         </div>
@@ -66,10 +67,10 @@ export default function ConversionsPage() {
 
       <div className="conversions-body">
         <div className="calc-card">
-          <h2 style={{ display: 'flex', alignItems: 'center', gap: '4px', }}> 
-            <img src="/src/assets/icons/calc-calculator.png" alt="" style={{ width: '35px', height: '35px', objectFit: 'contain', verticalAlign: 'middle' }} />
-            {' '}Quick Calculator
-            </h2>
+          <h2 className="calc-card-title">
+            <img src="/src/assets/icons/calc-calculator.png" alt="" className="conv-icon-lg" />
+            Quick Calculator
+          </h2>
           <p>Enter an ingredient and amount to see all its substitutes</p>
 
           <div className="calc-inputs">
@@ -100,9 +101,9 @@ export default function ConversionsPage() {
           </div>
 
           {calcFrom && calcAmount && calcResults.length === 0 && (
-            <div className="calc-empty" style={{ display: 'flex', alignItems: 'center', gap: '4px', }}> 
-            <img src="/src/assets/icons/state-empty.png" alt="" style={{ width: '20px', height: '20px', objectFit: 'contain', verticalAlign: 'middle' }} />
-            {' '}No conversions found for "{calcFrom}"
+            <div className="calc-empty calc-empty--flex">
+              <img src="/src/assets/icons/state-empty.png" alt="" className="conv-icon-xs" />
+              No conversions found for "{calcFrom}"
             </div>
           )}
 
@@ -112,7 +113,7 @@ export default function ConversionsPage() {
                 <div key={to} className="calc-result-row">
                   <div className="calc-result-left">
                     <span>
-                      <img src="/src/assets/icons/action-refresh.png" alt="" style={{ width: '30px', height: '30px', objectFit: 'contain', verticalAlign: 'middle' }} /> 
+                      <img src="/src/assets/icons/action-refresh.png" alt="" className="conv-icon-md" />
                     </span>
                     <div>
                       <strong>{calcAmount} </strong>
@@ -140,7 +141,7 @@ export default function ConversionsPage() {
                 placeholder="Search ingredient..."
               />
               <span>
-                <img src="/src/assets/icons/search-icon.png" alt="Search" style={{ width: '35px', height: '35px', objectFit: 'contain' }} />
+                <img src="/src/assets/icons/search-icon.png" alt="Search" className="conv-icon-lg" />
               </span>
             </div>
           </div>
@@ -150,7 +151,7 @@ export default function ConversionsPage() {
           ) : filtered.length === 0 ? (
             <div className="table-empty">
               <div>
-                <img src="/src/assets/icons/action-refresh.png" alt="" style={{ width: '30px', height: '30px', objectFit: 'contain', verticalAlign: 'middle' }} /> 
+                <img src="/src/assets/icons/action-refresh.png" alt="" className="conv-icon-md" />
               </div>
               <p>{search ? 'No results found' : 'No conversions available yet'}</p>
             </div>
@@ -170,12 +171,18 @@ export default function ConversionsPage() {
                       <td className="ingredient-cell">{conv.ingredient1Name}</td>
                       <td className="arrow-cell">{conv.isBidirectional ? '↔' : '→'}</td>
                       <td className="ingredient-cell">{conv.ingredient2Name}</td>
-                      <td><span className="ratio-mono" style={{ display: 'flex', alignItems: 'center', gap: '4px', }}><img src="/src/assets/icons/cancel-x.png" alt="" style={{ width: '10px', height: '10px', objectFit: 'contain', verticalAlign: 'middle' }} /> 
-                    {conv.conversionRatio}</span></td>
                       <td>
-                        <span className={`direction-badge ${conv.isBidirectional ? 'both' : 'one'}`} style={{ display: 'flex', alignItems: 'center', gap: '4px', }}>
-                          {conv.isBidirectional ? <><img src="/src/assets/icons/arrow2.png" alt="↔" style={{ width: '20px', height: '20px', objectFit: 'contain', verticalAlign: 'middle' }} />{' '}Both</>
-                            : <><img src="/src/assets/icons/arrow1.png" alt="->" style={{ width: '20px', height: '20px', objectFit: 'contain', verticalAlign: 'middle' }} />{' '}One-way</>}
+                        <span className="ratio-mono ratio-mono--flex">
+                          <img src="/src/assets/icons/cancel-x.png" alt="" className="conv-icon-xxs" />
+                          {conv.conversionRatio}
+                        </span>
+                      </td>
+                      <td>
+                        <span className={`direction-badge direction-badge--flex ${conv.isBidirectional ? 'both' : 'one'}`}>
+                          {conv.isBidirectional
+                            ? <><img src="/src/assets/icons/arrow2.png" alt="↔" className="conv-icon-sm" />Both</>
+                            : <><img src="/src/assets/icons/arrow1.png" alt="->" className="conv-icon-sm" />One-way</>
+                          }
                         </span>
                       </td>
                     </tr>

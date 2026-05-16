@@ -16,6 +16,16 @@
   font-size: 2rem;
   color: #d4547a;
   margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.mi-title-icon {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+  vertical-align: middle;
 }
 
 .mi-card {
@@ -31,7 +41,9 @@
 }
 
 .mi-btn {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   padding: 12px 28px;
   border-radius: 999px;
   text-decoration: none;
@@ -40,4 +52,11 @@
   font-family: 'Nunito', sans-serif;
   font-weight: 700;
   box-shadow: 0 4px 12px rgba(212, 84, 122, 0.3);
+}
+
+.mi-btn-icon {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+  vertical-align: middle;
 }

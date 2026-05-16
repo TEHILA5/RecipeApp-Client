@@ -25,10 +25,10 @@ type SearchMode = 'name' | 'category' | 'ingredients' | 'advanced';
 type BaseSearchMode = 'name' | 'category' | 'ingredients';
 
 const TABS: { key: SearchMode; label: string; emoji: React.ReactNode }[] = [
-  { key: 'name',        label: 'By Name',        emoji: <img src="/src/assets/icons/content-text.png" alt="Name" style={{ width: 20, height: 20 }} /> },
-  { key: 'category',    label: 'By Category',    emoji: <img src="/src/assets/icons/content-folder.png" alt="Category" style={{ width: 20, height: 20 }} /> },
-  { key: 'ingredients', label: 'By Ingredients', emoji: <img src="/src/assets/icons/calc-spoon.png" alt="Ingredients" style={{ width: 20, height: 20 }} /> },
-  { key: 'advanced',    label: 'Smart Search',   emoji: <img src="/src/assets/icons/ai-crystal-ball.png" alt="Advanced" style={{ width: 20, height: 20 }} /> },
+  { key: 'name',        label: 'By Name',        emoji: <img src="/src/assets/icons/content-text.png" alt="Name" className="tab-icon" /> },
+  { key: 'category',    label: 'By Category',    emoji: <img src="/src/assets/icons/content-folder.png" alt="Category" className="tab-icon" /> },
+  { key: 'ingredients', label: 'By Ingredients', emoji: <img src="/src/assets/icons/calc-spoon.png" alt="Ingredients" className="tab-icon" /> },
+  { key: 'advanced',    label: 'Smart Search',   emoji: <img src="/src/assets/icons/ai-crystal-ball.png" alt="Advanced" className="tab-icon" /> },
 ];
 
 export default function SearchPage() {
@@ -44,11 +44,8 @@ export default function SearchPage() {
   }[]>([]);
   const [loadingAlternatives, setLoadingAlternatives] = useState(false);
 
-  // ✅ RTK Query — replaces getAllConversions() axios call + useEffect
   const { data: allConversions = [] } = useGetAllConversionsQuery();
 
-  // Keep a ref so the alternatives useEffect can read the latest value
-  // without needing it as a dependency (avoids re-running on every refetch)
   const conversionsRef = useRef(allConversions);
   useEffect(() => { conversionsRef.current = allConversions; }, [allConversions]);
 
@@ -82,7 +79,6 @@ export default function SearchPage() {
 
       const conversions = conversionsRef.current;
 
-      // Build a map of ingredient → its known alternatives (lower-cased)
       const altMap: Record<string, string[]> = {};
       for (const ing of ingredientList) {
         const alts = getAlternativesForIngredient(ing, conversions);
@@ -187,7 +183,7 @@ export default function SearchPage() {
               key={key}
               onClick={() => handleSetMode(key)}
               className={`search-tab ${activeTab === key ? 'active' : ''} ${key === 'advanced' ? 'ai' : ''}`}
-            style={{ display: 'flex', alignItems: 'center', gap: '4px', }}>
+            >
               {emoji} {label}
             </button>
           ))}

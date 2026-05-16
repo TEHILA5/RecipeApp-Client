@@ -43,7 +43,6 @@
   margin-left: auto;
 }
 
-/* Nav links */
 .nav-links {
   display: flex;
   gap: 32px;
@@ -96,7 +95,6 @@
 .nav-links a:hover { color: var(--deep-pink); }
 .nav-links a:hover::after { width: 100%; }
 
-/* Small inline icons next to nav text (Sweetie, Admin) */
 .nav-inline-icon {
   width: 34px;
   height: 34px;
@@ -105,7 +103,6 @@
   display: block;
 }
 
-/* Admin pill */
 .admin-link {
   background: linear-gradient(135deg, #e8799a, #d4547a) !important;
   color: white !important;
@@ -116,10 +113,8 @@
 }
 .admin-link::after { display: none; }
 
-/* Sweetie link */
 .nav-sweetie-link { color: var(--deep-pink) !important; }
 
-/* Mobile user section */
 .mobile-user-section {
   margin-top: 8px;
   border-top: 1px solid #fce7f3;
@@ -136,6 +131,12 @@
   text-transform: none !important;
   letter-spacing: 0 !important;
 }
+.mobile-profile-avatar {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
 .mobile-logout-btn {
   background: none;
   border: 2px solid #fce7f3;
@@ -148,7 +149,6 @@
 }
 .mobile-auth-btns { display: flex; gap: 8px; }
 
-/* Desktop nav actions */
 .nav-actions { display: flex; align-items: center; gap: 16px; }
 
 .nav-user {
@@ -171,7 +171,6 @@
   box-shadow: 0 4px 12px rgba(232, 121, 154, 0.3);
 }
 
-/* Avatar in nav-user pill — small, no overflow */
 .chef-hat-icon {
   width: 28px;
   height: 28px;

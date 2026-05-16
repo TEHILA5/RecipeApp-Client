@@ -22,7 +22,6 @@ export default function MyFavorites() {
           src="/src/assets/icons/recipe-bookmark.png"
           alt="No favorites"
           className="favorites-empty-img"
-          style={{ width: '50px', height: '50px', objectFit: 'contain', verticalAlign: 'middle',placeSelf: 'center' }} 
         />
       </div>
       <h3>No saved recipes yet</h3>
@@ -64,7 +63,9 @@ export default function MyFavorites() {
                     }}
                   />
                 ) : null}
-                <div className={`favorite-img-fallback ${imgSrc ? 'hidden' : ''}`}><img src={img} alt={item.recipeName} style={{ width: '20px', height: '20px', objectFit: 'contain', verticalAlign: 'middle' }} /></div>
+                <div className={`favorite-img-fallback ${imgSrc ? 'hidden' : ''}`}>
+                  <img src={img} alt={item.recipeName} className="favorite-fallback-icon" />
+                </div>
               </div>
 
               <div className="favorite-body">
@@ -72,9 +73,24 @@ export default function MyFavorites() {
                 <h3>{item.recipeName}</h3>
                 {desc && <p>{desc}</p>}
                 <div className="favorite-meta">
-                  {recipe?.totalTime && <span style={{ display: 'flex', alignItems: 'center', gap: '4px', }}><img src="/src/assets/icons/meta-time.png" alt="Time" style={{ width: '20px', height: '20px', objectFit: 'contain', verticalAlign: 'middle' }} /> {recipe.totalTime} min</span>}
-                  {recipe?.level && <span style={{ display: 'flex', alignItems: 'center', gap: '4px', }}><img src={levelIcon} alt={levelAlt} style={{ width: '20px', height: '20px', objectFit: 'contain', verticalAlign: 'middle' }} /> {level}</span>}
-                  {recipe?.servings && <span style={{ display: 'flex', alignItems: 'center', gap: '4px', }}><img src="/src/assets/icons/meta-servings.png" alt="Servings" style={{ width: '20px', height: '20px', objectFit: 'contain', verticalAlign: 'middle' }} /> {recipe.servings}</span>}
+                  {recipe?.totalTime && (
+                    <span className="favorite-meta-item">
+                      <img src="/src/assets/icons/meta-time.png" alt="Time" className="favorite-meta-icon" />
+                      {recipe.totalTime} min
+                    </span>
+                  )}
+                  {recipe?.level && (
+                    <span className="favorite-meta-item">
+                      <img src={levelIcon} alt={levelAlt} className="favorite-meta-icon" />
+                      {level}
+                    </span>
+                  )}
+                  {recipe?.servings && (
+                    <span className="favorite-meta-item">
+                      <img src="/src/assets/icons/meta-servings.png" alt="Servings" className="favorite-meta-icon" />
+                      {recipe.servings}
+                    </span>
+                  )}
                 </div>
               </div>
             </Link>
@@ -84,10 +100,13 @@ export default function MyFavorites() {
                 onClick={() => removeBookmark(item.recipeId!)}
                 disabled={isRemoving}
                 className={`remove-btn ${isRemoving ? 'removing' : ''}`}
-              style={{ display: 'flex', alignItems: 'center', gap: '4px', }}>
-                {isRemoving ? 'Removing...' : <>
-                <img src="/src/assets/icons/recipe-bookmark.png" alt="" style={{ width: '20px', height: '20px', objectFit: 'contain', verticalAlign: 'middle' }} />
-                {' '}Remove from Saved </>}
+              >
+                {isRemoving ? 'Removing...' : (
+                  <>
+                    <img src="/src/assets/icons/recipe-bookmark.png" alt="" className="favorite-meta-icon" />
+                    {' '}Remove from Saved
+                  </>
+                )}
               </button>
             </div>
           </div>

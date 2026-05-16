@@ -4,7 +4,7 @@ import { useGetRecipesQuery } from '../../recipe/redux/recipeSlice';
 import StatsCard from '../components/StatsCard';
 import UserManagement from '../components/UserManagement';
 import RecipeModeration from '../components/RecipeModeration';
-import AnalyticsTab from '../components/AnalyticsTab'; 
+import AnalyticsTab from '../components/AnalyticsTab';
 import ConversionsTab from '../components/ConversionsTab';
 import { useAppSelector } from '../../../redux/hooks';
 import {
@@ -17,12 +17,12 @@ import './AdminDashboard.css';
 type ActiveTab = 'overview' | 'recipes' | 'ingredients' | 'conversions' | 'users' | 'analytics';
 
 const TABS: { key: ActiveTab; label: string; icon: string }[] = [
-  { key: 'overview',     label: 'Overview',     icon: '/src/assets/icons/rank-chart.png' },
-  { key: 'recipes',      label: 'Recipes',      icon: '/src/assets/icons/page-about.png' },
-  { key: 'ingredients',  label: 'Ingredients',  icon: '/src/assets/icons/calc-spoon.png' },
-  { key: 'conversions',  label: 'Conversions',  icon: '/src/assets/icons/action-refresh.png' },
-  { key: 'users',        label: 'Users',        icon: '/src/assets/icons/profile-avatar.png' },
-  { key: 'analytics',    label: 'Analytics',    icon: '/src/assets/icons/rank-chart.png' },
+  { key: 'overview',    label: 'Overview',    icon: '/src/assets/icons/rank-chart.png' },
+  { key: 'recipes',     label: 'Recipes',     icon: '/src/assets/icons/page-about.png' },
+  { key: 'ingredients', label: 'Ingredients', icon: '/src/assets/icons/calc-spoon.png' },
+  { key: 'conversions', label: 'Conversions', icon: '/src/assets/icons/action-refresh.png' },
+  { key: 'users',       label: 'Users',       icon: '/src/assets/icons/profile-avatar.png' },
+  { key: 'analytics',  label: 'Analytics',   icon: '/src/assets/icons/rank-chart.png' },
 ];
 
 export default function AdminDashboard() {
@@ -61,13 +61,13 @@ export default function AdminDashboard() {
     <div className="ad-page">
       <div className="ad-hero">
         <div className="ad-hero-inner">
-          <div className="ad-breadcrumb" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-            <img src="/src/assets/icons/nav-admin.png" alt="" style={{ width: '40px', height: '40px', objectFit: 'contain', verticalAlign: 'middle' }} />
-            {' '}Admin Panel
+          <div className="ad-breadcrumb">
+            <img src="/src/assets/icons/nav-admin.png" alt="" className="ad-breadcrumb-icon" />
+            Admin Panel
           </div>
-          <h1 className="ad-welcome" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+          <h1 className="ad-welcome">
             Welcome back, <span className="ad-name">{user?.name}</span>!{' '}
-            <img src="/src/assets/icons/rank-crown.png" alt="" style={{ width: '60px', height: '60px', objectFit: 'contain', verticalAlign: 'middle' }} />
+            <img src="/src/assets/icons/rank-crown.png" alt="" className="ad-crown-icon" />
           </h1>
           <p className="ad-subtitle">Manage your Sweet&amp;Treat platform</p>
           <div className="ad-tabs">
@@ -76,10 +76,9 @@ export default function AdminDashboard() {
                 key={key}
                 onClick={() => setActiveTab(key)}
                 className={`ad-tab ${activeTab === key ? 'ad-tab--active' : ''}`}
-                style={{ display: 'flex', alignItems: 'center', gap: '4px' }}
               >
-                <img src={icon} alt="" style={{ width: '25px', height: '25px', objectFit: 'contain', verticalAlign: 'middle' }} />
-                {' '}{label}
+                <img src={icon} alt="" className="ad-tab-icon" />
+                {label}
               </button>
             ))}
           </div>
@@ -91,29 +90,29 @@ export default function AdminDashboard() {
         {activeTab === 'overview' && (
           <div>
             <div className="ad-stats-grid">
-              <StatsCard icon="/src/assets/icons/page-about.png"      value={stats.totalRecipes}       label="Total Recipes" color="#d4547a" />
-              <StatsCard icon="/src/assets/icons/profile-trophy.png"  value={stats.topCategory}        label="Top Category"  color="#c4894a" />
-              <StatsCard icon="/src/assets/icons/rank-star.png"        value={stats.avgRating}          label="Avg Rating"    color="#f59e0b" />
-              <StatsCard icon="/src/assets/icons/action-refresh.png"  value={conversions.length || '—'} label="Conversions"  color="#7c3aed" />
+              <StatsCard icon="/src/assets/icons/page-about.png"     value={stats.totalRecipes}        label="Total Recipes" color="#d4547a" />
+              <StatsCard icon="/src/assets/icons/profile-trophy.png" value={stats.topCategory}         label="Top Category"  color="#c4894a" />
+              <StatsCard icon="/src/assets/icons/rank-star.png"      value={stats.avgRating}           label="Avg Rating"    color="#f59e0b" />
+              <StatsCard icon="/src/assets/icons/action-refresh.png" value={conversions.length || '—'} label="Conversions"   color="#7c3aed" />
             </div>
             <div className="ad-card">
               <h3 className="ad-card-title">Quick Actions</h3>
               <div className="ad-quick-actions">
-                <Link to="/recipes/create" className="ad-btn ad-btn--primary" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                  <img src="/src/assets/icons/action-add.png" alt="" style={{ width: '20px', height: '20px', objectFit: 'contain', verticalAlign: 'middle' }} />
-                  {' '}Add New Recipe
+                <Link to="/recipes/create" className="ad-btn ad-btn--primary">
+                  <img src="/src/assets/icons/action-add.png" alt="" className="ad-action-icon" />
+                  Add New Recipe
                 </Link>
-                <button onClick={() => setActiveTab('ingredients')} className="ad-btn ad-btn--outline" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                  <img src="/src/assets/icons/tip-salt.png" alt="" style={{ width: '25px', height: '25px', objectFit: 'contain', verticalAlign: 'middle' }} />
-                  {' '}Manage Ingredients
+                <button onClick={() => setActiveTab('ingredients')} className="ad-btn ad-btn--outline">
+                  <img src="/src/assets/icons/tip-salt.png" alt="" className="ad-action-icon--lg" />
+                  Manage Ingredients
                 </button>
-                <button onClick={() => setActiveTab('analytics')} className="ad-btn ad-btn--outline" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                  <img src="/src/assets/icons/rank-chart.png" alt="" style={{ width: '25px', height: '25px', objectFit: 'contain', verticalAlign: 'middle' }} />
-                  {' '}View Analytics
+                <button onClick={() => setActiveTab('analytics')} className="ad-btn ad-btn--outline">
+                  <img src="/src/assets/icons/rank-chart.png" alt="" className="ad-action-icon--lg" />
+                  View Analytics
                 </button>
-                <Link to="/admin/reply" className="ad-btn ad-btn--outline" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                  <img src="/src/assets/icons/page-contact.png" alt="" style={{ width: '25px', height: '25px', objectFit: 'contain', verticalAlign: 'middle' }} />
-                  {' '}Reply to Contact
+                <Link to="/admin/reply" className="ad-btn ad-btn--outline">
+                  <img src="/src/assets/icons/page-contact.png" alt="" className="ad-action-icon--lg" />
+                  Reply to Contact
                 </Link>
               </div>
             </div>
@@ -124,14 +123,14 @@ export default function AdminDashboard() {
 
         {activeTab === 'ingredients' && (
           <div className="ad-card">
-            <h3 className="ad-card-title" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-              Manage Ingredients{' '}
-              <img src="/src/assets/icons/tip-salt.png" alt="" style={{ width: '25px', height: '25px', objectFit: 'contain', verticalAlign: 'middle' }} />
+            <h3 className="ad-card-title ad-card-title--row">
+              Manage Ingredients
+              <img src="/src/assets/icons/tip-salt.png" alt="" className="ad-action-icon--lg" />
             </h3>
             <p className="ad-card-desc">Add, edit, or remove ingredients from the system.</p>
-            <Link to="/admin/ingredients" className="ad-btn ad-btn--primary" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-              <img src="/src/assets/icons/tip-salt.png" alt="" style={{ width: '25px', height: '25px', objectFit: 'contain', verticalAlign: 'middle' }} />
-              {' '}Go to Ingredients Manager
+            <Link to="/admin/ingredients" className="ad-btn ad-btn--primary">
+              <img src="/src/assets/icons/tip-salt.png" alt="" className="ad-action-icon--lg" />
+              Go to Ingredients Manager
             </Link>
           </div>
         )}

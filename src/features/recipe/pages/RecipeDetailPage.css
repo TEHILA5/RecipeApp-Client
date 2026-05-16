@@ -24,7 +24,6 @@
 
 .rdp-sep { margin: 0 8px; }
 
-/* Not found */
 .rdp-not-found {
   min-height: 60vh;
   display: flex;
@@ -36,7 +35,12 @@
   text-align: center;
 }
 
-.rdp-not-found-icon { font-size: 64px; margin-bottom: 16px; }
+.rdp-not-found-icon {
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+  margin-bottom: 16px;
+}
 
 .rdp-not-found-title {
   font-family: 'Dancing Script', cursive;

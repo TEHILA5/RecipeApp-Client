@@ -54,6 +54,21 @@
   text-align: center;
 }
 
+.visual-emoji-img {
+  width: 70px;
+  height: 70px;
+  object-fit: contain;
+  place-self: center;
+}
+
+.visual-hero-img {
+  width: 70px;
+  height: 70px;
+  object-fit: contain;
+  display: block;
+  margin: 0 auto;
+}
+
 .login-form-wrapper {
   padding: 60px 50px;
   display: flex;
@@ -81,6 +96,12 @@
 }
 
 .form-logo .logo-emoji { font-size: 1.8rem; }
+
+.form-logo-img {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+}
 
 .form-title {
   font-size: 1.8rem;

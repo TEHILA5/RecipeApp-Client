@@ -33,13 +33,15 @@ export default function IngredientManagePage() {
     <div className="ingredient-page">
       <div className="ingredient-header">
         <div className="ingredient-header-inner">
-          <div className="header-eyebrow" style={{ display: 'flex', alignItems: 'center', gap: '4px', }}>
-            <img src="/src/assets/icons/nav-admin.png" alt="" style={{ width: '40px', height: '40px', objectFit: 'contain', verticalAlign: 'middle' }} />
-            {' '}Admin → Ingredients</div>
-          <h1 style={{ display: 'flex', alignItems: 'center', gap: '4px', }}> Manage 
-            <span>Ingredients</span> 
-            <img src="/src/assets/icons/calc-spoon.png" alt="Ingredient" style={{ width: '30px', height: '30px', objectFit: 'contain' }} />
-            </h1>
+          <div className="header-eyebrow">
+            <img src="/src/assets/icons/nav-admin.png" alt="" className="header-eyebrow-icon" />
+            Admin → Ingredients
+          </div>
+          <h1>
+            Manage
+            <span>Ingredients</span>
+            <img src="/src/assets/icons/calc-spoon.png" alt="Ingredient" className="header-title-icon" />
+          </h1>
           <p>{ingredients.length} ingredients in the system</p>
         </div>
       </div>
@@ -54,33 +56,36 @@ export default function IngredientManagePage() {
               placeholder="Search ingredients..."
             />
             <span>
-              <img src="/src/assets/icons/search-icon.png" alt="Search" style={{ width: '30px', height: '30px', objectFit: 'contain' }} />
+              <img src="/src/assets/icons/search-icon.png" alt="Search" className="search-icon" />
             </span>
           </div>
           <button
             className={`add-btn ${showAddForm ? 'cancel' : ''}`}
             onClick={() => setShowAddForm(!showAddForm)}
           >
-            {showAddForm ?
-            <div style={{ display: 'flex', alignItems: 'center', gap: '4px', }}>
-            <img src="/src/assets/icons/cancel-x.png" alt="" style={{ width: '30px', height: '30px', objectFit: 'contain', verticalAlign: 'middle' }} />
-            {' '}Cancel </div>
-             :
-             <div style={{ display: 'flex', alignItems: 'center', gap: '4px', }}>
-            <img src="/src/assets/icons/action-add.png" alt="" style={{ width: '30px', height: '30px', objectFit: 'contain', verticalAlign: 'middle' }} />
-            {' '}Add Ingredient</div>
-            }
+            {showAddForm ? (
+              <div className="btn-inner">
+                <img src="/src/assets/icons/cancel-x.png" alt="" className="btn-icon" />
+                Cancel
+              </div>
+            ) : (
+              <div className="btn-inner">
+                <img src="/src/assets/icons/action-add.png" alt="" className="btn-icon" />
+                Add Ingredient
+              </div>
+            )}
           </button>
         </div>
 
         {showAddForm && (
           <div className="add-form-card">
             <p className="add-form-title">
-            <div style={{ display: 'flex', alignItems: 'center', gap: '4px', }}>
-            <img src="/src/assets/icons/action-new.png" alt="" style={{ width: '30px', height: '30px', objectFit: 'contain', verticalAlign: 'middle' }} />
-            {' '}New Ingredient</div>
+              <div className="btn-inner">
+                <img src="/src/assets/icons/action-new.png" alt="" className="btn-icon" />
+                New Ingredient
+              </div>
             </p>
-            {createError && <div className="save-error">Failed to create ingredient</div>}
+            {createError ? <div className="save-error">Failed to create ingredient</div> : null}
             <IngredientForm
               onSave={handleCreate}
               onCancel={() => setShowAddForm(false)}
@@ -110,7 +115,9 @@ export default function IngredientManagePage() {
 
             {filtered.length === 0 && (
               <div className="empty-state">
-                <div><img src="/src/assets/icons/calc-spoon.png" alt="No ingredients" style={{ width: '20px', height: '20px', objectFit: 'contain' }} /></div>
+                <div>
+                  <img src="/src/assets/icons/calc-spoon.png" alt="No ingredients" className="empty-state-icon" />
+                </div>
                 <p>No ingredients match your search</p>
               </div>
             )}

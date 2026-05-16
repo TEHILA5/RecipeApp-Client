@@ -36,12 +36,12 @@ export default function RecipeModeration() {
               className="rm-search"
             />
             <span className="rm-search-icon">
-              <img src="/src/assets/icons/search-icon.png" alt="Search" style={{ width: '28px', height: '28px', objectFit: 'contain' }} />
+              <img src="/src/assets/icons/search-icon.png" alt="Search" className="rm-icon-md" />
             </span>
           </div>
-          <Link to="/recipes/create" className="rm-add-btn" style={{ display: 'flex', alignItems: 'center', gap: '4px', }}>
-            <img src="/src/assets/icons/action-add.png" alt="" style={{ width: '18px', height: '18px', objectFit: 'contain', verticalAlign: 'middle' }} />
-            {' '}Add Recipe
+          <Link to="/recipes/create" className="rm-add-btn">
+            <img src="/src/assets/icons/action-add.png" alt="" className="rm-icon-sm" />
+            Add Recipe
           </Link>
         </div>
       </div>
@@ -65,9 +65,12 @@ export default function RecipeModeration() {
                 const categoryImg = CATEGORY_IMAGES[recipe.category];
                 const isDeleting = deletingId === recipe.id && deleting;
                 return (
-                  <tr key={recipe.id} className={`rm-row ${idx % 2 === 0 ? 'rm-row-even' : 'rm-row-odd'} ${isDeleting ? 'rm-row-deleting' : ''}`}>
+                  <tr
+                    key={recipe.id}
+                    className={`rm-row ${idx % 2 === 0 ? 'rm-row-even' : 'rm-row-odd'} ${isDeleting ? 'rm-row-deleting' : ''}`}
+                  >
                     <td className="rm-td">
-                      <div className="rm-recipe-info" >
+                      <div className="rm-recipe-info">
                         <div className="rm-thumb">
                           {recipe.arrImage
                             ? <img src={recipe.arrImage} alt="" className="rm-thumb-img" />
@@ -83,32 +86,34 @@ export default function RecipeModeration() {
                       </div>
                     </td>
                     <td className="rm-td">
-                      <span className="rm-category-badge" style={{ display: 'flex', alignItems: 'left', gap: '4px', }}>
-                        {recipe.category} 
-                      </span>
+                      <span className="rm-category-badge">{recipe.category}</span>
                     </td>
                     <td className="rm-td rm-rating">
-                      <img src="/src/assets/icons/rank-star.png" alt="Rating" style={{ width: '20px', height: '20px', objectFit: 'contain', verticalAlign: 'middle' }} />
-                      {' '}{recipe.averageRating?.toFixed(1) ?? '—'}
+                      <img src="/src/assets/icons/rank-star.png" alt="Rating" className="rm-icon-sm" />
+                      {recipe.averageRating?.toFixed(1) ?? '—'}
                     </td>
                     <td className="rm-td rm-time">
-                      <img src="/src/assets/icons/meta-time.png" alt="Time" style={{ width: '20px', height: '20px', objectFit: 'contain', verticalAlign: 'middle' }} />
-                      {' '}{recipe.totalTime}m
+                      <img src="/src/assets/icons/meta-time.png" alt="Time" className="rm-icon-sm" />
+                      {recipe.totalTime}m
                     </td>
                     <td className="rm-td">
                       <div className="rm-actions">
-                        <Link to={`/recipes/${recipe.id}/edit`} className="rm-edit-btn" style={{ display: 'flex', alignItems: 'center', gap: '4px', }}>
-                            <img src="/src/assets/icons/profile-edit.png" alt="" style={{ width: '20px', height: '20px', objectFit: 'contain', verticalAlign: 'middle' }} />
-                            {' '}Edit
-                          </Link>
-                        <button onClick={() => handleDelete(recipe.id)} disabled={isDeleting} className="rm-delete-btn" style={{ display: 'flex', alignItems: 'center', gap: '4px', }}>
-                            {isDeleting ? '...' : (
-                              <>
-                                <img src="/src/assets/icons/action-delete.png" alt="" style={{ width: '20px', height: '20px', objectFit: 'contain', verticalAlign: 'middle' }} />
-                                {' '}Delete
-                              </>
-                            )}
-                          </button>
+                        <Link to={`/recipes/${recipe.id}/edit`} className="rm-edit-btn">
+                          <img src="/src/assets/icons/profile-edit.png" alt="" className="rm-icon-sm" />
+                          Edit
+                        </Link>
+                        <button
+                          onClick={() => handleDelete(recipe.id)}
+                          disabled={isDeleting}
+                          className="rm-delete-btn"
+                        >
+                          {isDeleting ? '...' : (
+                            <>
+                              <img src="/src/assets/icons/action-delete.png" alt="" className="rm-icon-sm" />
+                              Delete
+                            </>
+                          )}
+                        </button>
                       </div>
                     </td>
                   </tr>

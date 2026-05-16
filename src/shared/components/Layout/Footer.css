@@ -105,6 +105,12 @@
   box-shadow: 0 4px 12px rgba(232, 121, 154, 0.4);
 }
 
+.social-icon-img {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+}
+
 .footer-bottom {
   padding-top: 24px;
   text-align: center;
@@ -113,6 +119,17 @@
 .copyright {
   font-size: 0.85rem;
   color: var(--light);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+  text-align: center;
+}
+
+.footer-heart-icon {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
 }
 
 @media (max-width: 768px) {

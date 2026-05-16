@@ -1,0 +1,83 @@
+.tools-legend {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 32px;
+  justify-content: center;
+}
+
+.tools-legend-badge {
+  padding: 4px 14px;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.tools-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.tool-card {
+  background: white;
+  border-radius: 20px;
+  padding: 24px;
+  box-shadow: 0 4px 16px rgba(212, 84, 122, 0.07);
+  border: 1px solid #fce7f3;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.tool-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.tool-icon {
+  width: 44px;
+  height: 44px;
+  object-fit: contain;
+}
+
+.tool-category-badge {
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.tool-name {
+  font-family: 'Nunito', sans-serif;
+  font-weight: 800;
+  color: #1f2937;
+  font-size: 1rem;
+  margin: 0;
+}
+
+.tool-why {
+  color: #6b7280;
+  font-size: 0.88rem;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.tool-tip {
+  background: #fdf2f8;
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 0.82rem;
+  color: #d4547a;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.tool-tip-icon {
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
+}

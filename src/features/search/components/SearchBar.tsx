@@ -19,7 +19,7 @@ export default function SearchBar({ value, onChange, placeholder = 'Search...' }
         className="search-bar-input"
       />
       <span className="search-bar-icon">
-        <img src="/src/assets/icons/search-icon.png" alt="Search" style={{ width: '30px', height: '30px', objectFit: 'contain', verticalAlign: 'middle' }}/>
+        <img src="/src/assets/icons/search-icon.png" alt="Search" className="search-bar-icon-img" />
       </span>
     </div>
   );

@@ -18,3 +18,9 @@
   background: #e8799a;
   color: white;
 }
+
+.print-recipe-icon {
+  width: 35px;
+  height: 35px;
+  object-fit: contain;
+}

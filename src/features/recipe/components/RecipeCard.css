@@ -1,0 +1,96 @@
+.recipe-card {
+  display: flex;
+  flex-direction: column;
+  border-radius: 18px;
+  background: white;
+  border: 1px solid #fce7f3;
+  overflow: hidden;
+  text-decoration: none;
+  color: inherit;
+  transition: box-shadow 0.2s, transform 0.2s;
+}
+
+.recipe-card:hover {
+  box-shadow: 0 8px 28px rgba(212, 84, 122, 0.13);
+  transform: translateY(-2px);
+}
+
+.card-img-wrap {
+  aspect-ratio: 4 / 3;
+  position: relative;
+  background: #fdf2f8;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.card-img-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.card-fallback-icon {
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
+}
+
+.card-badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+}
+
+.card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 16px;
+}
+
+.card-rating {
+  display: flex;
+  align-items: center;
+}
+
+.card-title {
+  font-family: 'Nunito', sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 0;
+}
+
+.card-desc {
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.82rem;
+  color: #9ca3af;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.card-meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 4px;
+}
+
+.meta-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #6b7280;
+}
+
+.meta-icon {
+  width: 16px;
+  height: 16px;
+  object-fit: contain;
+}

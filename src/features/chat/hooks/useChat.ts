@@ -1,6 +1,3 @@
-// ===============================================
-// useChat.ts — src/features/chat/hooks/useChat.ts
-// ===============================================
 import { useEffect, useRef, useState, useCallback } from 'react';
 import * as signalR from '@microsoft/signalr';
 
@@ -39,7 +36,6 @@ export function useChat(currentUserName: string) {
       .configureLogging(signalR.LogLevel.Warning)
       .build();
 
-    // ── Public ──
     connection.on('ReceivePublicMessage', (msg: Omit<ChatMessage, 'id'>) => {
       setPublicMessages((prev) => [...prev, { ...msg, id: crypto.randomUUID() }]);
       if (msg.sender !== currentUserName) {
@@ -47,9 +43,7 @@ export function useChat(currentUserName: string) {
       }
     });
 
-    // ── Private ──
     connection.on('ReceivePrivateMessage', (msg: Omit<ChatMessage, 'id'> & { recipient?: string }) => {
-      // קובע מי הצד השני מנקודת מבטי
       const otherUser = msg.sender === currentUserName
         ? (msg.recipient ?? '')
         : msg.sender;
@@ -60,18 +54,15 @@ export function useChat(currentUserName: string) {
         [key]: [...(prev[key] ?? []), { ...msg, id: crypto.randomUUID() }],
       }));
 
-      // ספירת הודעות שלא נקראו — רק אם הגיעו אלי
       if (msg.sender !== currentUserName) {
         setUnreadCounts((prev) => ({ ...prev, [key]: (prev[key] ?? 0) + 1 }));
       }
     });
 
-    // ── Online Users ──
     connection.on('UsersUpdated', (users: string[]) => {
       setOnlineUsers(users.filter((u) => u !== currentUserName));
     });
 
-    // ── Errors ──
     connection.on('ReceiveError', (msg: string) => {
       setError(msg);
       setTimeout(() => setError(null), 4000);
@@ -99,17 +90,14 @@ export function useChat(currentUserName: string) {
     await connectionRef.current.invoke('SendPrivateMessage', targetUser, message.trim());
   }, []);
 
-  // הודעות שיחה ספציפית
   const getConversation = useCallback((otherUser: string): ChatMessage[] => {
     return privateConversations[conversationKey(currentUserName, otherUser)] ?? [];
   }, [privateConversations, currentUserName]);
 
-  // מסמן שיחה כנקראה
   const markAsRead = useCallback((key: string) => {
     setUnreadCounts((prev) => { const n = { ...prev }; delete n[key]; return n; });
   }, []);
 
-  // כמה הודעות שלא נקראו משיחה ספציפית
   const getUnread = useCallback((otherUser: string): number => {
     return unreadCounts[conversationKey(currentUserName, otherUser)] ?? 0;
   }, [unreadCounts, currentUserName]);

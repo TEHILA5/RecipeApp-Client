@@ -1,5 +1,6 @@
 import { StaticPage, Section } from './StaticPageHelpers';
 import pageIcon from '../../../assets/icons/page-privacy.png';
+import './PrivacyPage.css';
 
 export default function PrivacyPage() {
   return (

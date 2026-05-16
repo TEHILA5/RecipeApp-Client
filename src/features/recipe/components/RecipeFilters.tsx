@@ -2,6 +2,7 @@ import { useState, useRef } from 'react';
 import { useClickOutside } from '../../../shared/hooks/useClickOutside';
 import type { RecipeCategory, DifficultyLevel } from '../types/recipe.types';
 import { CATEGORY_IMAGES } from '../types/recipe.types';
+import './RecipeFilters.css';
 
 import filtersIcon  from '../../../assets/icons/filters-icon.png';
 import levelEasy    from '../../../assets/icons/meta-level-easy.png';
@@ -75,7 +76,7 @@ function CategoryChip({ value, label, active, onClick }: {
   return (
     <button onClick={onClick} className={`filter-chip ${active ? 'active' : ''}`}>
       {img
-        ? <img src={img} alt={label} style={{ width: '74.4px', height: '90.4px', objectFit: 'cover', overflow: 'hidden', display: 'block' }} />
+        ? <img src={img} alt={label} className="category-chip-img" />
         : label
       }
     </button>
@@ -107,7 +108,7 @@ export default function RecipeFilters({ filters, onFilterChange, onClear }: Reci
   return (
     <div className="recipe-filters">
       <button className="filters-toggle" onClick={() => setIsExpanded(!isExpanded)}>
-        <img src={filtersIcon} alt="Filters" style={{ width: '18px', height: '18px', objectFit: 'contain', verticalAlign: 'middle', marginRight: '6px' }} />
+        <img src={filtersIcon} alt="Filters" className="filters-toggle-icon" />
         <span>Filters</span>
         {activeCount > 0 && <span className="filter-count">{activeCount}</span>}
         <span className={`toggle-icon ${isExpanded ? 'expanded' : ''}`}>▼</span>
@@ -140,7 +141,7 @@ export default function RecipeFilters({ filters, onFilterChange, onClear }: Reci
                 onClick={() => setLevel(value)}
                 className={`filter-chip ${filters.level === value ? 'active' : ''}`}
               >
-                <img src={icon} alt={label} style={{ width: '22px', height: '22px', objectFit: 'contain', verticalAlign: 'middle', marginRight: '6px' }} />
+                <img src={icon} alt={label} className="level-chip-icon" />
                 {label}
               </button>
             ))}

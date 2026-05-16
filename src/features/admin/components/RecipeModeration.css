@@ -5,7 +5,6 @@
   overflow: hidden;
 }
 
-/* Header */
 .rm-header {
   padding: 20px 24px;
   border-bottom: 1px solid #fce7f3;
@@ -28,7 +27,6 @@
   align-items: center;
 }
 
-/* Search */
 .rm-search-wrap {
   position: relative;
 }
@@ -51,7 +49,6 @@
   pointer-events: none;
 }
 
-/* Add button */
 .rm-add-btn {
   padding: 9px 20px;
   border-radius: 999px;
@@ -62,9 +59,11 @@
   font-weight: 700;
   font-size: 0.85rem;
   white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
 
-/* Loading */
 .rm-loading {
   text-align: center;
   padding: 60px;
@@ -85,7 +84,6 @@
   to { transform: rotate(360deg); }
 }
 
-/* Table */
 .rm-table-wrap {
   overflow-x: auto;
 }
@@ -121,7 +119,6 @@
 .rm-row-odd  { background: #fffbfd; }
 .rm-row-deleting { opacity: 0.5; }
 
-/* Recipe cell */
 .rm-recipe-info {
   display: flex;
   align-items: center;
@@ -161,7 +158,6 @@
   color: #9ca3af;
 }
 
-/* Category badge */
 .rm-category-badge {
   padding: 4px 12px;
   border-radius: 999px;
@@ -171,19 +167,23 @@
   color: #d4547a;
 }
 
-/* Rating & time */
 .rm-rating {
   font-size: 0.85rem;
   color: #f59e0b;
   font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
 
 .rm-time {
   font-size: 0.85rem;
   color: #6b7280;
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
 
-/* Action buttons */
 .rm-actions {
   display: flex;
   gap: 8px;
@@ -199,6 +199,9 @@
   font-family: 'Nunito', sans-serif;
   font-weight: 700;
   font-size: 0.78rem;
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
 
 .rm-delete-btn {
@@ -211,15 +214,30 @@
   font-weight: 700;
   font-size: 0.78rem;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
 
 .rm-delete-btn:disabled {
   cursor: not-allowed;
 }
 
-/* Empty state */
 .rm-empty {
   text-align: center;
   padding: 40px;
   color: #9ca3af;
+}
+
+.rm-icon-sm {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+  vertical-align: middle;
+}
+
+.rm-icon-md {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
 }

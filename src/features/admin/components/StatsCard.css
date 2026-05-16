@@ -3,6 +3,12 @@
   margin-bottom: 12px;
 }
 
+.sc-icon {
+  width: 2em;
+  height: 2em;
+  object-fit: contain;
+}
+
 .sc-value {
   font-family: 'Dancing Script', cursive;
   font-size: 2rem;

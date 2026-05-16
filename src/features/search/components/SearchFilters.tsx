@@ -70,8 +70,8 @@ export default function SearchFilters({
               className={`category-chip ${active ? 'active' : ''}`}
             >
               {img
-                ? <img src={img} alt={label} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
-                : <span style={{ fontSize: '0.85rem' }}>{label}</span>
+                ? <img src={img} alt={label} className="category-chip__img" />
+                : <span className="category-chip__label">{label}</span>
               }
             </button>
           );
@@ -107,7 +107,8 @@ export default function SearchFilters({
         <div className="ingredient-tags">
           {ingredientList.map((ing) => (
             <span key={ing} className="ingredient-tag">
-              <img src="/src/assets/icons/calc-spoon.png" alt={ing} style={{ width: '20px', height: '20px', objectFit: 'contain', verticalAlign: 'middle' }} /> {ing}
+              <img src="/src/assets/icons/calc-spoon.png" alt={ing} className="ingredient-tag__icon" />
+              {ing}
               <button onClick={() => onRemoveIngredient(ing)}>×</button>
             </span>
           ))}

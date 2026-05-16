@@ -27,9 +27,10 @@ import bookmarkOff   from '../../../assets/icons/footer-heart.png';
 import recipeBookIcon from '../../../assets/icons/recipe-book.png';
 import editIcon      from '../../../assets/icons/profile-edit.png';
 import deleteIcon    from '../../../assets/icons/action-delete.png';
-import saveIcon      from '../../../assets/icons/profile-save.png'; 
+import saveIcon      from '../../../assets/icons/profile-save.png';
 import RecipeVoiceReader, { RecipeIngredientDto } from './Recipevoicereader';
 import RecipePrintButton from './RecipePrintButton';
+
 const LEVEL_ICONS: Record<number, string> = {
   1: levelEasyIcon,
   2: levelMedIcon,
@@ -134,7 +135,6 @@ export default function RecipeDetail({ recipe, onCommentAdded }: RecipeDetailPro
   return (
     <div className="rd-wrap">
 
-      {/* Hero */}
       <div className="rd-hero">
         <div className="rd-img-wrap">
           {recipe.arrImage
@@ -178,7 +178,6 @@ export default function RecipeDetail({ recipe, onCommentAdded }: RecipeDetailPro
         </div>
         <RecipePrintButton recipe={recipe} />
 
-        {/* Meta bar */}
         <div className="rd-meta-bar">
           <div className="rd-meta-item">
             <img src={timeIcon} alt="Prep time" style={{ width: '20px', height: '20px', objectFit: 'contain' }} />
@@ -210,7 +209,6 @@ export default function RecipeDetail({ recipe, onCommentAdded }: RecipeDetailPro
         <div className="rd-desc">{recipe.description}</div>
       </div>
 
-      {/* Tabs */}
       <div className="rd-tabs-wrap">
         <div className="rd-tabs">
           {TABS.map(({ key, label }) => (
@@ -228,7 +226,6 @@ export default function RecipeDetail({ recipe, onCommentAdded }: RecipeDetailPro
             !recipe.instructions
               ? <p className="rd-empty">No instructions available.</p>
               : <>
-                {/* ← Add voice reader here */}
                 <RecipeVoiceReader
                   recipe={{
                     name: recipe.name,
@@ -236,8 +233,7 @@ export default function RecipeDetail({ recipe, onCommentAdded }: RecipeDetailPro
                     recipeIngredients: (recipe.ingredients ?? []) as RecipeIngredientDto[],
                   }}
                 />
-                
-               <div className="rd-steps">
+                <div className="rd-steps">
                   {recipe.instructions.split('\n').filter(Boolean).map((step, i) => (
                     <div key={i} className="rd-step">
                       <div className="rd-step-num">{i + 1}</div>

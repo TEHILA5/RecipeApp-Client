@@ -35,12 +35,22 @@
   border-bottom: 2px solid transparent;
   margin-bottom: -2px;
   transition: all 0.2s;
+  display: flex;
+  align-items: center;
 }
 
 .profile-tab.active {
   background: white;
   color: #d4547a;
   border-bottom-color: white;
+}
+
+.profile-tab-icon {
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
+  margin-right: 6px;
+  vertical-align: middle;
 }
 
 .profile-page-body {
@@ -64,6 +74,16 @@
   font-size: 1.8rem;
   color: #d4547a;
   margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+}
+
+.section-heading-icon {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+  margin-right: 8px;
+  vertical-align: middle;
 }
 
 .stats-grid {
@@ -83,6 +103,12 @@
 .stat-emoji {
   font-size: 2rem;
   margin-bottom: 8px;
+}
+
+.stat-icon {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
 }
 
 .stat-value {
@@ -150,6 +176,16 @@
   font-family: 'Nunito', sans-serif;
   font-weight: 700;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.delete-btn-icon {
+  width: 25px;
+  height: 25px;
+  object-fit: contain;
+  vertical-align: middle;
 }
 
 /* Modal */

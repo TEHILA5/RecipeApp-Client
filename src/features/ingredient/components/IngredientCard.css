@@ -26,6 +26,13 @@
   font-size: 1.1rem;
 }
 
+.ingredient-name .ingredient-icon {
+  width: 30px;
+  height: 30px;
+  object-fit: contain;
+  vertical-align: middle;
+}
+
 .ingredient-name span:last-child {
   font-weight: 600;
   color: #1f2937;
@@ -33,6 +40,9 @@
 }
 
 .edit-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
   padding: 6px 16px;
   border-radius: 999px;
   border: 2px solid #fce7f3;
@@ -47,4 +57,11 @@
 
 .edit-btn:hover {
   background: #fce7f3;
+}
+
+.edit-btn-icon {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+  vertical-align: middle;
 }

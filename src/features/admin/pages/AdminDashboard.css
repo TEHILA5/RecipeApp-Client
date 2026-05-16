@@ -19,6 +19,9 @@
 }
 
 .ad-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 4px;
   margin-bottom: 8px;
   font-size: 0.78rem;
   font-weight: 700;
@@ -27,11 +30,28 @@
   opacity: 0.7;
 }
 
+.ad-breadcrumb-icon {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+  vertical-align: middle;
+}
+
 .ad-welcome {
+  display: flex;
+  align-items: center;
+  gap: 4px;
   font-family: 'Dancing Script', cursive;
   font-size: clamp(2rem, 3.5vw, 2.8rem);
   margin-bottom: 8px;
   color: white;
+}
+
+.ad-crown-icon {
+  width: 60px;
+  height: 60px;
+  object-fit: contain;
+  vertical-align: middle;
 }
 
 .ad-name { color: #e8799a; }
@@ -50,6 +70,9 @@
 }
 
 .ad-tab {
+  display: flex;
+  align-items: center;
+  gap: 4px;
   padding: 12px 20px;
   border-radius: 12px 12px 0 0;
   border: none;
@@ -68,6 +91,13 @@
   background: white;
   color: #d4547a;
   border-bottom: 2px solid white;
+}
+
+.ad-tab-icon {
+  width: 25px;
+  height: 25px;
+  object-fit: contain;
+  vertical-align: middle;
 }
 
 /* ── Content ── */
@@ -100,6 +130,12 @@
   margin-bottom: 20px;
 }
 
+.ad-card-title--row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
 .ad-card-desc {
   color: #9ca3af;
   margin-bottom: 24px;
@@ -113,6 +149,9 @@
 }
 
 .ad-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
   padding: 12px 24px;
   border-radius: 999px;
   font-family: 'Nunito', sans-serif;
@@ -120,7 +159,6 @@
   font-size: 0.9rem;
   cursor: pointer;
   text-decoration: none;
-  display: inline-block;
 }
 
 .ad-btn--primary {
@@ -134,6 +172,20 @@
   border: 2px solid #fce7f3;
   background: white;
   color: #d4547a;
+}
+
+.ad-action-icon {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+  vertical-align: middle;
+}
+
+.ad-action-icon--lg {
+  width: 25px;
+  height: 25px;
+  object-fit: contain;
+  vertical-align: middle;
 }
 
 /* ════════════════════════════════════════
@@ -373,12 +425,18 @@
 }
 
 .cv-title {
+  display: flex;
+  align-items: center;
+  gap: 4px;
   font-family: 'Dancing Script', cursive;
   font-size: 1.8rem;
   color: #7c3aed;
 }
 
 .cv-add-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
   padding: 10px 24px;
   border-radius: 999px;
   border: none;
@@ -518,9 +576,19 @@
 
 .cv-toggle--on .cv-toggle-thumb { left: 25px; }
 
-.cv-toggle-label { font-size: 0.85rem; font-weight: 700; color: #6b7280; }
+.cv-toggle-label {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #6b7280;
+}
 
 .cv-preview {
+  display: flex;
+  align-items: center;
+  gap: 6px;
   background: #f5f3ff;
   border-radius: 12px;
   padding: 12px 16px;
@@ -533,6 +601,9 @@
 .cv-error { color: #ef4444; font-size: 0.85rem; margin-bottom: 12px; }
 
 .cv-save-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
   padding: 12px 32px;
   border-radius: 999px;
   border: none;
@@ -583,8 +654,20 @@
   transform: translateY(-50%);
 }
 
+.cv-search-img {
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
+}
+
 .cv-state { text-align: center; padding: 60px; color: #9ca3af; }
 .cv-state-icon { font-size: 48px; margin-bottom: 12px; }
+
+.cv-state-img {
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
+}
 
 .cv-overflow { overflow-x: auto; }
 
@@ -627,6 +710,9 @@
 }
 
 .cv-direction-badge {
+  display: flex;
+  align-items: center;
+  gap: 4px;
   font-size: 0.8rem;
   font-weight: 700;
   padding: 3px 10px;
@@ -640,6 +726,9 @@
 .cv-actions { display: flex; gap: 8px; }
 
 .cv-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
   padding: 6px 16px;
   border-radius: 999px;
   font-family: 'Nunito', sans-serif;
@@ -652,3 +741,24 @@
 .cv-btn--cancel { border: 2px solid #ede9fe; background: white; color: #7c3aed; }
 .cv-btn--edit { border: 2px solid #ede9fe; background: white; color: #7c3aed; }
 .cv-btn--delete { border: none; background: #fee2e2; color: #991b1b; }
+
+.cv-btn-icon {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+  vertical-align: middle;
+}
+
+.cv-title-icon {
+  width: 30px;
+  height: 30px;
+  object-fit: contain;
+  vertical-align: middle;
+}
+
+.cv-save-icon {
+  width: 25px;
+  height: 25px;
+  object-fit: contain;
+  vertical-align: middle;
+}

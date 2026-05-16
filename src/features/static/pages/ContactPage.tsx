@@ -37,9 +37,9 @@ export default function ContactPage() {
   };
 
   const validate = () => {
-    if (!form.name.trim())              return setErrorMsg('Please enter your name'), false;
-    if (!form.email.includes('@'))      return setErrorMsg('Please enter a valid email'), false;
-    if (!form.category)                 return setErrorMsg('Please select a category'), false;
+    if (!form.name.trim())               return setErrorMsg('Please enter your name'), false;
+    if (!form.email.includes('@'))       return setErrorMsg('Please enter a valid email'), false;
+    if (!form.category)                  return setErrorMsg('Please select a category'), false;
     if (form.message.trim().length < 10) return setErrorMsg('Please write at least 10 characters'), false;
     return true;
   };
@@ -59,7 +59,7 @@ export default function ContactPage() {
       <StaticPage icon={pageSuccessIcon} title="Message Sent!" subtitle="We'll get back to you soon">
         <div className="contact-success">
           <div className="contact-success-icon">
-            <img src={successEnvelope} alt="Message sent" style={{ width: '100px', height: '100px', objectFit: 'contain' }} />
+            <img src={successEnvelope} alt="Message sent" className="contact-success-envelope" />
           </div>
           <h2 className="contact-success-title">Got your message!</h2>
           <p className="contact-success-text">
@@ -76,7 +76,6 @@ export default function ContactPage() {
       <p className="contact-intro">Have a question, suggestion or issue? Send us a message.</p>
 
       <div className="contact-card">
-        {/* Name + Email */}
         <div className="contact-grid">
           <div>
             <label className="contact-label">Your Name *</label>
@@ -88,7 +87,6 @@ export default function ContactPage() {
           </div>
         </div>
 
-        {/* Category chips */}
         <div>
           <label className="contact-label">Category *</label>
           <div className="contact-categories">
@@ -104,7 +102,6 @@ export default function ContactPage() {
           </div>
         </div>
 
-        {/* Related recipe */}
         <div>
           <label className="contact-label">Related Recipe (optional)</label>
           <select className="contact-input" value={form.recipeName} onChange={(e) => updateField('recipeName', e.target.value)}>
@@ -113,14 +110,12 @@ export default function ContactPage() {
           </select>
         </div>
 
-        {/* Message */}
         <div>
           <label className="contact-label">Message *</label>
           <textarea className="contact-textarea" value={form.message} onChange={(e) => updateField('message', e.target.value)} />
           <div className="contact-counter">{form.message.length} characters</div>
         </div>
 
-        {/* Priority chips — icon uses .priority-icon class */}
         <div>
           <label className="contact-label">Priority</label>
           <div className="contact-urgency">

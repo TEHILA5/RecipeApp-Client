@@ -22,14 +22,18 @@ export default function EditProfile() {
 
   return (
     <div className="edit-profile-card">
-      <h2 style={{ display: 'flex', alignItems: 'center', gap: '4px', }}>
-        <img src="/src/assets/icons/profile-edit.png" alt="" style={{ width: '20px', height: '20px', objectFit: 'contain', verticalAlign: 'middle' }} />
-        {' '}Edit Profile
+      <h2 className="edit-profile-heading">
+        <img src="/src/assets/icons/profile-edit.png" alt="" className="edit-profile-heading__icon" />
+        Edit Profile
       </h2>
 
-      {saveSuccess && <Alert severity="success" sx={{ mb: 2, borderRadius: '12px' }} style={{ display: 'flex', alignItems: 'center', gap: '4px', }}><img src="/src/assets/icons/profile-success.png" alt="" style={{ width: '20px', height: '20px', objectFit: 'contain', verticalAlign: 'middle' }} />
-        {' '}Profile Profile updated successfully!</Alert>}
-      {saveError  && <Alert severity="error"   sx={{ mb: 2, borderRadius: '12px' }}>{saveError}</Alert>}
+      {saveSuccess && (
+        <Alert severity="success" sx={{ mb: 2, borderRadius: '12px' }} className="edit-profile-alert">
+          <img src="/src/assets/icons/profile-success.png" alt="" className="edit-profile-alert__icon" />
+          Profile updated successfully!
+        </Alert>
+      )}
+      {saveError && <Alert severity="error" sx={{ mb: 2, borderRadius: '12px' }}>{saveError}</Alert>}
 
       <form onSubmit={handleSubmit(handleSave)} className="edit-profile-form">
         <TextField
@@ -62,11 +66,11 @@ export default function EditProfile() {
           })}
         />
 
-        <button type="submit" disabled={saving} className={`save-btn ${saving ? 'saving' : ''}`} style={{ display: 'flex', alignItems: 'center', gap: '4px', }}>
+        <button type="submit" disabled={saving} className={`save-btn ${saving ? 'saving' : ''}`}>
           {saving ? 'Saving...' : (
             <>
-              <img src="/src/assets/icons/profile-save.png" alt="" style={{ width: '20px', height: '20px', objectFit: 'contain', verticalAlign: 'middle' }} />
-              {' '}Save Changes
+              <img src="/src/assets/icons/profile-save.png" alt="" className="save-btn__icon" />
+              Save Changes
             </>
           )}
         </button>

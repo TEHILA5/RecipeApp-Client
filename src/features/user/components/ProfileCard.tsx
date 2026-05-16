@@ -5,11 +5,11 @@ import { useUpdateMeMutation } from '../../../api/userApi';
 import type { UserDto, UserUpdateDto } from '../../../api/userApi';
 import './ProfileCard.css';
 
-import avatarIcon  from '../../../assets/icons/profile-avatar.png';
-import editIcon    from '../../../assets/icons/profile-edit.png';
-import successIcon from '../../../assets/icons/profile-success.png';
-import warningIcon from '../../../assets/icons/profile-warning.png';
-import saveIcon    from '../../../assets/icons/profile-save.png';
+import avatarIcon   from '../../../assets/icons/profile-avatar.png';
+import editIcon     from '../../../assets/icons/profile-edit.png';
+import successIcon  from '../../../assets/icons/profile-success.png';
+import warningIcon  from '../../../assets/icons/profile-warning.png';
+import saveIcon     from '../../../assets/icons/profile-save.png';
 import calendarIcon from '../../../assets/icons/profile-calendar.png';
 
 interface ProfileCardProps {
@@ -17,7 +17,7 @@ interface ProfileCardProps {
 }
 
 const FIELDS = [
-  { key: 'name',  label: 'Full Name',     type: 'text',  placeholder: 'Your name'     },
+  { key: 'name',  label: 'Full Name',     type: 'text',  placeholder: 'Your name'      },
   { key: 'email', label: 'Email Address', type: 'email', placeholder: 'your@email.com' },
   { key: 'phone', label: 'Phone Number',  type: 'tel',   placeholder: '050-000-0000'   },
 ] as const;
@@ -26,13 +26,13 @@ export default function ProfileCard({ user }: ProfileCardProps) {
   const dispatch = useAppDispatch();
   const [updateMe, { isLoading: saving }] = useUpdateMeMutation();
 
-  const [editing, setEditing]   = useState(false);
-  const [error, setError]       = useState('');
-  const [success, setSuccess]   = useState('');
-  const [form, setForm]         = useState<UserUpdateDto>({ name: user.name, email: user.email, phone: user.phone });
+  const [editing, setEditing] = useState(false);
+  const [error, setError]     = useState('');
+  const [success, setSuccess] = useState('');
+  const [form, setForm]       = useState<UserUpdateDto>({ name: user.name, email: user.email, phone: user.phone });
 
   const handleSave = async () => {
-    if (!form.name?.trim()) { setError('Name is required'); return; }
+    if (!form.name?.trim())  { setError('Name is required'); return; }
     if (!form.email?.trim()) { setError('Email is required'); return; }
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) { setError('Please enter a valid email address'); return; }
     if (form.phone && !/^[\d\-+() ]{7,15}$/.test(form.phone)) { setError('Please enter a valid phone number'); return; }
@@ -62,33 +62,33 @@ export default function ProfileCard({ user }: ProfileCardProps) {
   return (
     <div className="profile-card">
       <div className="profile-header">
-        <img src={avatarIcon} alt="Avatar" className="avatar" style={{ width: '56px', height: '56px', objectFit: 'contain' }} />
+        <img src={avatarIcon} alt="Avatar" className="avatar" />
         <div>
           <h2>{user.name}</h2>
           {joinDate && (
-            <p style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <img src={calendarIcon} alt="Member since" style={{ width: '14px', height: '14px', objectFit: 'contain' }} />
+            <p className="profile-join-date">
+              <img src={calendarIcon} alt="Member since" className="profile-join-date__icon" />
               Member since {joinDate}
             </p>
           )}
         </div>
         {!editing && (
-          <button className="edit-btn" onClick={() => setEditing(true)} style={{ display: 'flex', alignItems: 'center', gap: '4px', }}>
-            <img src={editIcon} alt="Edit" style={{ width: '16px', height: '16px', objectFit: 'contain', marginRight: '6px', verticalAlign: 'middle' }} />
+          <button className="edit-btn" onClick={() => setEditing(true)}>
+            <img src={editIcon} alt="Edit" className="edit-btn__icon" />
             Edit Profile
           </button>
         )}
       </div>
 
       {success && (
-        <div className="alert success" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <img src={successIcon} alt="Success" style={{ width: '18px', height: '18px', objectFit: 'contain' }} />
+        <div className="alert success">
+          <img src={successIcon} alt="Success" className="alert__icon" />
           {success}
         </div>
       )}
       {error && (
-        <div className="alert error" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <img src={warningIcon} alt="Warning" style={{ width: '18px', height: '18px', objectFit: 'contain' }} />
+        <div className="alert error">
+          <img src={warningIcon} alt="Warning" className="alert__icon" />
           {error}
         </div>
       )}
@@ -109,8 +109,8 @@ export default function ProfileCard({ user }: ProfileCardProps) {
       {editing && (
         <div className="profile-actions">
           <button className="cancel-btn" onClick={handleCancel}>Cancel</button>
-          <button className={`save-btn ${saving ? 'saving' : ''}`} onClick={handleSave} disabled={saving} style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <img src={saveIcon} alt="Save" style={{ width: '16px', height: '16px', objectFit: 'contain' }} />
+          <button className={`save-btn ${saving ? 'saving' : ''}`} onClick={handleSave} disabled={saving}>
+            <img src={saveIcon} alt="Save" className="save-btn__icon" />
             {saving ? 'Saving...' : 'Save Changes'}
           </button>
         </div>

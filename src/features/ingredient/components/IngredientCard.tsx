@@ -40,13 +40,13 @@ export default function IngredientCard({ id, name, onUpdate }: IngredientCardPro
     <div className="ingredient-card">
       <div className="ingredient-name">
         <span>
-          <img src="/src/assets/icons/calc-spoon.png" alt="" style={{ width: '30px', height: '30px', objectFit: 'contain', verticalAlign: 'middle' }} />
+          <img src="/src/assets/icons/calc-spoon.png" alt="" className="ingredient-icon" />
         </span>
         <span>{name}</span>
       </div>
-      <button className="edit-btn" onClick={() => setEditing(true)} style={{ display: 'flex', alignItems: 'center', gap: '4px', }}> 
-        <img src="/src/assets/icons/profile-edit.png" alt="" style={{ width: '20px', height: '20px', objectFit: 'contain', verticalAlign: 'middle' }} />
-        {' '}Edit  
+      <button className="edit-btn" onClick={() => setEditing(true)}>
+        <img src="/src/assets/icons/profile-edit.png" alt="" className="edit-btn-icon" />
+        Edit
       </button>
     </div>
   );

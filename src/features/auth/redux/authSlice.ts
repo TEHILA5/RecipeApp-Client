@@ -55,7 +55,6 @@ const authSlice = createSlice({
         localStorage.setItem('user', JSON.stringify(state.user));
       }
     },
-    // Called on app init to restore session from localStorage
     restoreAuth: (state) => {
       const token = localStorage.getItem('token');
       const userStr = localStorage.getItem('user');
@@ -73,7 +72,6 @@ const authSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    // Login
     builder
       .addMatcher(authApi.endpoints.login.matchFulfilled, (state, action) => {
         const { token, user } = action.payload;
@@ -90,7 +88,6 @@ const authSlice = createSlice({
         state.isAuthenticated = false;
       });
 
-    // Register
     builder
       .addMatcher(authApi.endpoints.register.matchFulfilled, (state, action) => {
         const { token, user } = action.payload;
@@ -107,7 +104,6 @@ const authSlice = createSlice({
         state.isAuthenticated = false;
       });
 
-    // getMe
     builder.addMatcher(authApi.endpoints.getMe.matchFulfilled, (state, action) => {
       state.user = action.payload;
     });

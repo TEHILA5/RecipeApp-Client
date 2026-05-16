@@ -3,6 +3,7 @@ import type { Recipe } from '../types/recipe.types';
 import { LEVEL_LABELS, CATEGORY_IMAGES } from '../types/recipe.types';
 import StarRating from '../../../shared/components/StarRating';
 import ImageLazyLoad from '../../../shared/components/ImageLazyLoad';
+import './RecipeCard.css';
 
 import timeIcon from '../../../assets/icons/meta-time.png';
 import servingsIcon from '../../../assets/icons/meta-servings.png';
@@ -27,12 +28,12 @@ export default function RecipeCard({ recipe, badge }: RecipeCardProps) {
   const levelIcon = LEVEL_ICONS[recipe.level] ?? levelEasyIcon;
 
   const fallback = categoryImg
-    ? <img src={categoryImg} alt={recipe.category} style={{ width: '48px', height: '48px', objectFit: 'contain' }} />
-    : <span><img src="/src/assets/icons/page-about.png" alt="Recipe" style={{ width: '48px', height: '48px', objectFit: 'contain' }} /></span>;
+    ? <img src={categoryImg} alt={recipe.category} className="card-fallback-icon" />
+    : <span><img src="/src/assets/icons/page-about.png" alt="Recipe" className="card-fallback-icon" /></span>;
 
   return (
     <Link to={`/recipes/${recipe.id}`} className="recipe-card">
-      <div className="card-img-wrap" style={{ aspectRatio: '4/3' }}>
+      <div className="card-img-wrap">
         <ImageLazyLoad
           src={recipe.arrImage}
           alt={recipe.name}
@@ -53,16 +54,16 @@ export default function RecipeCard({ recipe, badge }: RecipeCardProps) {
         </p>
         <div className="card-meta">
           <span className="meta-item">
-            <img src={timeIcon} alt="Time" className="meta-icon" style={{ width: '16px', height: '16px', objectFit: 'contain' }} />
+            <img src={timeIcon} alt="Time" className="meta-icon" />
             {recipe.prepTime} min
           </span>
           <span className="meta-item">
-            <img src={levelIcon} alt={levelLabel} className="meta-icon" style={{ width: '16px', height: '16px', objectFit: 'contain' }} />
+            <img src={levelIcon} alt={levelLabel} className="meta-icon" />
             {levelLabel}
           </span>
           {recipe.servings && (
             <span className="meta-item">
-              <img src={servingsIcon} alt="Servings" className="meta-icon" style={{ width: '16px', height: '16px', objectFit: 'contain' }} />
+              <img src={servingsIcon} alt="Servings" className="meta-icon" />
               {recipe.servings}
             </span>
           )}

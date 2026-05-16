@@ -16,4 +16,14 @@
   font-size: 2rem;
   color: #d4547a;
   margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.mu-title-icon {
+  width: 1em;
+  height: 1em;
+  object-fit: contain;
+  vertical-align: middle;
 }

@@ -5,7 +5,6 @@
   font-family: 'Nunito', sans-serif;
 }
 
-/* ── Hero card ── */
 .rd-hero {
   border-radius: 28px;
   overflow: hidden;
@@ -30,10 +29,9 @@
   align-items: center;
   justify-content: center;
   font-size: 100px;
-  overflow: hidden; /* חותך את הרקע הלבן */
+  overflow: hidden;
 }
 
-/* תמונת קטגוריה ב-hero — ממלאת את כל האזור */
 .rd-img-emoji img {
   width: 100%;
   height: 100%;
@@ -47,7 +45,6 @@
   background: linear-gradient(to top, rgba(0,0,0,0.55) 0%, transparent 60%);
 }
 
-/* Admin buttons */
 .rd-admin-btns {
   position: absolute;
   top: 16px;
@@ -71,7 +68,6 @@
 .rd-btn-edit { background: rgba(255,255,255,0.95); color: #d4547a; }
 .rd-btn-delete-hero { background: rgba(239,68,68,0.9); color: white; }
 
-/* Bookmark */
 .rd-bookmark {
   position: absolute;
   top: 16px;
@@ -93,7 +89,6 @@
 
 .rd-bookmark--active { background: #d4547a; color: white; }
 
-/* Image footer */
 .rd-img-footer {
   position: absolute;
   bottom: 24px;
@@ -123,7 +118,6 @@
   text-shadow: 0 2px 12px rgba(0,0,0,0.4);
 }
 
-/* Meta bar */
 .rd-meta-bar {
   display: flex;
   flex-wrap: wrap;
@@ -168,13 +162,11 @@
   font-size: 0.95rem;
 }
 
-/* ── Stars ── */
 .rd-stars { display: flex; gap: 4px; }
 
 .rd-star { font-size: 1rem; cursor: default; transition: color 0.15s; }
 .rd-star--interactive { font-size: 1.6rem; cursor: pointer; }
 
-/* ── Tabs ── */
 .rd-tabs-wrap {
   background: white;
   border-radius: 24px;
@@ -207,7 +199,6 @@
 
 .rd-tab-content { padding: 28px; }
 
-/* ── Instructions ── */
 .rd-empty { color: #9ca3af; text-align: center; }
 
 .rd-steps { display: flex; flex-direction: column; }
@@ -236,7 +227,6 @@
 
 .rd-step-text { margin: 0; line-height: 1.75; color: #374151; font-size: 0.95rem; }
 
-/* ── Comments ── */
 .rd-review-form {
   background: #fdf2f8;
   border-radius: 16px;
@@ -371,7 +361,6 @@
 .rd-comment-date { font-size: 0.75rem; color: #9ca3af; }
 .rd-comment-text { margin: 0; color: #4b5563; line-height: 1.6; font-size: 0.9rem; }
 
-/* ── Modal ── */
 .rd-modal-text {
   color: #6b7280;
   margin-bottom: 28px;

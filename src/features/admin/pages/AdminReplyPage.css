@@ -23,6 +23,16 @@
   font-family: 'Dancing Script', cursive;
   color: #d4547a;
   margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.title-icon {
+  width: 2em;
+  height: 2em;
+  object-fit: contain;
+  vertical-align: middle;
 }
 
 .input,
@@ -78,4 +88,12 @@
 
 .big-icon {
   font-size: 4rem;
+}
+
+.success-icon {
+  width: 64px;
+  height: 64px;
+  object-fit: contain;
+  display: block;
+  margin: 0 auto;
 }

@@ -1,5 +1,6 @@
 import { StaticPage, Section } from './StaticPageHelpers';
 import pageIcon from '../../../assets/icons/page-about.png';
+import './AboutPage.css';
 
 export default function AboutPage() {
   return (

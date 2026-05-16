@@ -73,6 +73,9 @@
   background: transparent;
   color: #9ca3af;
   white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
 
 .search-tab.active {
@@ -86,7 +89,11 @@
   color: white;
 }
 
-/* Search input card */
+.tab-icon {
+  width: 20px;
+  height: 20px;
+}
+ 
 .search-input-card {
   background: white;
   border-radius: 20px;

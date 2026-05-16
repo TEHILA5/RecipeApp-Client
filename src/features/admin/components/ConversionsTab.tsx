@@ -6,6 +6,7 @@ import {
   useDeleteConversionMutation,
   type ConversionDto,
 } from '../../../api/adminApi';
+import './ConversionsTab.css';
 
 interface Ingredient {
   id: number;
@@ -110,20 +111,19 @@ export default function ConversionsTab({ allIngredients }: ConversionsTabProps) 
   return (
     <div>
       <div className="cv-header">
-        <h3 className="cv-title" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+        <h3 className="cv-title">
           Ingredient Conversions{' '}
-          <img src="/src/assets/icons/action-refresh.png" alt="" style={{ width: '30px', height: '30px', objectFit: 'contain', verticalAlign: 'middle' }} />
+          <img src="/src/assets/icons/action-refresh.png" alt="" className="cv-title-icon" />
         </h3>
         <button
           onClick={() => { setShowAddForm((v) => !v); setConvError(''); }}
           className="cv-add-btn"
-          style={{ display: 'flex', alignItems: 'center', gap: '4px' }}
         >
           {showAddForm
             ? '✕ Cancel'
             : <>
-                <img src="/src/assets/icons/action-add.png" alt="" style={{ width: '20px', height: '20px', objectFit: 'contain', verticalAlign: 'middle' }} />
-                {' '}Add Conversion
+                <img src="/src/assets/icons/action-add.png" alt="" className="cv-btn-icon" />
+                Add Conversion
               </>
           }
         </button>
@@ -168,8 +168,8 @@ export default function ConversionsTab({ allIngredients }: ConversionsTabProps) 
                   )}
                   {form[idKey] > 0 && (
                     <div className="cv-selected">
-                      <img src="/src/assets/icons/profile-success.png" alt="" style={{ width: '20px', height: '20px', objectFit: 'contain', verticalAlign: 'middle' }} />
-                      {' '}{form[nameKey]}
+                      <img src="/src/assets/icons/profile-success.png" alt="" className="cv-btn-icon" />
+                      {form[nameKey]}
                       <button
                         className="cv-clear-btn"
                         onClick={() => setForm((f) => ({ ...f, [idKey]: 0, [nameKey]: '', [queryKey]: '' }))}
@@ -206,17 +206,17 @@ export default function ConversionsTab({ allIngredients }: ConversionsTabProps) 
               <span className="cv-toggle-label">
                 Bidirectional{' '}
                 {form.isBidirectional
-                  ? <img src="/src/assets/icons/arrow2.png" alt="↔" style={{ width: '20px', height: '20px', objectFit: 'contain', verticalAlign: 'middle' }} />
-                  : <img src="/src/assets/icons/arrow1.png" alt="->" style={{ width: '20px', height: '20px', objectFit: 'contain', verticalAlign: 'middle' }} />
+                  ? <img src="/src/assets/icons/arrow2.png" alt="↔" className="cv-btn-icon" />
+                  : <img src="/src/assets/icons/arrow1.png" alt="->" className="cv-btn-icon" />
                 }
               </span>
             </div>
           </div>
 
           {form.ingredient1Name && form.ingredient2Name && form.conversionRatio && (
-            <div className="cv-preview" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <img src="/src/assets/icons/content-clipboard.png" alt="" style={{ width: '20px', height: '20px', objectFit: 'contain', verticalAlign: 'middle' }} />
-              {' '}Preview: 1 {form.ingredient1Name} = {form.conversionRatio} {form.ingredient2Name}
+            <div className="cv-preview">
+              <img src="/src/assets/icons/content-clipboard.png" alt="" className="cv-btn-icon" />
+              Preview: 1 {form.ingredient1Name} = {form.conversionRatio} {form.ingredient2Name}
             </div>
           )}
 
@@ -226,12 +226,11 @@ export default function ConversionsTab({ allIngredients }: ConversionsTabProps) 
             onClick={handleSaveConversion}
             disabled={savingConv}
             className={`cv-save-btn ${savingConv ? 'cv-save-btn--busy' : ''}`}
-            style={{ display: 'flex', alignItems: 'center', gap: '4px' }}
           >
             {savingConv ? 'Saving...' : (
               <>
-                <img src="/src/assets/icons/profile-success.png" alt="" style={{ width: '25px', height: '25px', objectFit: 'contain', verticalAlign: 'middle' }} />
-                {' '}Save Conversion
+                <img src="/src/assets/icons/profile-success.png" alt="" className="cv-save-icon" />
+                Save Conversion
               </>
             )}
           </button>
@@ -252,7 +251,7 @@ export default function ConversionsTab({ allIngredients }: ConversionsTabProps) 
               className="cv-search"
             />
             <span className="cv-search-icon">
-              <img src="/src/assets/icons/search-icon.png" alt="Search" style={{ width: '18px', height: '18px', objectFit: 'contain' }} />
+              <img src="/src/assets/icons/search-icon.png" alt="Search" className="cv-search-img" />
             </span>
           </div>
         </div>
@@ -262,7 +261,7 @@ export default function ConversionsTab({ allIngredients }: ConversionsTabProps) 
         ) : filteredConversions.length === 0 ? (
           <div className="cv-state">
             <div className="cv-state-icon">
-              <img src="/src/assets/icons/action-refresh.png" alt="" style={{ width: '48px', height: '48px', objectFit: 'contain' }} />
+              <img src="/src/assets/icons/action-refresh.png" alt="" className="cv-state-img" />
             </div>
             <p>{convSearch ? 'No results' : 'No conversions yet'}</p>
           </div>
@@ -306,10 +305,10 @@ export default function ConversionsTab({ allIngredients }: ConversionsTabProps) 
                           <div className="cv-toggle-thumb" />
                         </div>
                       ) : (
-                        <span className={`cv-direction-badge ${conv.isBidirectional ? 'cv-direction-badge--bi' : ''}`} style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                        <span className={`cv-direction-badge ${conv.isBidirectional ? 'cv-direction-badge--bi' : ''}`}>
                           {conv.isBidirectional
-                            ? <><img src="/src/assets/icons/arrow2.png" alt="↔" style={{ width: '20px', height: '20px', objectFit: 'contain', verticalAlign: 'middle' }} />{' '}Both</>
-                            : <><img src="/src/assets/icons/arrow1.png" alt="->" style={{ width: '20px', height: '20px', objectFit: 'contain', verticalAlign: 'middle' }} />{' '}One-way</>
+                            ? <><img src="/src/assets/icons/arrow2.png" alt="↔" className="cv-btn-icon" /> Both</>
+                            : <><img src="/src/assets/icons/arrow1.png" alt="->" className="cv-btn-icon" /> One-way</>
                           }
                         </span>
                       )}
@@ -318,11 +317,11 @@ export default function ConversionsTab({ allIngredients }: ConversionsTabProps) 
                       <div className="cv-actions">
                         {editingConv?.id === conv.id ? (
                           <>
-                            <button onClick={handleUpdateConversion} disabled={savingConv} className="cv-btn cv-btn--save" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                            <button onClick={handleUpdateConversion} disabled={savingConv} className="cv-btn cv-btn--save">
                               {savingConv ? '...' : (
                                 <>
-                                  <img src="/src/assets/icons/profile-success.png" alt="" style={{ width: '20px', height: '20px', objectFit: 'contain', verticalAlign: 'middle' }} />
-                                  {' '}Save
+                                  <img src="/src/assets/icons/profile-success.png" alt="" className="cv-btn-icon" />
+                                  Save
                                 </>
                               )}
                             </button>
@@ -330,15 +329,15 @@ export default function ConversionsTab({ allIngredients }: ConversionsTabProps) 
                           </>
                         ) : (
                           <>
-                            <button onClick={() => setEditingConv(conv)} className="cv-btn cv-btn--edit" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                              <img src="/src/assets/icons/profile-edit.png" alt="" style={{ width: '20px', height: '20px', objectFit: 'contain', verticalAlign: 'middle' }} />
-                              {' '}Edit
+                            <button onClick={() => setEditingConv(conv)} className="cv-btn cv-btn--edit">
+                              <img src="/src/assets/icons/profile-edit.png" alt="" className="cv-btn-icon" />
+                              Edit
                             </button>
-                            <button onClick={() => handleDeleteConversion(conv.id)} disabled={deletingConvId === conv.id} className="cv-btn cv-btn--delete" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                            <button onClick={() => handleDeleteConversion(conv.id)} disabled={deletingConvId === conv.id} className="cv-btn cv-btn--delete">
                               {deletingConvId === conv.id ? '...' : (
                                 <>
-                                  <img src="/src/assets/icons/action-delete.png" alt="" style={{ width: '20px', height: '20px', objectFit: 'contain', verticalAlign: 'middle' }} />
-                                  {' '}Delete
+                                  <img src="/src/assets/icons/action-delete.png" alt="" className="cv-btn-icon" />
+                                  Delete
                                 </>
                               )}
                             </button>

@@ -10,8 +10,8 @@ interface PrintRecipeButtonProps {
     totalTime?: number;
     level?: number;
     ingredients?: {
-      ingredientName?: string;  
-      quantity: number;         
+      ingredientName?: string;
+      quantity: number;
       unit: string;
     }[];
   };
@@ -49,7 +49,6 @@ export default function PrintRecipeButton({ recipe }: PrintRecipeButtonProps) {
             margin: 0 auto;
           }
 
-          /* ── Header ── */
           .header {
             display: flex;
             justify-content: space-between;
@@ -106,7 +105,6 @@ export default function PrintRecipeButton({ recipe }: PrintRecipeButtonProps) {
             flex-shrink: 0;
           }
 
-          /* ── Meta pills ── */
           .meta {
             display: flex;
             gap: 16px;
@@ -124,14 +122,12 @@ export default function PrintRecipeButton({ recipe }: PrintRecipeButtonProps) {
             font-family: sans-serif;
           }
 
-          /* ── Two-column layout ── */
           .body {
             display: grid;
             grid-template-columns: 1fr 1.6fr;
             gap: 32px;
           }
 
-          /* ── Ingredients ── */
           h2 {
             font-size: 1rem;
             text-transform: uppercase;
@@ -156,7 +152,6 @@ export default function PrintRecipeButton({ recipe }: PrintRecipeButtonProps) {
           td:first-child { color: #333; font-weight: 500; }
           td:last-child  { color: #888; text-align: right; white-space: nowrap; }
 
-          /* ── Instructions ── */
           .steps { counter-reset: step; }
 
           .step {
@@ -183,7 +178,6 @@ export default function PrintRecipeButton({ recipe }: PrintRecipeButtonProps) {
             margin-top: 2px;
           }
 
-          /* ── Footer ── */
           .footer {
             margin-top: 36px;
             padding-top: 12px;
@@ -260,9 +254,9 @@ export default function PrintRecipeButton({ recipe }: PrintRecipeButtonProps) {
   };
 
   return (
-    <button className="print-recipe-btn" onClick={handlePrint} title="Print recipe" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '4px', textAlign: 'center',}}>
-      <img src='/src/assets/icons/printer.png' alt="love" style={{ width: '35px', height: '35px', objectFit: 'contain',}} />
-      {' '}Print Recipe
+    <button className="print-recipe-btn" onClick={handlePrint} title="Print recipe">
+      <img src='/src/assets/icons/printer.png' alt="Print" className="print-recipe-icon" />
+      Print Recipe
     </button>
   );
 }

@@ -19,11 +19,9 @@ import searchReducer from '../features/search/redux/searchSlice';
 //   recipesApi    → /features/recipe/redux/recipeSlice.ts
 
 export const store = configureStore({
-  reducer: {
-    // Single RTK Query reducer for all API calls
+  reducer: { 
     [baseApi.reducerPath]: baseApi.reducer,
-
-    // UI slices (no server state)
+ 
     auth: authReducer,
     ingredients: ingredientReducer,
     recipePanel: recipePanelReducer,

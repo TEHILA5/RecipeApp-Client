@@ -4,12 +4,7 @@ export interface AlternativeMatch {
   alternativeName: string;
   conversionRatio: number;
 }
-
-/**
- * Given an ingredient name and the full conversions list,
- * returns all known alternatives for that ingredient.
- * Pure function — no API call.
- */
+ 
 export function getAlternativesForIngredient(
   ingredientName: string,
   conversions: ConversionDto[]

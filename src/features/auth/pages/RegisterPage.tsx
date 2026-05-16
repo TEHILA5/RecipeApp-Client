@@ -36,7 +36,7 @@ function RegisterPage() {
   };
 
   const errorMessage = error
-    ? typeof error === 'object' && 'message' in error && error.message
+    ? typeof error === 'object' && error !== null && 'message' in error && typeof error.message === 'string'
       ? error.message
       : 'Registration failed'
     : null;
@@ -49,10 +49,10 @@ function RegisterPage() {
             <h2 className="visual-title">Join Sweet&amp;Treat!</h2>
             <p className="visual-desc">
               Create your free account and start your delicious journey.
-              Discover thousands of amazing dessert recipes crafted with love! 
+              Discover thousands of amazing dessert recipes crafted with love!
             </p>
             <div className="visual-emoji">
-              <img src="/src/assets/images/sweety.png" alt="Logo" style={{ width: '70px', height: '70px', objectFit: 'contain', placeSelf: 'center' }} />
+              <img src="/src/assets/images/sweety.png" alt="Logo" className="visual-hero-img" />
             </div>
           </div>
         </div>

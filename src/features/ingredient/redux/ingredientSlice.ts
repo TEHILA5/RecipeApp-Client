@@ -1,9 +1,5 @@
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
 
-// ingredientSlice now only manages local UI state.
-// All API calls are handled via ingredientApi (RTK Query):
-//   useGetAllIngredientsQuery, useCreateIngredientMutation, useUpdateIngredientMutation, etc.
-
 interface IngredientUIState {
   searchTerm: string;
   selectedIngredientId: number | null;

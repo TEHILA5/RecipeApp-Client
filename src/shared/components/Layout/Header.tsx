@@ -65,7 +65,7 @@ export default function Header() {
               {isAuthenticated ? (
                 <div className="mobile-user">
                   <Link to="/profile" onClick={closeMenu} className="mobile-profile-link">
-                    <img src={chefHat} alt="Profile" style={{ width: '24px', height: '24px', objectFit: 'contain' }} />
+                    <img src={chefHat} alt="Profile" className="mobile-profile-avatar" />
                     {user?.name || 'Chef'}
                   </Link>
                   <button onClick={handleLogout} className="mobile-logout-btn">Logout</button>

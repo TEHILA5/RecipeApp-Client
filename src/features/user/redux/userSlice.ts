@@ -1,13 +1,7 @@
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
 import type { UserActionDto } from '../../recipe/types/userAction.types';
 
-// userSlice now only manages optimistic UI state for bookmarks.
-// All API calls are handled via userActionApi (RTK Query):
-//   useGetMySavedRecipesQuery, useGetMyCommentsQuery
-//   useAddBookmarkMutation, useRemoveBookmarkMutation, etc.
-
 interface UserUIState {
-  // Optimistic bookmark IDs for instant UI feedback
   optimisticBookmarks: number[];
 }
 
@@ -41,5 +35,4 @@ export const {
 
 export default userSlice.reducer;
 
-// Re-export type for convenience
 export type { UserActionDto };
