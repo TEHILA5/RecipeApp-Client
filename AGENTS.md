@@ -57,6 +57,7 @@ Global & feature-specific slices for UI (modals, toasts, theme, auth), kept sepa
 
 - **Files**: `src/redux/slices/uiSlice.ts` (global), `features/*/redux/*Slice.ts` (auth, admin, etc.)
 - **Example**: See [src/features/auth/redux/authSlice.ts](src/features/auth/redux/authSlice.ts)
+- **Important**: `recipePanelSlice` in `features/recipe/redux/recipeSlice.ts` is UI state (form inputs, pagination), NOT API state. RTK Query recipes live in `baseApi`.
 
 #### **Store Setup**
 See [src/app/store.ts](src/app/store.ts) — combines all slices and RTK Query baseApi.
@@ -86,6 +87,17 @@ See [src/app/store.ts](src/app/store.ts) — combines all slices and RTK Query b
 - **Use Tailwind utilities** for layout & quick styling
 - **Create `.css` file** only when complex styling is needed (animations, media queries, special effects)
 
+**Asset Handling** (CRITICAL for production build):
+- **Icons/Images in type files** (e.g., `recipe.types.ts`): Use relative imports, NOT hardcoded paths
+  ```typescript
+  import cakesIcon from '@/assets/icons/cakes.svg';
+  export const CATEGORY_IMAGES: Record<string, string> = {
+    Cakes: cakesIcon,
+  };
+  ```
+- **Hardcoded paths like `/src/assets/...` will break in production** — use dynamic imports instead
+- **In components**: Import assets at the top and reference via imports, not URLs
+
 ### Authentication & Authorization
 
 - **Token Storage**: JWT in localStorage (see [authSlice](src/features/auth/redux/authSlice.ts))
@@ -109,17 +121,22 @@ const isAdminFromToken = (token: string): boolean => {
 **Recipe Category Mapping** (Critical Pattern):
 - Backend returns category as `number` (0-29)
 - Frontend uses category `string` (Cakes, Cookies, etc.)
-- **Conversion**: `normalizeRecipe()` (int→string), `serializeForServer()` (string→int, private function in recipeSlice)
-- **Normalization**: `normalizeRecipe()` defined in [src/features/recipe/types/recipe.types.ts](src/features/recipe/types/recipe.types.ts)
-- **Serialization**: `serializeForServer()` defined in [src/features/recipe/redux/recipeSlice.ts](src/features/recipe/redux/recipeSlice.ts) (private)
-- **Usage**: Auto-applied in RTK Query hooks via `transformResponse`; must manually apply in non-RTK contexts
-- **Constant Maps**: `RECIPE_CATEGORIES_MAP` (string→number), `INT_TO_CATEGORY` (number→string) in recipe.types.ts
+- **Normalization**: `normalizeRecipe()` function defined in [src/features/recipe/types/recipe.types.ts](src/features/recipe/types/recipe.types.ts) converts backend objects (int→string)
+  ```typescript
+  import { normalizeRecipe } from '@/features/recipe/types/recipe.types';
+  const normalized = normalizeRecipe(recipeFromServer);
+  ```
+- **Serialization**: `serializeForServer()` (reverse operation, private function in [recipeSlice.ts](src/features/recipe/redux/recipeSlice.ts)) converts form objects (string→int) before sending to API
+- **Auto-Applied**: In RTK Query hooks via `transformResponse` — don't apply twice
+- **Manual Apply**: When working with Redux dispatch, custom forms, or non-RTK contexts
+- **Constant Maps**: `RECIPE_CATEGORIES_MAP` (string→number), `INT_TO_CATEGORY` (number→string) in recipe.types.ts for reference
 
 **Ingredient Importance Mapping** (Similar Pattern):
 - Backend returns importance as `number` (1=Essential, 2=Recommended, 3=Optional)
 - Frontend uses importance `string` for display
-- **Mappings**: `INT_TO_IMPORTANCE`, `IMPORTANCE_TO_INT` in ingredient types
+- **Mappings**: `INT_TO_IMPORTANCE`, `IMPORTANCE_TO_INT` in ingredient types (see [src/features/recipe/types/recipe.types.ts](src/features/recipe/types/recipe.types.ts))
 - **Auto-converted**: In `normalizeRecipe()` for recipe ingredient lists
+- **Rule**: Always check if ingredient data is normalized before displaying importance labels
 
 **Tags & JSON Parsing**:
 - Backend stores tags as JSON string in recipe
@@ -151,7 +168,7 @@ const isAdminFromToken = (token: string): boolean => {
 | `useLocalStorage(key, initialValue)` | Persist state to localStorage | Theme preference, filters |
 | `useMediaQuery(query)` | Detect responsive breakpoints | Mobile/desktop layouts |
 | `useScrollToTop()` | Scroll page to top on navigation | After page change |
-
+**Usage tip**: `useDebounce` is critical for the recipe search experience—always wrap fast-changing inputs (name, ingredients search) with this to avoid excessive Redux updates.
 **Usage**: Import from `src/shared/hooks/` and use in any component. These prevent code duplication.
 
 ### Redux Hooks (`src/redux/hooks.ts`)
@@ -170,12 +187,17 @@ Each feature may expose custom hooks for managing feature state and API interact
 
 | Hook | Location | Purpose |
 |------|----------|---------|  
-| `useRecipes()` | `features/recipe/hooks/` | Search, filter, sort recipes with debouncing |
-| `useRecipeSearch()` | `features/recipe/hooks/` | Multi-mode search (name/category/ingredients) |
+| `useRecipes()` | `features/recipe/hooks/` | Client-side recipe filtering with debouncing (updates Redux) |
+| `useRecipeSearch()` | `features/recipe/hooks/` | Multi-mode search: name/category/ingredients with Redux dispatch |
 | `useRecipeDetail()` | `features/recipe/hooks/` | Single recipe operations & mutations |
 | `useAuth()` | `features/auth/hooks/` | Auth state, login/logout, token refresh |
 | `useUserProfile()` | `features/user/hooks/` | Profile save/delete with optimistic updates |
-| `useChat()` | `features/chat/hooks/` | SignalR connection lifecycle & messaging |
+| `useChat()` | `features/chat/hooks/` | Siction lifecycle & messaging |
+
+**⚠️ Recipe Search Hook Decision**:
+- **Use `useRecipes()`** → Simple filtering by name/category/difficulty within already-loaded recipes (client-side)
+- **Use `useRecipeSearch()`** → Advanced multi-criteria search with backend integration (API call)
+- Both update Redux state; check existing SearchPage for pattern
 
 **Usage**: Import from `features/[name]/hooks/` and use to encapsulate feature logic.
 
@@ -262,55 +284,92 @@ Use CSS variables for colors: `color: var(--primary-pink);`
 
 For MUI-specific styling, customize in [muiTheme.ts](src/styles/themes/muiTheme.ts)
 
-## Error Handling Patterns
+## Error Handling & User Feedback Patterns
 
-The app uses **inconsistent error handling** by design (no central error boundary yet). Common patterns:
+The app uses **inconsistent error handling** by design (no central error boundary yet). Choose based on criticality:
 
-1. **Local Component State** (Pages & Forms):
-   ```typescript
-   const [error, setError] = useState('');
-   try {
-     await someAction().unwrap();
-   } catch (err) {
-     setError('User-friendly message');
-   }
-   ```
+### 1. Local Component State (Pages & Forms) — **PREFERRED for user-facing errors**
+```typescript
+const [error, setError] = useState('');
+const [createRecipe] = useCreateRecipeMutation();
 
-2. **Redux Slice State** (Auth, Admin):
-   ```typescript
-   // In slice
-   extraReducers: (builder) => {
-     builder.addCase(loginUser.rejected, (state, action) => {
-       state.error = action.payload || 'Login failed';
-     });
-   }
-   ```
+try {
+  const result = await createRecipe(formData).unwrap();
+  // Success
+} catch (err: any) {
+  setError(err.data?.message || 'Failed to create recipe');
+}
 
-3. **Console & No UI Feedback** (Less critical operations):
-   ```typescript
-   try {
-     await deleteItem().unwrap();
-   } catch (err) {
-     console.error('Failed to delete:', err);
-   }
-   ```
+return error && <Alert severity="error">{error}</Alert>;
+```
 
-**Future improvement**: Add error boundaries and centralized toast/snackbar notifications for critical errors.
+### 2. RTK Query Mutation Error Handling **← RECOMMENDED for async operations**
+```typescript
+const [createRecipe, { isLoading, error: apiError }] = useCreateRecipeMutation();
+
+// Error state comes from hook directly
+return apiError && <Alert severity="error">{apiError.data?.message}</Alert>;
+```
+
+### 3. Redux Slice State (Auth, Admin) — For auth-related errors
+```typescript
+// In slice.ts
+extraReducers: (builder) => {
+  builder.addCase(loginUser.rejected, (state, action: PayloadAction<string | undefined>) => {
+    state.error = action.payload || 'Login failed';
+  });
+}
+
+// In component
+const { error } = useAppSelector(state => state.auth);
+```
+
+### 4. Toast/Notification Pattern — For success or non-critical errors
+```typescript
+import { useAppDispatch } from '@/redux/hooks';
+import { addToast } from '@/redux/slices/uiSlice';
+
+const dispatch = useAppDispatch();
+
+try {
+  await someAction().unwrap();
+  dispatch(addToast({ message: 'Success!', type: 'success' }));
+} catch (err) {
+  dispatch(addToast({ message: 'Operation failed', type: 'error' }));
+}
+```
+See [uiSlice.ts](src/redux/slices/uiSlice.ts) for toast state shape and available types.
+
+### 5. Console & No UI Feedback — Only for non-critical background operations
+```typescript
+try {
+  await analyticsTrack().unwrap();
+} catch (err) {
+  console.error('Analytics failed:', err); // Silent failure acceptable
+}
+```
+
+**⚠️ Common Mistake**: Don't use `.unwrap()` without try/catch in mutations — always handle the Promise rejection.
 
 ## Important Conventions & Gotchas
 
 | Issue | Details | Fix |
 |-------|---------|-----|
-| **Recipe data mismatch** | Backend sends category as `number`; frontend expects `string` | Apply `normalizeRecipe()` to all recipe queries |
-| **Ingredient importance not transformed** | Importance field returns as number but needs string for display | Also handled by `normalizeRecipe()` |
-| **Session lost on refresh** | Auth state not persisted | Ensure `restoreAuth()` called on app init (see [App.tsx](src/App.tsx)) |
-| **Type errors in Redux** | Non-serializable function in middleware | UI slice disables serialization check for modal callbacks; acceptable here |
-| **Form validation fails** | Custom rules not applied | Check [validation.ts](src/shared/utils/validation.ts) for available validators |
-| **API auth fails** | Missing Bearer token | Token auto-injected in `baseApi`; verify JWT stored in auth slice |
-| **CSS not applying** | CSS file not imported in component | Always import `.css` at top of component: `import './ComponentName.css';` |
-| **CSS files are optional** | Not all components have `.css` pairs | Use MUI `sx` or Tailwind if `.css` not needed |
-| **Admin role missing** | JWT not properly parsed | Check `isAdminFromToken()` in [authSlice.ts](src/features/auth/redux/authSlice.ts) |
-| **Unused dependency** | `yup` validator in package.json but not used | App uses React Hook Form inline rules instead; safe to remove |
+| **Recipe category mismatch** | Backend sends category as `number`; frontend expects `string` | Apply `normalizeRecipe()` to all recipe queries. Auto-applied in RTK Query but manual apply needed in Redux dispatch contexts. |
+| **Ingredient importance not transformed** | Importance field returns as number but needs string for display | Handled by `normalizeRecipe()` — don't manually map |
+| **Session lost on page refresh** | Auth state not persisted | Ensure `dispatch(restoreAuth())` called on app init (see [App.tsx](src/App.tsx)) |
+| **Recipe fetch missing category labels** | Forgot to import/apply `normalizeRecipe()` | All recipe queries MUST pass through `normalizeRecipe()` before rendering |
+| **Two recipe search hooks confusing** | `useRecipes()` vs `useRecipeSearch()` — which one to use? | Client-side simple filters → `useRecipes()` | Advanced search → `useRecipeSearch()` |
+| **Type errors in Redux** | Non-serializable function in middleware warning | UI slice intentionally disables serialization check for modal `onConfirm` callback; this is acceptable |
+| **Form validation not triggering** | Custom rules not applied to React Hook Form | Rules in `validation.ts` must be explicitly passed to `register()`: `register('email', { validate: validation.email.validate })` |
+| **API returns 401 Unauthorized** | Missing or invalid Bearer token | Token auto-injected in `baseApi`; verify JWT is in auth slice and not expired |
+| **CSS file not applying** | CSS file not imported in component | Always `import './ComponentName.css'` at top of component |
+| **CSS files are optional** | Not all components have `.css` pairs | Use MUI `sx` prop or Tailwind utilities if `.css` not needed |
+| **Admin button/page not showing** | JWT not properly parsed for admin role | Check `isAdminFromToken()` in [authSlice.ts](src/features/auth/redux/authSlice.ts); admin claim is `http://schemas.microsoft.com/ws/2008/06/identity/claims/role` |
+| **Images broken in production** | Hardcoded asset paths like `/src/assets/...` don't work in built app | Use dynamic imports: `import icon from '@/assets/icons/...'` |
+| **Environment variables undefined** | `import.meta.env.VITE_API_BASE_URL` returns undefined | Check `.env` file exists with correct `VITE_API_BASE_URL=https://localhost:7244/api` |
+| **API calls fail locally** | HTTPS certificate error from `localhost:7244` | Backend needs valid cert; configure in `.env` or bypass with `NODE_TLS_REJECT_UNAUTHORIZED=0` |
+| **RTK Query cache not invalidating** | Tags don't match between query `providesTags` and mutation `invalidatesTags` | Tag names must be exactly the same; check [baseApi.ts](src/api/baseApi.ts) for defined tags and their usage across API files |
 
 ### Redux Slices Reference
 
@@ -412,13 +471,64 @@ All Redux state is centralized in [src/app/store.ts](src/app/store.ts). Key slic
   export default function MyComponent({ title, onClose }: MyComponentProps) { }
   ```
 
+## Environment Setup & Configuration
+
+### Local Development Setup
+
+1. **Install dependencies** and set environment variables:
+   ```bash
+   npm install
+   ```
+
+2. **Configure `.env` file** (in workspace root):
+   ```env
+   VITE_API_BASE_URL=https://localhost:7244/api
+   ```
+
+3. **Start dev server**:
+   ```bash
+   npm run dev    # Vite HMR on http://localhost:5173
+   ```
+
+### Backend API Requirements
+
+- **Base URL**: `https://localhost:7244/api` (local dev, hardcoded in `.env`)
+- **Auth**: JWT tokens expected; stored in Redux auth slice and localStorage
+- **CORS**: API must allow requests from `http://localhost:5173`
+- **HTTPS**: Local backend requires valid SSL certificate (or disable cert validation: `NODE_TLS_REJECT_UNAUTHORIZED=0`)
+
+### Type-Safe Environment Variables
+
+Vite environment vars are available via `import.meta.env.VITE_*`. Currently accessed with `any` cast:
+```typescript
+const API_BASE_URL = (import.meta as any).env?.VITE_API_BASE_URL;
+```
+
+**Future improvement**: Add proper types in `vite-env.d.ts` for full type safety.
+
+---
+
 ## Known Issues & Limitations
 
 - **No test framework**: Jest, Vitest, or testing utilities are not set up. Any test additions are experimental.
-- **Error handling**: Inconsistent across features. No centralized error boundary or toast notification system yet (see error patterns above).
+- **Error handling**: Inconsistent across features (see error handling section for patterns). No centralized error boundary yet.
 - **TypeScript strictness**: `noImplicitAny`, `noUnusedLocals`, `noUnusedParameters` disabled for flexibility. Not as strict as typical TS projects.
 - **Unused dependency**: `yup` in package.json is not used anywhere (app uses React Hook Form inline validation instead).
-- **Environment config**: `.env` file exists with `VITE_API_BASE_URL=https://localhost:7244/api` for local development.
+- **Asset import inconsistency**: Some components use hardcoded paths (`/src/assets/...`) which fail in production build — should use dynamic imports.
+
+## Common Mistakes Agents Make (& How to Avoid Them)
+
+| Mistake | Why It Happens | Prevention |
+|---------|---|---|
+| Forget `normalizeRecipe()` on API responses | Assumes backend sends strings, not numbers | Always apply `normalizeRecipe()` immediately after API query completes |
+| Use wrong recipe search hook | `useRecipes()` and `useRecipeSearch()` do different things | Read hook comments; `useRecipes()` = client-side, `useRecipeSearch()` = API |
+| Don't handle RTK Query mutation errors | Assume mutations auto-handle errors | Always use `try/catch` with `.unwrap()` or check `error` from hook |
+| Hardcode asset paths in type files | Paths work in dev but break in production | Use dynamic imports: `import icon from '@/assets/icons/...'` |
+| Import CSS file missing | Assumes MUI/Tailwind will handle all styling | Check for `.css` file; import at top of component if exists |
+| Forget `dispatch(restoreAuth())` on app init | Auth state loads fine in dev | Ensure [App.tsx](src/App.tsx) calls `restoreAuth()` in `useEffect` |
+| Apply `normalizeRecipe()` twice | Assumes it's always needed | Check if RTK Query `transformResponse` already applied it |
+| Access `import.meta.env` without type safety | Assumes all vars are defined | Always provide fallback: `(import.meta as any).env?.VITE_VAR || 'default'` |
+| Mismatch RTK Query tag names | Copy-paste tag names without checking | Verify `providesTags` in query matches `invalidatesTags` in mutation |
 
 ---
 

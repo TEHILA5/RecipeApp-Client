@@ -31,6 +31,7 @@ export interface AdvancedSearchResult {
     maxPrepTime: number | null;
     keywords: string[];
     originalText: string;
+    ingredientKeywords: string[];
   };
   results: RankedRecipe[]; 
 } 

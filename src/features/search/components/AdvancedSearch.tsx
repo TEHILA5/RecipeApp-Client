@@ -69,6 +69,10 @@ export default function AdvancedSearch() {
             {data.intent.difficultyLevel && <Chip label={<><img src="/src/assets/icons/rank-star.png" alt="Difficulty" className="as-chip-icon" /> {LEVEL_LABELS[data.intent.difficultyLevel]}</>} color="#f0fdf4" textColor="#16a34a" />}
             {data.intent.maxPrepTime && <Chip label={<><img src="/src/assets/icons/meta-time.png" alt="Prep Time" className="as-chip-icon" /> ⏱ Max {data.intent.maxPrepTime} min</>} color="#fff7ed" textColor="#c2410c" />}
             {data.intent.tags.map((tag) => <Chip key={tag} label={<><img src="/src/assets/icons/recipe-bookmark.png" alt="Tag" className="as-chip-icon" /> 🏷 {tag}</>} color="#fdf2f8" textColor="#d4547a" />)}
+            {data.intent.ingredientKeywords?.map((ing) => (
+              <Chip key={ing} label={<>🥄 {ing}</>} color="#f0fdf4" textColor="#15803d" />
+            ))}
+
           </div>
         )}
 

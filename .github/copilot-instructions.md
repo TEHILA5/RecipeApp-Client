@@ -102,13 +102,15 @@ export const { useGetAllIngredientsQuery } = ingredientApi;
 
 | Problem | Solution |
 |---------|----------|
-| Recipe data type mismatch (number vs string category) | Use `normalizeRecipe()` on all recipe queries |
+| Recipe data type mismatch (number vs string category) | Use `normalizeRecipe()` on all recipe queries; auto-applied in RTK Query but manual apply needed in Redux dispatch contexts. See [Data Transformation](../AGENTS.md#data-transformation--validation). |
 | Auth lost on page refresh | Verify `restoreAuth()` is called in [App.tsx](../src/App.tsx) |
 | CSS file not working | Ensure you `import './MyComponent.css'` at the top of the component |
 | Form validation not triggering | Check rules exist in [validation.ts](../src/shared/utils/validation.ts) and are passed to `register()` |
-| API returns 401 Unauthorized | JWT might be missing or expired; check auth slice has valid token |
+| API returns 401 Unauthorized | JWT might be missing or expired; check auth slice has valid token. See [Environment Setup](../AGENTS.md#environment-setup--configuration). |
 | Admin button not showing | Verify JWT is parsed correctly for admin role claim |
 | Non-serializable Redux error | Intentional for modal callbacks in `uiSlice.ts`; middleware configured to ignore |
+| Two recipe search hooks confusing | `useRecipes()` = client-side filtering | `useRecipeSearch()` = API search. See [Feature-Specific Hooks](../AGENTS.md#feature-specific-hooks). |
+| Images broken in production | Don't hardcode `/src/assets/...` paths; use dynamic imports instead. See [Asset Handling](../AGENTS.md#styling-strategy-layered). |
 
 ## File Organization Quick Reference
 
