@@ -16,13 +16,13 @@
 
     /* Linting - הגדרות מותאמות */
     "strict": true,
-    "noUnusedLocals": false,        // ✅ כבה - לא נראה שגיאות על משתנים לא בשימוש
-    "noUnusedParameters": false,    // ✅ כבה - לא נראה שגיאות על פרמטרים לא בשימוש
+    "noUnusedLocals": false,  
+    "noUnusedParameters": false,
     "noFallthroughCasesInSwitch": true,
     "noUncheckedIndexedAccess": false,
     
     /* Allow any when needed */
-    "noImplicitAny": false           // ✅ כבה - מאפשר any אימפליציטי
+    "noImplicitAny": false           
   },
   "include": ["src"], 
 }

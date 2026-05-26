@@ -6,17 +6,7 @@ import recipePanelReducer from '../features/recipe/redux/recipeSlice';
 import uiReducer from '../redux/slices/uiSlice';
 import adminReducer from '../features/admin/redux/adminSlice';
 import userReducer from '../features/user/redux/userSlice';
-import searchReducer from '../features/search/redux/searchSlice';
-
-// All API endpoints are injected into the single baseApi:
-//   authApi       → /api/authApi.ts
-//   adminApi      → /api/adminApi.ts
-//   ingredientApi → /api/ingredientApi.ts
-//   userActionApi → /api/userActionApi.ts
-//   userApi       → /api/userApi.ts
-//   contactApi    → /api/contactApi.ts
-//   chatApi       → /api/chatApi.ts
-//   recipesApi    → /features/recipe/redux/recipeSlice.ts
+import searchReducer from '../features/search/redux/searchSlice'; 
 
 export const store = configureStore({
   reducer: { 

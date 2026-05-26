@@ -14,9 +14,10 @@ npm run preview  # Preview production build locally
 ## Architecture at a Glance
 
 - **Feature-based**: Code organized by `features/[name]` (auth, recipe, search, admin, etc.)
-- **State management**: RTK Query (server) + Redux slices (UI)
+- **State management**: RTK Query with Fetch API (server) + Redux slices (UI)
 - **Styling**: MUI + Tailwind + optional CSS files
 - **Type safety**: Relaxed TypeScript (flexibility over strictness)
+- **HTTP Client**: Fetch API via `fetchBaseQuery` (NOT axios)
 
 See [AGENTS.md](../AGENTS.md) for **full architecture guide, patterns, and gotchas**.
 

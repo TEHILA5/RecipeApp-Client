@@ -10,9 +10,9 @@ import Toast from './shared/components/UI/Toast';
 import './styles/global.css';
 import './App.css';
 
+store.dispatch(restoreAuth());
 function App() {
   useEffect(() => {
-    store.dispatch(restoreAuth());
 
     const loadingScreen = document.getElementById('loading-screen');
     if (loadingScreen) {

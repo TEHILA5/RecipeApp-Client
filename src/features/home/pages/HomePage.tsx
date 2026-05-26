@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router-dom'; 
 import { useAppSelector } from '../../../redux/hooks';
 import { useGetRecipesQuery } from '../../recipe/redux/recipeSlice';
 import { type Recipe, LEVEL_LABELS, CATEGORY_IMAGES } from '../../recipe/types/recipe.types';

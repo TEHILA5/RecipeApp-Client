@@ -38,7 +38,8 @@ Centralized `baseApi` with **injected endpoints** from feature-specific API file
 
 - **Files**: `src/api/*Api.ts` (authApi, ingredientApi, userActionApi, etc.)
 - **Pattern**: Each file injects endpoints into baseApi with automatic tag-based cache invalidation
-- **Example**: See [src/api/authApi.ts](src/api/authApi.ts)
+- **HTTP Client**: **Fetch API** (via `fetchBaseQuery`), NOT axios. Bearer token auto-injected via `baseApi.prepareHeaders()`
+- **Example**: See [src/api/authApi.ts](src/api/authApi.ts) and [src/api/baseApi.ts](src/api/baseApi.ts)
 
 ```typescript
 // Pattern: injected endpoints with tags

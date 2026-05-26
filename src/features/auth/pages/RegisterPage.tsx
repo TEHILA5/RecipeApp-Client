@@ -35,11 +35,22 @@ function RegisterPage() {
     }
   };
 
-  const errorMessage = error
-    ? typeof error === 'object' && error !== null && 'message' in error && typeof error.message === 'string'
-      ? error.message
-      : 'Registration failed'
-    : null;
+  const errorMessage = (() => {
+  if (!error) return null;
+
+  const err = error as { data?: { errors?: Record<string, string[]>; title?: string } };
+
+  if (err.data) {
+    if (err.data.errors) {
+      const messages = Object.values(err.data.errors).flat();
+      if (messages.length > 0) return messages.join(', ');
+    }
+    if (err.data.title) return err.data.title;
+  }
+
+  return 'Registration failed';
+  })();
+  
 
   return (
     <div className="login-page">

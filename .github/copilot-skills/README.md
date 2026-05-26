@@ -10,8 +10,7 @@ This directory contains focused guides that complement the main [AGENTS.md](../.
 
 | Skill | When to Use | Key Topics |
 |-------|------------|-----------|
-| **[Add API Endpoint](./add-api-endpoint.md)** | Adding RTK Query endpoints for backend communication | Injected endpoints, DTOs, cache invalidation, data transformation |
-| **[Add Feature Page](./add-feature-page.md)** | Creating a new feature module with pages, routes, and state | Directory structure, Redux slices, routing, hooks pattern |
+| **[HTTP Client Note](./http-client-note.md)** | Understanding the HTTP layer | Fetch API (not axios), RTK Query, baseApi configuration |
 | **[Style Components](./style-components.md)** | Choosing styling approach (MUI, Tailwind, CSS) | Decision tree, BEM naming, CSS variables, responsive design |
 | **[Form Validation](./form-validation.md)** | Implementing forms with React Hook Form | Validation rules, FormInput component, custom validators |
 
