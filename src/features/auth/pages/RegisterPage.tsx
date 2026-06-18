@@ -38,13 +38,14 @@ function RegisterPage() {
   const errorMessage = (() => {
   if (!error) return null;
 
-  const err = error as { data?: { errors?: Record<string, string[]>; title?: string } };
+  const err = error as { data?: { errors?: Record<string, string[]>; title?: string; message?: string;  } };
 
   if (err.data) {
     if (err.data.errors) {
       const messages = Object.values(err.data.errors).flat();
       if (messages.length > 0) return messages.join(', ');
     }
+    if (err.data.message) return err.data.message;
     if (err.data.title) return err.data.title;
   }
 
