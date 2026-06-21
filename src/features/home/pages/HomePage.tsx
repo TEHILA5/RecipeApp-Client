@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import { Link } from 'react-router-dom'; 
 import { useAppSelector } from '../../../redux/hooks';
 import { useGetRecipesQuery } from '../../recipe/redux/recipeSlice';
@@ -7,13 +8,23 @@ import Hero from '../components/Hero';
 import CategoryGrid from '../components/CategoryGrid';
 import FeaturedRecipes from '../components/FeaturedRecipes';
 import RecipeCard from '../../recipe/components/RecipeCard';
+import SectionHeader from '../../../shared/components/UI/SectionHeader';
 import './HomePage.css';
+
+function FeaturedStat({ value, label }: { value: ReactNode; label: string }) {
+  return (
+    <div className="feat-stat">
+      <div className="feat-stat-val">{value}</div>
+      <div className="feat-stat-lbl">{label}</div>
+    </div>
+  );
+}
 
 function FeaturedCard({ recipe }: { recipe: Recipe }) {
   const image = CATEGORY_IMAGES[recipe.category] ?? '🍰';
   const levelLabel = LEVEL_LABELS[recipe.level as 1 | 2 | 3] ?? 'Easy';
   return (
-    <div className="featured-wrap">
+    <article className="featured-wrap">
       <div className="featured-img-wrap">
         {recipe.arrImage ? (
           <img src={recipe.arrImage} alt={recipe.name} className="featured-img"
@@ -32,26 +43,14 @@ function FeaturedCard({ recipe }: { recipe: Recipe }) {
         <h3 className="featured-title">{recipe.name}</h3>
         <p className="featured-desc">{recipe.description}</p>
         <div className="featured-stats">
-          <div>
-            <div className="feat-stat-val"><StarRating rating={recipe.averageRating} size="md" /></div>
-            <div className="feat-stat-lbl">Rating</div>
-          </div>
-          <div>
-            <div className="feat-stat-val">{recipe.totalTime}m</div>
-            <div className="feat-stat-lbl">Time</div>
-          </div>
-          <div>
-            <div className="feat-stat-val">{recipe.servings}</div>
-            <div className="feat-stat-lbl">Servings</div>
-          </div>
-          <div>
-            <div className="feat-stat-val">{levelLabel}</div>
-            <div className="feat-stat-lbl">Level</div>
-          </div>
+          <FeaturedStat value={<StarRating rating={recipe.averageRating} size="md" />} label="Rating" />
+          <FeaturedStat value={`${recipe.totalTime}m`} label="Time" />
+          <FeaturedStat value={recipe.servings} label="Servings" />
+          <FeaturedStat value={levelLabel} label="Level" />
         </div>
         <Link to={`/recipes/${recipe.id}`} className="btn-pink">View Recipe →</Link>
       </div>
-    </div>
+    </article>
   );
 }
 
@@ -83,11 +82,7 @@ export default function HomePage() {
       <Hero />
 
       <section className="section">
-        <div className="section-header">
-          <div className="section-eyebrow">✦ Most Loved</div>
-          <h2 className="section-title">Popular <span>Recipes</span></h2>
-          <div className="section-divider" />
-        </div>
+        <SectionHeader eyebrow="✦ Most Loved" title={<>Popular <span>Recipes</span></>} />
         {error ? <div className="hp-error">{errorMessage}</div> : null}
         <div className="recipes-grid">
           {loading ? (
@@ -123,11 +118,7 @@ export default function HomePage() {
 
       {newestRecipes.length > 0 && (
         <section className="section section-bg">
-          <div className="section-header">
-            <div className="section-eyebrow">✦ Fresh Bakes</div>
-            <h2 className="section-title">Newest <span>Recipes</span></h2>
-            <div className="section-divider" />
-          </div>
+          <SectionHeader eyebrow="✦ Fresh Bakes" title={<>Newest <span>Recipes</span></>} />
           <div className="recipes-grid">
             {newestRecipes.map((recipe, i) => (
               <RecipeCard key={recipe.id} recipe={recipe} badge={i === 0 ? (
@@ -146,17 +137,13 @@ export default function HomePage() {
       <CategoryGrid />
 
       <section className="section">
-        <div className="section-header">
-          <div className="section-eyebrow">✦ Recipe of the Month</div>
-          <h2 className="section-title">Featured <span>Dessert</span></h2>
-          <div className="section-divider" />
-        </div>
+        <SectionHeader eyebrow="✦ Recipe of the Month" title={<>Featured <span>Dessert</span></>} />
         {loading ? (
           <div className="hp-loading">Loading...</div>
         ) : featuredRecipe ? (
           <FeaturedCard recipe={featuredRecipe} />
         ) : (
-          <div className="featured-wrap">
+          <article className="featured-wrap">
             <div className="featured-img-wrap">
               <div className="featured-img featured-img--fallback">🍓</div>
             </div>
@@ -169,7 +156,7 @@ export default function HomePage() {
               <p className="featured-desc">Be the first to discover amazing dessert recipes!</p>
               {!isAuthenticated && <Link to="/register" className="btn-pink">Get Started Free →</Link>}
             </div>
-          </div>
+          </article>
         )}
       </section>
 

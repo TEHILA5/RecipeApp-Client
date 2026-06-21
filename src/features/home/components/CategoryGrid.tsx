@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useGetRecipesQuery } from '../../recipe/redux/recipeSlice';
+import SectionHeader from '../../../shared/components/UI/SectionHeader';
 import './CategoryGrid.css';
 
 const CATEGORIES = [
@@ -30,11 +31,7 @@ export default function CategoryGrid() {
 
   return (
     <section className="section section-bg">
-      <div className="section-header">
-        <div className="section-eyebrow">✦ Explore By</div>
-        <h2 className="section-title">Recipe <span>Categories</span></h2>
-        <div className="section-divider" />
-      </div>
+      <SectionHeader eyebrow="✦ Explore By" title={<>Recipe <span>Categories</span></>} />
       <div className="categories-grid">
         {CATEGORIES.map(({ name, cat, image }) => (
           <Link key={cat} to={`/recipes?category=${cat}`} className="cat-card">

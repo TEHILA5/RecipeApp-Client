@@ -66,7 +66,7 @@ export default function SweetieChat() {
 
   return (
     <div className="sc-page">
-      <div className="sc-header">
+      <header className="sc-header">
         <div className="sc-avatar">
           <img src={sweety} alt="Sweety" className="sc-avatar-img" />
         </div>
@@ -78,7 +78,7 @@ export default function SweetieChat() {
           <div className="sc-status-dot" />
           <span className="sc-status-text">Online</span>
         </div>
-      </div>
+      </header>
 
       <div className="sc-messages messages-area">
         {messages.length === 0 && (

@@ -154,7 +154,7 @@ export default function RecipeForm({ initialData, onSubmit, loading = false, sub
   return (
     <div className="rf-wrap">
 
-      <div className="rf-section">
+      <section className="rf-section">
         <SectionTitle icon={<img src="/src/assets/icons/content-notes.png" alt="Basic Info" className="rf-section-icon" />} title="Basic Info" />
         <div className="rf-grid">
           <div>
@@ -191,9 +191,9 @@ export default function RecipeForm({ initialData, onSubmit, loading = false, sub
             <input className="rf-input" value={form.arrImage} onChange={(e) => set('arrImage', e.target.value)} placeholder="https://example.com/image.jpg" />
           </div>
         </div>
-      </div>
+      </section>
 
-      <div className="rf-section">
+      <section className="rf-section">
         <SectionTitle icon={<img src="/src/assets/icons/recipe-bookmark.png" alt="Tags" className="rf-section-icon" />} title="Tags" />
         <p className="rf-hint">Add tags to help with smart search — e.g. "frozen", "chocolate", "quick"</p>
 
@@ -227,9 +227,9 @@ export default function RecipeForm({ initialData, onSubmit, loading = false, sub
             ))}
           </div>
         </div>
-      </div>
+      </section>
 
-      <div className="rf-section">
+      <section className="rf-section">
         <SectionTitle icon={<img src="/src/assets/icons/meta-time.png" alt="Time & Servings" className="rf-section-icon" />} title="Time & Servings" />
         <div className="rf-grid-3">
           {[
@@ -245,9 +245,9 @@ export default function RecipeForm({ initialData, onSubmit, loading = false, sub
             </div>
           ))}
         </div>
-      </div>
+      </section>
 
-      <div className="rf-section">
+      <section className="rf-section">
         <div className="rf-section-header">
           <SectionTitle icon={<img src="/src/assets/icons/calc-spoon.png" alt="Ingredients" className="rf-section-icon" />} title="Ingredients" />
           <Button variant="outline" size="sm" onClick={() => { setShowNewIngredientModal(true); setNewIngredientError(''); setNewIngredientName(''); }}>
@@ -302,9 +302,9 @@ export default function RecipeForm({ initialData, onSubmit, loading = false, sub
           </div>
           <Button onClick={handleAddIngredient} disabled={!newIngredient.ingredientId}>+ Add</Button>
         </div>
-      </div>
+      </section>
 
-      <div className="rf-section">
+      <section className="rf-section">
         <SectionTitle icon={<img src="/src/assets/icons/content-clipboard.png" alt="Instructions" className="rf-section-icon" />} title="Instructions" />
         <label className="rf-label">Step-by-step instructions *</label>
         <p className="rf-hint rf-hint--tight">Write each step on a new line</p>
@@ -313,7 +313,7 @@ export default function RecipeForm({ initialData, onSubmit, loading = false, sub
           value={form.instructions} onChange={(e) => set('instructions', e.target.value)}
           rows={8} placeholder="Step 1: Preheat oven to 180 degrees" />
         {errors.instructions && <p className="rf-field-error">{errors.instructions}</p>}
-      </div>
+      </section>
 
       <div className="rf-submit-row">
         <Button onClick={handleSubmit} loading={loading} size="lg">

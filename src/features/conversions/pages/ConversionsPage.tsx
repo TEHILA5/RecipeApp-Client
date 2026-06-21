@@ -54,7 +54,7 @@ export default function ConversionsPage() {
 
   return (
     <div className="conversions-page">
-      <div className="conversions-header">
+      <header className="conversions-header">
         <div className="conversions-header-inner">
           <div className="header-eyebrow">✦ Ingredient Conversions</div>
           <h1 className="conversions-h1">
@@ -63,7 +63,7 @@ export default function ConversionsPage() {
           </h1>
           <p>Find ingredient substitutes and calculate exact amounts</p>
         </div>
-      </div>
+      </header>
 
       <div className="conversions-body">
         <div className="calc-card">

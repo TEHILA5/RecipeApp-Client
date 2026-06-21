@@ -46,7 +46,7 @@ export default function RecipeListPage() {
 
   return (
     <div className="recipe-list-page">
-      <div className="page-header">
+      <header className="page-header">
         <div className="header-content">
           <div className="header-text">
             <h1 className="page-title">All <span>Recipes</span></h1>
@@ -58,7 +58,7 @@ export default function RecipeListPage() {
             </Link>
           )}
         </div>
-      </div>
+      </header>
 
       <div className="filters-section">
         <div className="search-bar-wrapper">

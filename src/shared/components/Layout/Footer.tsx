@@ -32,7 +32,7 @@ export default function Footer() {
             </div>
           </div>
 
-          <div className="footer-section">
+          <nav className="footer-section">
             <h4>Recipes</h4>
             <ul>
               <li><Link to="/recipes">All Recipes</Link></li>
@@ -40,9 +40,9 @@ export default function Footer() {
               <li><Link to="/recipes?category=Cookies">Cookies</Link></li>
               <li><Link to="/recipes?category=Pastries">Pastries</Link></li>
             </ul>
-          </div>
+          </nav>
 
-          <div className="footer-section">
+          <nav className="footer-section">
             <h4>Sweety</h4>
             <ul>
               <li><Link to="/baking-tips">Baking Tips</Link></li>
@@ -50,9 +50,9 @@ export default function Footer() {
               <li><Link to="/tools">Tools We Love</Link></li>
               <li><Link to="/faq">FAQ</Link></li>
             </ul>
-          </div>
+          </nav>
 
-          <div className="footer-section">
+          <nav className="footer-section">
             <h4>Connect</h4>
             <ul>
               <li><Link to="/about">About Us</Link></li>
@@ -60,7 +60,7 @@ export default function Footer() {
               <li><Link to="/newsletter">Newsletter</Link></li>
               <li><Link to="/privacy">Privacy</Link></li>
             </ul>
-          </div>
+          </nav>
         </div>
 
         <div className="footer-bottom">

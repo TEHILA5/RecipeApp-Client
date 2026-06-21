@@ -57,7 +57,7 @@ export default function SearchFilters({
 }: SearchFiltersProps) {
 
   if (mode === 'category') return (
-    <div>
+    <>
       <p className="filter-hint">Select a category ({ALL_CATEGORIES.length} available):</p>
       <div className="category-chips">
         {ALL_CATEGORIES.map(({ value, label }) => {
@@ -77,11 +77,11 @@ export default function SearchFilters({
           );
         })}
       </div>
-    </div>
+    </>
   );
 
   if (mode === 'ingredients') return (
-    <div>
+    <>
       <p className="filter-hint">
         Add ingredients one by one and press <strong>+ Add</strong> (or Enter):
       </p>
@@ -115,7 +115,7 @@ export default function SearchFilters({
           <button className="clear-btn" onClick={onClearIngredients}>Clear all</button>
         </div>
       )}
-    </div>
+    </>
   );
 
   return null;

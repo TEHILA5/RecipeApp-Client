@@ -37,13 +37,13 @@ export default function NewsletterPage() {
   return (
     <div className="newsletter-page">
 
-      <div className="newsletter-header">
+      <header className="newsletter-header">
         <img src={mailboxIcon} alt="Newsletter" className="newsletter-header-icon" />
         <h1 className="newsletter-header-title">Sweet&Treat Newsletter</h1>
         <p className="newsletter-header-subtitle">
           Monthly recipes, baking tips, and sweet inspiration — delivered straight to your inbox.
         </p>
-      </div>
+      </header>
 
       <div className="newsletter-body">
 
@@ -105,11 +105,11 @@ export default function NewsletterPage() {
           <h3 className="whats-inside-title">What's Inside</h3>
           <div className="whats-inside-grid">
             {WHATS_INSIDE.map((item) => (
-              <div key={item.title} className="whats-inside-card">
+              <article key={item.title} className="whats-inside-card">
                 <img src={item.icon} alt={item.title} className="whats-inside-icon" />
                 <div className="whats-inside-card-title">{item.title}</div>
                 <div className="whats-inside-card-desc">{item.desc}</div>
-              </div>
+              </article>
             ))}
           </div>
         </div>

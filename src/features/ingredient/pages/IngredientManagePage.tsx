@@ -31,7 +31,7 @@ export default function IngredientManagePage() {
 
   return (
     <div className="ingredient-page">
-      <div className="ingredient-header">
+      <header className="ingredient-header">
         <div className="ingredient-header-inner">
           <div className="header-eyebrow">
             <img src="/src/assets/icons/nav-admin.png" alt="" className="header-eyebrow-icon" />
@@ -44,7 +44,7 @@ export default function IngredientManagePage() {
           </h1>
           <p>{ingredients.length} ingredients in the system</p>
         </div>
-      </div>
+      </header>
 
       <div className="ingredient-body">
         <div className="search-bar">

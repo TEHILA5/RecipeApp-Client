@@ -26,13 +26,13 @@ export default function IngredientGuidePage() {
     <StaticPage icon={pageIcon} title="Ingredient Guide" subtitle="Understanding what goes into your desserts">
       <div className="ingredient-list">
         {ingredients.map((ing, i) => (
-          <div key={i} className="ingredient-card">
+          <article key={i} className="ingredient-card">
             <img src={ing.icon} alt={ing.name} className="ingredient-card__icon" />
             <div>
               <h3 className="ingredient-card__name">{ing.name}</h3>
               <p className="ingredient-card__tip">{ing.tip}</p>
             </div>
-          </div>
+          </article>
         ))}
       </div>
     </StaticPage>

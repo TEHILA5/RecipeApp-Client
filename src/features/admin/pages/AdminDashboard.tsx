@@ -59,7 +59,7 @@ export default function AdminDashboard() {
 
   return (
     <div className="ad-page">
-      <div className="ad-hero">
+      <header className="ad-hero">
         <div className="ad-hero-inner">
           <div className="ad-breadcrumb">
             <img src="/src/assets/icons/nav-admin.png" alt="" className="ad-breadcrumb-icon" />
@@ -83,12 +83,12 @@ export default function AdminDashboard() {
             ))}
           </div>
         </div>
-      </div>
+      </header>
 
       <div className="ad-content">
 
         {activeTab === 'overview' && (
-          <div>
+          <>
             <div className="ad-stats-grid">
               <StatsCard icon="/src/assets/icons/page-about.png"     value={stats.totalRecipes}        label="Total Recipes" color="#d4547a" />
               <StatsCard icon="/src/assets/icons/profile-trophy.png" value={stats.topCategory}         label="Top Category"  color="#c4894a" />
@@ -116,7 +116,7 @@ export default function AdminDashboard() {
                 </Link>
               </div>
             </div>
-          </div>
+          </>
         )}
 
         {activeTab === 'recipes' && <RecipeModeration />}

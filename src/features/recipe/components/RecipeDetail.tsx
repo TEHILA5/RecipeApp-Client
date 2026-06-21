@@ -245,7 +245,7 @@ export default function RecipeDetail({ recipe, onCommentAdded }: RecipeDetailPro
             )}
 
           {activeTab === 'comments' && (
-            <div>
+            <>
               {isLoggedIn && !hasCommented ? (
                 <div className="rd-review-form">
                   <h4 className="rd-review-title">Leave a Review</h4>
@@ -309,7 +309,7 @@ export default function RecipeDetail({ recipe, onCommentAdded }: RecipeDetailPro
                   ))}
                 </div>
               )}
-            </div>
+            </>
           )}
         </div>
       </div>

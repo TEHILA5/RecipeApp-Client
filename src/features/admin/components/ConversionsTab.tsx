@@ -109,7 +109,7 @@ export default function ConversionsTab({ allIngredients }: ConversionsTabProps) 
   );
 
   return (
-    <div>
+    <>
       <div className="cv-header">
         <h3 className="cv-title">
           Ingredient Conversions{' '}
@@ -352,6 +352,6 @@ export default function ConversionsTab({ allIngredients }: ConversionsTabProps) 
           </div>
         )}
       </div>
-    </div>
+    </>
   );
 }

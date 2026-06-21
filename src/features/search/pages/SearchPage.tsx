@@ -164,7 +164,7 @@ export default function SearchPage() {
 
   return (
     <div className="search-page">
-      <div className="search-header">
+      <header className="search-header">
         <div className="search-header-inner">
           <div className="header-eyebrow">✦ Find Your Recipe</div>
           <h1>Search <span>Recipes</span> 🔍</h1>
@@ -174,7 +174,7 @@ export default function SearchPage() {
               : 'Find the perfect dessert by name, category, or ingredients'}
           </p>
         </div>
-      </div>
+      </header>
 
       <div className="search-body">
         <div className="search-tabs">

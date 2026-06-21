@@ -3,6 +3,7 @@ import { useAppSelector } from '../../../redux/hooks';
 import { useGetRecommendedRecipesQuery } from '../../recipe/redux/recipeSlice';
 import { type Recipe, LEVEL_LABELS, CATEGORY_IMAGES } from '../../recipe/types/recipe.types';
 import StarRating from '../../../shared/components/StarRating';
+import SectionHeader from '../../../shared/components/UI/SectionHeader';
 import './FeaturedRecipes.css';
 
 function RecipeCard({ recipe }: { recipe: Recipe }) {
@@ -87,11 +88,7 @@ export default function FeaturedRecipes() {
 
   return (
     <section className="section">
-      <div className="section-header">
-        <div className="section-eyebrow">✦ Just For You</div>
-        <h2 className="section-title">Recommended <span>Recipes</span></h2>
-        <div className="section-divider" />
-      </div>
+      <SectionHeader eyebrow="✦ Just For You" title={<>Recommended <span>Recipes</span></>} />
 
       {Boolean(error) && !isLoading && (
         <p className="featured-error">

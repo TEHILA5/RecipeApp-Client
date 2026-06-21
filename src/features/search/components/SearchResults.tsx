@@ -182,7 +182,7 @@ export default function SearchResults({
       )}
 
       {activeResultTab === 'alternatives' && (
-        <div>
+        <>
           <div className="alt-banner">
             <span>
               <img src="/src/assets/icons/action-refresh.png" alt="Info" className="alt-banner-icon" />
@@ -254,7 +254,7 @@ export default function SearchResults({
               </div>
             </>
           )}
-        </div>
+        </>
       )}
     </>
   );

@@ -44,7 +44,7 @@ export default function ProfilePage() {
 
   return (
     <div className="profile-page">
-      <div className="profile-page-header">
+      <header className="profile-page-header">
         <div className="profile-page-header-inner">
           <ProfileCard user={user} />
           <div className="profile-tabs">
@@ -60,13 +60,13 @@ export default function ProfilePage() {
             ))}
           </div>
         </div>
-      </div>
+      </header>
 
       <div className="profile-page-body">
         {activeTab === 'info' && <EditProfile />}
 
         {activeTab === 'stats' && (
-          <div className="stats-card">
+          <section className="stats-card">
             <h2>
               <img src={statsIcon} alt="Stats" className="section-heading-icon" />
               Your Stats
@@ -80,11 +80,11 @@ export default function ProfilePage() {
                 </div>
               ))}
             </div>
-          </div>
+          </section>
         )}
 
         {activeTab === 'danger' && (
-          <div className="danger-card">
+          <section className="danger-card">
             <h2>
               <img src={warningIcon} alt="Warning" className="section-heading-icon" />
               Account Settings
@@ -108,7 +108,7 @@ export default function ProfilePage() {
                 Delete
               </button>
             </div>
-          </div>
+          </section>
         )}
       </div>
 

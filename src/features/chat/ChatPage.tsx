@@ -69,7 +69,7 @@ export default function ChatPage() {
   return (
     <div className="cp-page">
 
-      <div className="cp-header">
+      <header className="cp-header">
         <div className="cp-header-inner">
           <div>
             <h1 className="cp-header-title">
@@ -85,7 +85,7 @@ export default function ChatPage() {
             </span>
           </div>
         </div>
-      </div>
+      </header>
 
       <div className="cp-body">
 

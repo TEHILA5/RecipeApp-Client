@@ -8,7 +8,7 @@ export default function MyRecipesPage() {
 
   return (
     <div className="my-recipes-page">
-      <div className="my-recipes-header">
+      <header className="my-recipes-header">
         <div className="my-recipes-header-inner">
           <div className="header-top">
             <img src={myBook} alt="Recipe Book" className="book-img" />
@@ -28,7 +28,7 @@ export default function MyRecipesPage() {
             </div>
           </div>
         </div>
-      </div>
+      </header>
 
       <div className="my-recipes-body">
         <MyFavorites />
