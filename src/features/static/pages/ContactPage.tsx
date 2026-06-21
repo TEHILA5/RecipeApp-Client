@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useSendContactMessageMutation } from '../../../api/contactApi';
 import { useGetRecipesQuery } from '../../recipe/redux/recipeSlice';
 import { StaticPage } from './StaticPageHelpers';
+import FormField from '../../../shared/components/UI/FormField';
 import './ContactPage.css';
 
 import pageIcon           from '../../../assets/icons/page-contact.png';
@@ -77,18 +78,15 @@ export default function ContactPage() {
 
       <div className="contact-card">
         <div className="contact-grid">
-          <div>
-            <label className="contact-label">Your Name *</label>
+          <FormField label="Your Name *">
             <input className="contact-input" value={form.name} onChange={(e) => updateField('name', e.target.value)} />
-          </div>
-          <div>
-            <label className="contact-label">Email *</label>
+          </FormField>
+          <FormField label="Email *">
             <input className="contact-input" value={form.email} onChange={(e) => updateField('email', e.target.value)} />
-          </div>
+          </FormField>
         </div>
 
-        <div>
-          <label className="contact-label">Category *</label>
+        <FormField label="Category *">
           <div className="contact-categories">
             {CATEGORIES.map((cat) => (
               <button
@@ -100,24 +98,21 @@ export default function ContactPage() {
               </button>
             ))}
           </div>
-        </div>
+        </FormField>
 
-        <div>
-          <label className="contact-label">Related Recipe (optional)</label>
+        <FormField label="Related Recipe (optional)">
           <select className="contact-input" value={form.recipeName} onChange={(e) => updateField('recipeName', e.target.value)}>
             <option value="">No recipe</option>
             {recipes.map((r) => <option key={r.id} value={r.name}>{r.name}</option>)}
           </select>
-        </div>
+        </FormField>
 
-        <div>
-          <label className="contact-label">Message *</label>
+        <FormField label="Message *">
           <textarea className="contact-textarea" value={form.message} onChange={(e) => updateField('message', e.target.value)} />
           <div className="contact-counter">{form.message.length} characters</div>
-        </div>
+        </FormField>
 
-        <div>
-          <label className="contact-label">Priority</label>
+        <FormField label="Priority">
           <div className="contact-urgency">
             {URGENCY_OPTIONS.map((opt) => (
               <button
@@ -131,7 +126,7 @@ export default function ContactPage() {
               </button>
             ))}
           </div>
-        </div>
+        </FormField>
 
         {errorMsg && <div className="contact-error">{errorMsg}</div>}
 

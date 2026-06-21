@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useSubscribeNewsletterMutation } from '../../../api/contactApi';
-import { labelStyle, inputStyle } from './staticStyles';
+import PageHeader from '../../../shared/components/UI/PageHeader';
+import FormField from '../../../shared/components/UI/FormField';
 
 import mailboxIcon   from '../../../assets/icons/newsletter-mailbox.png';
 import celebrateIcon from '../../../assets/icons/newsletter-celebrate.png';
@@ -37,13 +38,13 @@ export default function NewsletterPage() {
   return (
     <div className="newsletter-page">
 
-      <header className="newsletter-header">
-        <img src={mailboxIcon} alt="Newsletter" className="newsletter-header-icon" />
-        <h1 className="newsletter-header-title">Sweet&Treat Newsletter</h1>
-        <p className="newsletter-header-subtitle">
-          Monthly recipes, baking tips, and sweet inspiration — delivered straight to your inbox.
-        </p>
-      </header>
+      <PageHeader
+        variant="gradient"
+        padding="hero"
+        lead={<img src={mailboxIcon} alt="Newsletter" className="newsletter-header-icon" />}
+        title="Sweet&Treat Newsletter"
+        subtitle="Monthly recipes, baking tips, and sweet inspiration — delivered straight to your inbox."
+      />
 
       <div className="newsletter-body">
 
@@ -66,22 +67,20 @@ export default function NewsletterPage() {
             </p>
 
             <div className="newsletter-form">
-              <div>
-                <label style={labelStyle}>Your Name</label>
-                <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. Sarah" style={inputStyle} />
-              </div>
-              <div>
-                <label style={labelStyle}>Email Address *</label>
+              <FormField label="Your Name">
+                <input type="text" className="form-field-row__input" value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. Sarah" />
+              </FormField>
+              <FormField label="Email Address *" error={errorMsg || undefined}>
                 <input
                   type="email"
+                  className="form-field-row__input"
                   value={email}
                   onChange={(e) => { setEmail(e.target.value); setErrorMsg(''); }}
                   onKeyDown={(e) => e.key === 'Enter' && handleSubmit()}
                   placeholder="hello@example.com"
-                  style={{ ...inputStyle, borderColor: errorMsg ? '#ef4444' : '#fce7f3' }}
+                  style={errorMsg ? { borderColor: '#ef4444' } : undefined}
                 />
-                {errorMsg && <p className="newsletter-error">{errorMsg}</p>}
-              </div>
+              </FormField>
 
               <button
                 onClick={handleSubmit}

@@ -6,7 +6,8 @@ import {
 } from '../../../api/ingredientApi';
 import Modal from '../../../shared/components/UI/Modal';
 import Button from '../../../shared/components/UI/Button';
-import ErrorMessage from '../../../shared/components/UI/ErrorMessage';
+import FormField from '../../../shared/components/UI/FormField';
+import ModalActions from '../../../shared/components/UI/ModalActions';
 import './RecipeForm.css';
 
 interface FormIngredient {
@@ -157,39 +158,32 @@ export default function RecipeForm({ initialData, onSubmit, loading = false, sub
       <section className="rf-section">
         <SectionTitle icon={<img src="/src/assets/icons/content-notes.png" alt="Basic Info" className="rf-section-icon" />} title="Basic Info" />
         <div className="rf-grid">
-          <div>
-            <label className="rf-label">Recipe Name *</label>
+          <FormField label="Recipe Name *" labelVariant="uppercase" error={errors.name}>
             <input className={`rf-input ${errors.name ? 'rf-input--error' : ''}`}
               value={form.name} onChange={(e) => set('name', e.target.value)} placeholder="e.g. Chocolate Lava Cake" />
-            {errors.name && <p className="rf-field-error">{errors.name}</p>}
-          </div>
-          <div>
-            <label className="rf-label">Description *</label>
+          </FormField>
+          <FormField label="Description *" labelVariant="uppercase" error={errors.description}>
             <textarea className={`rf-input rf-textarea ${errors.description ? 'rf-input--error' : ''}`}
               value={form.description} onChange={(e) => set('description', e.target.value)}
               rows={3} placeholder="A short, enticing description..." />
-            {errors.description && <p className="rf-field-error">{errors.description}</p>}
-          </div>
+          </FormField>
           <div className="rf-grid-2">
-            <div>
-              <label className="rf-label">Category *</label>
+            <FormField label="Category *" labelVariant="uppercase">
               <select className="rf-input" value={form.category} onChange={(e) => set('category', e.target.value as RecipeCategory)}>
                 {CATEGORIES.map((cat) => <option key={cat} value={cat}>{cat}</option>)}
               </select>
-            </div>
-            <div>
-              <label className="rf-label">Difficulty *</label>
+            </FormField>
+            <FormField label="Difficulty *" labelVariant="uppercase">
               <select className="rf-input" value={form.level} onChange={(e) => set('level', Number(e.target.value) as DifficultyLevel)}>
                 <option value={1}>Easy</option>
                 <option value={2}>Medium</option>
                 <option value={3}>Hard</option>
               </select>
-            </div>
+            </FormField>
           </div>
-          <div>
-            <label className="rf-label">Image URL</label>
+          <FormField label="Image URL" labelVariant="uppercase">
             <input className="rf-input" value={form.arrImage} onChange={(e) => set('arrImage', e.target.value)} placeholder="https://example.com/image.jpg" />
-          </div>
+          </FormField>
         </div>
       </section>
 
@@ -237,12 +231,10 @@ export default function RecipeForm({ initialData, onSubmit, loading = false, sub
             { label: 'Total Time (min) *', field: 'totalTime' as const, error: errors.totalTime },
             { label: 'Servings *',         field: 'servings' as const,  error: errors.servings },
           ].map(({ label, field, error }) => (
-            <div key={field}>
-              <label className="rf-label">{label}</label>
+            <FormField key={field} label={label} labelVariant="uppercase" error={error}>
               <input type="number" min={1} className={`rf-input ${error ? 'rf-input--error' : ''}`}
                 value={form[field] as number} onChange={(e) => set(field, Number(e.target.value))} />
-              {error && <p className="rf-field-error">{error}</p>}
-            </div>
+            </FormField>
           ))}
         </div>
       </section>
@@ -269,8 +261,7 @@ export default function RecipeForm({ initialData, onSubmit, loading = false, sub
         )}
 
         <div className="rf-ing-add">
-          <div>
-            <label className="rf-label">Ingredient</label>
+          <FormField label="Ingredient" labelVariant="uppercase">
             <select className="rf-input" value={newIngredient.ingredientId}
               onChange={(e) => {
                 const id = Number(e.target.value);
@@ -280,39 +271,36 @@ export default function RecipeForm({ initialData, onSubmit, loading = false, sub
               <option value={0}>Select...</option>
               {ingredientOptions.map((o) => <option key={o.id} value={o.id}>{o.name}</option>)}
             </select>
-          </div>
-          <div>
-            <label className="rf-label">Quantity</label>
+          </FormField>
+          <FormField label="Quantity" labelVariant="uppercase">
             <input type="number" min={0} step={0.1} className="rf-input" value={newIngredient.quantity}
               onChange={(e) => setNewIngredient((n) => ({ ...n, quantity: Number(e.target.value) }))} />
-          </div>
-          <div>
-            <label className="rf-label">Unit</label>
+          </FormField>
+          <FormField label="Unit" labelVariant="uppercase">
             <select className="rf-input" value={newIngredient.unit} onChange={(e) => setNewIngredient((n) => ({ ...n, unit: e.target.value }))}>
               {UNITS.map((u) => <option key={u} value={u}>{u}</option>)}
             </select>
-          </div>
-          <div>
-            <label className="rf-label">Importance</label>
+          </FormField>
+          <FormField label="Importance" labelVariant="uppercase">
             <select className="rf-input" value={newIngredient.importance} onChange={(e) => setNewIngredient((n) => ({ ...n, importance: e.target.value as FormIngredient['importance'] }))}>
               <option value="Essential">Essential</option>
               <option value="Recommended">Recommended</option>
               <option value="Optional">Optional</option>
             </select>
-          </div>
+          </FormField>
           <Button onClick={handleAddIngredient} disabled={!newIngredient.ingredientId}>+ Add</Button>
         </div>
       </section>
 
       <section className="rf-section">
         <SectionTitle icon={<img src="/src/assets/icons/content-clipboard.png" alt="Instructions" className="rf-section-icon" />} title="Instructions" />
-        <label className="rf-label">Step-by-step instructions *</label>
-        <p className="rf-hint rf-hint--tight">Write each step on a new line</p>
-        <textarea
-          className={`rf-input rf-textarea ${errors.instructions ? 'rf-input--error' : ''}`}
-          value={form.instructions} onChange={(e) => set('instructions', e.target.value)}
-          rows={8} placeholder="Step 1: Preheat oven to 180 degrees" />
-        {errors.instructions && <p className="rf-field-error">{errors.instructions}</p>}
+        <FormField label="Step-by-step instructions *" labelVariant="uppercase" error={errors.instructions}>
+          <p className="rf-hint rf-hint--tight">Write each step on a new line</p>
+          <textarea
+            className={`rf-input rf-textarea ${errors.instructions ? 'rf-input--error' : ''}`}
+            value={form.instructions} onChange={(e) => set('instructions', e.target.value)}
+            rows={8} placeholder="Step 1: Preheat oven to 180 degrees" />
+        </FormField>
       </section>
 
       <div className="rf-submit-row">
@@ -323,19 +311,19 @@ export default function RecipeForm({ initialData, onSubmit, loading = false, sub
       </div>
 
       <Modal isOpen={showNewIngredientModal} onClose={() => setShowNewIngredientModal(false)} title="Add New Ingredient">
-        <label className="rf-label">Ingredient Name *</label>
-        <input
-          autoFocus type="text" value={newIngredientName}
-          onChange={(e) => { setNewIngredientName(e.target.value); setNewIngredientError(''); }}
-          onKeyDown={(e) => e.key === 'Enter' && handleCreateNewIngredient()}
-          placeholder="e.g. Vanilla Extract"
-          className={`rf-input ${newIngredientError ? 'rf-input--error' : ''}`}
-        />
-        <ErrorMessage message={newIngredientError} className="rf-ingredient-error" />
-        <div className="rf-modal-actions">
+        <FormField label="Ingredient Name *" labelVariant="uppercase" error={newIngredientError || undefined}>
+          <input
+            autoFocus type="text" value={newIngredientName}
+            onChange={(e) => { setNewIngredientName(e.target.value); setNewIngredientError(''); }}
+            onKeyDown={(e) => e.key === 'Enter' && handleCreateNewIngredient()}
+            placeholder="e.g. Vanilla Extract"
+            className={`rf-input ${newIngredientError ? 'rf-input--error' : ''}`}
+          />
+        </FormField>
+        <ModalActions>
           <Button variant="ghost" onClick={() => setShowNewIngredientModal(false)} fullWidth>Cancel</Button>
           <Button onClick={handleCreateNewIngredient} loading={savingNewIngredient} disabled={!newIngredientName.trim()} fullWidth>✨ Create</Button>
-        </div>
+        </ModalActions>
       </Modal>
     </div>
   );

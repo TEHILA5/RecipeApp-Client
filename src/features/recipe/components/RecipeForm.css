@@ -35,16 +35,6 @@
   object-fit: contain;
 }
 
-.rf-label {
-  display: block;
-  font-weight: 700;
-  color: #6b7280;
-  font-size: 0.8rem;
-  letter-spacing: 0.07em;
-  text-transform: uppercase;
-  margin-bottom: 6px;
-}
-
 .rf-input {
   width: 100%;
   padding: 12px 16px;
@@ -195,10 +185,4 @@
   width: 20px;
   height: 20px;
   object-fit: contain;
-}
-
-.rf-modal-actions {
-  display: flex;
-  gap: 12px;
-  margin-top: 24px;
 }

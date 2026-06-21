@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { useGetAllConversionsQuery } from '../../../api/adminApi';
 import Loading from '../../../shared/components/UI/Loading';
+import PageHeader from '../../../shared/components/UI/PageHeader';
 import './ConversionsPage.css';
 
 export default function ConversionsPage() {
@@ -54,16 +55,18 @@ export default function ConversionsPage() {
 
   return (
     <div className="conversions-page">
-      <header className="conversions-header">
-        <div className="conversions-header-inner">
-          <div className="header-eyebrow">✦ Ingredient Conversions</div>
-          <h1 className="conversions-h1">
+      <PageHeader
+        variant="purple"
+        size="md"
+        eyebrow="✦ Ingredient Conversions"
+        title={
+          <>
             Substitution <span>Guide</span>
             <img src="/src/assets/icons/action-refresh.png" alt="" className="conv-icon-xl" />
-          </h1>
-          <p>Find ingredient substitutes and calculate exact amounts</p>
-        </div>
-      </header>
+          </>
+        }
+        subtitle="Find ingredient substitutes and calculate exact amounts"
+      />
 
       <div className="conversions-body">
         <div className="calc-card">

@@ -1,4 +1,3 @@
-import type { ReactNode } from 'react';
 import { Link } from 'react-router-dom'; 
 import { useAppSelector } from '../../../redux/hooks';
 import { useGetRecipesQuery } from '../../recipe/redux/recipeSlice';
@@ -9,16 +8,8 @@ import CategoryGrid from '../components/CategoryGrid';
 import FeaturedRecipes from '../components/FeaturedRecipes';
 import RecipeCard from '../../recipe/components/RecipeCard';
 import SectionHeader from '../../../shared/components/UI/SectionHeader';
+import StatDisplay from '../../../shared/components/UI/StatDisplay';
 import './HomePage.css';
-
-function FeaturedStat({ value, label }: { value: ReactNode; label: string }) {
-  return (
-    <div className="feat-stat">
-      <div className="feat-stat-val">{value}</div>
-      <div className="feat-stat-lbl">{label}</div>
-    </div>
-  );
-}
 
 function FeaturedCard({ recipe }: { recipe: Recipe }) {
   const image = CATEGORY_IMAGES[recipe.category] ?? '🍰';
@@ -43,10 +34,10 @@ function FeaturedCard({ recipe }: { recipe: Recipe }) {
         <h3 className="featured-title">{recipe.name}</h3>
         <p className="featured-desc">{recipe.description}</p>
         <div className="featured-stats">
-          <FeaturedStat value={<StarRating rating={recipe.averageRating} size="md" />} label="Rating" />
-          <FeaturedStat value={`${recipe.totalTime}m`} label="Time" />
-          <FeaturedStat value={recipe.servings} label="Servings" />
-          <FeaturedStat value={levelLabel} label="Level" />
+          <StatDisplay variant="featured" value={<StarRating rating={recipe.averageRating} size="md" />} label="Rating" />
+          <StatDisplay variant="featured" value={`${recipe.totalTime}m`} label="Time" />
+          <StatDisplay variant="featured" value={recipe.servings} label="Servings" />
+          <StatDisplay variant="featured" value={levelLabel} label="Level" />
         </div>
         <Link to={`/recipes/${recipe.id}`} className="btn-pink">View Recipe →</Link>
       </div>

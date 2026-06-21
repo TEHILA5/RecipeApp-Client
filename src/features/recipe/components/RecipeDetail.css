@@ -396,29 +396,3 @@
   line-height: 1.6;
   text-align: center;
 }
-
-.rd-modal-actions { display: flex; gap: 12px; justify-content: center; }
-
-.rd-modal-cancel {
-  padding: 12px 28px;
-  border-radius: var(--radius-full);
-  border: 2px solid #e5e7eb;
-  background: white;
-  color: #6b7280;
-  font-family: var(--font-main);
-  font-weight: 700;
-  cursor: pointer;
-}
-
-.rd-modal-confirm {
-  padding: 12px 28px;
-  border-radius: var(--radius-full);
-  border: none;
-  background: #ef4444;
-  color: white;
-  font-family: var(--font-main);
-  font-weight: 700;
-  cursor: pointer;
-}
-
-.rd-modal-confirm--busy { cursor: not-allowed; opacity: 0.7; }

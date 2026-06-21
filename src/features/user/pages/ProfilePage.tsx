@@ -4,6 +4,9 @@ import { useUserProfile } from '../hooks/useUserProfile';
 import ProfileCard from '../components/ProfileCard';
 import EditProfile from '../components/EditProfile';
 import Modal from '../../../shared/components/UI/Modal';
+import PageHeader from '../../../shared/components/UI/PageHeader';
+import StatDisplay from '../../../shared/components/UI/StatDisplay';
+import ModalActions from '../../../shared/components/UI/ModalActions';
 import './ProfilePage.css';
 
 import avatarIcon       from '../../../assets/icons/profile-avatar.png';
@@ -44,8 +47,7 @@ export default function ProfilePage() {
 
   return (
     <div className="profile-page">
-      <header className="profile-page-header">
-        <div className="profile-page-header-inner">
+      <PageHeader layout="custom" size="md" padding="flush" align="left">
           <ProfileCard user={user} />
           <div className="profile-tabs">
             {TABS.map(({ key, label, icon }) => (
@@ -59,8 +61,7 @@ export default function ProfilePage() {
               </button>
             ))}
           </div>
-        </div>
-      </header>
+      </PageHeader>
 
       <div className="profile-page-body">
         {activeTab === 'info' && <EditProfile />}
@@ -73,11 +74,13 @@ export default function ProfilePage() {
             </h2>
             <div className="stats-grid">
               {stats.map(({ label, value, icon }) => (
-                <div key={label} className="stat-item">
-                  <img src={icon} alt={label} className="stat-emoji stat-icon" />
-                  <div className="stat-value">{value}</div>
-                  <div className="stat-label">{label}</div>
-                </div>
+                <StatDisplay
+                  key={label}
+                  variant="profile"
+                  icon={<img src={icon} alt={label} />}
+                  value={value}
+                  label={label}
+                />
               ))}
             </div>
           </section>
@@ -116,12 +119,15 @@ export default function ProfilePage() {
         <p className="modal-desc">
           This will permanently delete your account and all your data. This cannot be undone.
         </p>
-        <div className="modal-actions">
-          <button className="modal-cancel" onClick={() => setDeleteConfirm(false)}>Cancel</button>
-          <button className={`modal-confirm ${deleting ? 'loading' : ''}`} onClick={handleDeleteAccount} disabled={deleting}>
-            {deleting ? 'Deleting...' : 'Yes, Delete'}
-          </button>
-        </div>
+        <ModalActions
+          className="modal-actions--flush"
+          onCancel={() => setDeleteConfirm(false)}
+          onConfirm={handleDeleteAccount}
+          confirmLabel="Yes, Delete"
+          confirmLoadingLabel="Deleting..."
+          confirmLoading={deleting}
+          danger
+        />
       </Modal>
     </div>
   );

@@ -1,15 +1,4 @@
-/* ── Hero / Header ── */
-.ad-hero {
-  background: linear-gradient(135deg, #4a2c3a, #6b3d52);
-  padding: 48px 24px 0;
-  color: white;
-}
-
-.ad-hero-inner {
-  max-width: 1100px;
-  margin: 0 auto;
-}
-
+/* ── Admin breadcrumb / welcome (dark header content) ── */
 .ad-breadcrumb {
   display: flex;
   align-items: center;

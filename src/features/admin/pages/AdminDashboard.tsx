@@ -12,6 +12,7 @@ import {
   useGetWeeklyStatsQuery,
   useGetAllIngredientsAdminQuery,
 } from '../../../api/adminApi';
+import PageHeader from '../../../shared/components/UI/PageHeader';
 import './AdminDashboard.css';
 
 type ActiveTab = 'overview' | 'recipes' | 'ingredients' | 'conversions' | 'users' | 'analytics';
@@ -59,8 +60,7 @@ export default function AdminDashboard() {
 
   return (
     <div className="ad-page">
-      <header className="ad-hero">
-        <div className="ad-hero-inner">
+      <PageHeader variant="dark" size="xl" padding="flush" align="left">
           <div className="ad-breadcrumb">
             <img src="/src/assets/icons/nav-admin.png" alt="" className="ad-breadcrumb-icon" />
             Admin Panel
@@ -82,8 +82,7 @@ export default function AdminDashboard() {
               </button>
             ))}
           </div>
-        </div>
-      </header>
+      </PageHeader>
 
       <div className="ad-content">
 

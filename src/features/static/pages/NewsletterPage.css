@@ -1,31 +1,9 @@
-.newsletter-header {
-  background: linear-gradient(135deg, #d4547a, #e8799a);
-  padding: 64px 24px;
-  text-align: center;
-  color: white;
-}
-
 .newsletter-header-icon {
   width: 90px;
   height: 90px;
   object-fit: contain;
   margin-bottom: 16px;
   place-self: center;
-}
-
-.newsletter-header-title {
-  font-family: var(--font-script);
-  font-size: clamp(2.2rem, 4vw, 3rem);
-  margin-bottom: 12px;
-  color: white;
-}
-
-.newsletter-header-subtitle {
-  opacity: 0.9;
-  font-size: 1.05rem;
-  max-width: 480px;
-  margin: 0 auto;
-  line-height: 1.6;
 }
 
 /* Body */
@@ -92,12 +70,6 @@
   display: flex;
   flex-direction: column;
   gap: 16px;
-}
-
-.newsletter-error {
-  color: #ef4444;
-  font-size: 0.82rem;
-  margin-top: 6px;
 }
 
 .newsletter-submit {

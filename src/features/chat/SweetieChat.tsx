@@ -4,6 +4,7 @@ import type { ChatMessage } from '../../api/chatApi';
 import sweety from '../../assets/images/sweety.png';
 import sweetyTip from '../../assets/images/sweety-tip.png';
 import userIcon from '../../assets/icons/profile-avatar.png';
+import PageHeader from '../../shared/components/UI/PageHeader';
 import './SweetieChat.css';
 
 const SUGGESTIONS = [
@@ -66,19 +67,24 @@ export default function SweetieChat() {
 
   return (
     <div className="sc-page">
-      <header className="sc-header">
-        <div className="sc-avatar">
-          <img src={sweety} alt="Sweety" className="sc-avatar-img" />
-        </div>
-        <div>
-          <div className="sc-name">Sweetie</div>
-          <div className="sc-role">Dessert Recipe Assistant</div>
-        </div>
-        <div className="sc-status">
-          <div className="sc-status-dot" />
-          <span className="sc-status-text">Online</span>
-        </div>
-      </header>
+      <PageHeader
+        variant="gradient"
+        layout="inline"
+        padding="compact"
+        lead={
+          <div className="sc-avatar">
+            <img src={sweety} alt="Sweety" className="sc-avatar-img" />
+          </div>
+        }
+        title="Sweetie"
+        subtitle="Dessert Recipe Assistant"
+        action={
+          <div className="sc-status">
+            <div className="sc-status-dot" />
+            <span className="sc-status-text">Online</span>
+          </div>
+        }
+      />
 
       <div className="sc-messages messages-area">
         {messages.length === 0 && (

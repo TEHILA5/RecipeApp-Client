@@ -1,0 +1,72 @@
+/* featured — HomePage featured stats */
+.stat-display--featured .stat-display__value {
+  font-family: var(--font-script);
+  font-size: 1.8rem;
+  color: var(--deep-pink);
+}
+
+.stat-display--featured .stat-display__label {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--light);
+}
+
+/* profile — ProfilePage stat grid */
+.stat-display--profile {
+  padding: 24px 20px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, var(--soft-pink), #fff8f2);
+  border: 1px solid #fce7f3;
+  text-align: center;
+}
+
+.stat-display--profile .stat-display__icon {
+  margin-bottom: 8px;
+}
+
+.stat-display--profile .stat-display__icon img {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+}
+
+.stat-display--profile .stat-display__value {
+  font-family: var(--font-script);
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #d4547a;
+}
+
+.stat-display--profile .stat-display__label {
+  font-size: 0.82rem;
+  color: #9ca3af;
+  font-weight: 600;
+  margin-top: 4px;
+}
+
+/* admin — AdminDashboard stats inside Card */
+.stat-display--admin .stat-display__icon {
+  font-size: 2rem;
+  margin-bottom: 12px;
+}
+
+.stat-display--admin .stat-display__icon img {
+  width: 2em;
+  height: 2em;
+  object-fit: contain;
+}
+
+.stat-display--admin .stat-display__value {
+  font-family: var(--font-script);
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+.stat-display--admin .stat-display__label {
+  font-size: 0.82rem;
+  color: #9ca3af;
+  font-weight: 600;
+  margin-top: 4px;
+}

@@ -29,15 +29,9 @@
 }
 
 /* ── Page header gradient band ── */
-.page-header-band,
-.search-header,
-.profile-page-header,
-.my-recipes-header,
 .static-page__header,
-.page-header,
 .recipe-edit-header,
 .recipe-create-header,
-.ingredient-header,
 .as-hero {
   background: var(--gradient-header-band);
   border-bottom: 2px solid var(--header-band-border);

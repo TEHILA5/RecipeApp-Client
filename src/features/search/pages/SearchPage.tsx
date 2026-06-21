@@ -19,6 +19,7 @@ import SearchBar from '../components/SearchBar';
 import SearchFilters from '../components/SearchFilters';
 import SearchResults from '../components/SearchResults';
 import AdvancedSearch from '../components/AdvancedSearch';
+import PageHeader from '../../../shared/components/UI/PageHeader';
 import './SearchPage.css';
 
 type SearchMode = 'name' | 'category' | 'ingredients' | 'advanced';
@@ -164,17 +165,16 @@ export default function SearchPage() {
 
   return (
     <div className="search-page">
-      <header className="search-header">
-        <div className="search-header-inner">
-          <div className="header-eyebrow">✦ Find Your Recipe</div>
-          <h1>Search <span>Recipes</span> 🔍</h1>
-          <p>
-            {activeTab === 'advanced'
-              ? 'Describe what you want in plain English — let AI do the rest'
-              : 'Find the perfect dessert by name, category, or ingredients'}
-          </p>
-        </div>
-      </header>
+      <PageHeader
+        size="sm"
+        eyebrow="✦ Find Your Recipe"
+        title={<>Search <span>Recipes</span> 🔍</>}
+        subtitle={
+          activeTab === 'advanced'
+            ? 'Describe what you want in plain English — let AI do the rest'
+            : 'Find the perfect dessert by name, category, or ingredients'
+        }
+      />
 
       <div className="search-body">
         <div className="search-tabs">

@@ -4,6 +4,7 @@ import { useAppSelector } from '../../../redux/hooks';
 import { useRecipes } from '../hooks/useRecipes';
 import RecipeCard from '../components/RecipeCard';
 import RecipeFilters from '../components/RecipeFilters';
+import PageHeader from '../../../shared/components/UI/PageHeader';
 import type { RecipeCategory } from '../types/recipe.types';
 import './RecipeListPage.css';
 
@@ -46,19 +47,21 @@ export default function RecipeListPage() {
 
   return (
     <div className="recipe-list-page">
-      <header className="page-header">
-        <div className="header-content">
-          <div className="header-text">
-            <h1 className="page-title">All <span>Recipes</span></h1>
-            <p className="page-subtitle">Discover {totalCount} delicious dessert recipes</p>
-          </div>
-          {isAdmin && (
+      <PageHeader
+        layout="split"
+        size="full"
+        padding="large"
+        align="left"
+        title={<>All <span>Recipes</span></>}
+        subtitle={`Discover ${totalCount} delicious dessert recipes`}
+        action={
+          isAdmin ? (
             <Link to="/recipes/create" className="btn-add-recipe">
               <span>+</span> Add New Recipe
             </Link>
-          )}
-        </div>
-      </header>
+          ) : undefined
+        }
+      />
 
       <div className="filters-section">
         <div className="search-bar-wrapper">

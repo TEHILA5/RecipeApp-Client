@@ -6,6 +6,7 @@ import {
 } from '../../../api/ingredientApi';
 import IngredientCard from '../components/IngredientCard';
 import IngredientForm from '../components/IngredientForm';
+import PageHeader from '../../../shared/components/UI/PageHeader';
 import './IngredientManagePage.css';
 
 export default function IngredientManagePage() {
@@ -31,20 +32,24 @@ export default function IngredientManagePage() {
 
   return (
     <div className="ingredient-page">
-      <header className="ingredient-header">
-        <div className="ingredient-header-inner">
-          <div className="header-eyebrow">
+      <PageHeader
+        size="lg"
+        align="left"
+        eyebrow={
+          <>
             <img src="/src/assets/icons/nav-admin.png" alt="" className="header-eyebrow-icon" />
             Admin → Ingredients
-          </div>
-          <h1>
+          </>
+        }
+        title={
+          <>
             Manage
             <span>Ingredients</span>
             <img src="/src/assets/icons/calc-spoon.png" alt="Ingredient" className="header-title-icon" />
-          </h1>
-          <p>{ingredients.length} ingredients in the system</p>
-        </div>
-      </header>
+          </>
+        }
+        subtitle={`${ingredients.length} ingredients in the system`}
+      />
 
       <div className="ingredient-body">
         <div className="search-bar">

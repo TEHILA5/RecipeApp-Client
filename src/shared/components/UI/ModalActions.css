@@ -1,0 +1,46 @@
+.modal-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin-top: 24px;
+}
+
+.modal-actions--flush {
+  margin-top: 0;
+}
+
+.modal-actions__cancel {
+  padding: 12px 28px;
+  border-radius: var(--radius-full);
+  border: 2px solid #e5e7eb;
+  background: white;
+  color: #6b7280;
+  font-family: var(--font-main);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.modal-actions__confirm {
+  padding: 12px 28px;
+  border-radius: var(--radius-full);
+  border: none;
+  background: var(--gradient-primary);
+  color: white;
+  font-family: var(--font-main);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.modal-actions__confirm--danger {
+  background: #ef4444;
+}
+
+.modal-actions__confirm--loading {
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.modal-actions__confirm:disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
+}

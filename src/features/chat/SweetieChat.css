@@ -21,16 +21,6 @@
   background: var(--soft-pink);
 }
 
-.sc-header {
-  background: var(--gradient-primary);
-  padding: 16px 24px;
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  box-shadow: 0 4px 20px rgba(212, 84, 122, 0.25);
-  flex-shrink: 0;
-}
-
 .sc-avatar {
   width: 46px;
   height: 46px;

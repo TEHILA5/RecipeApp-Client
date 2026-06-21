@@ -15,6 +15,7 @@ import type { CommentCreateDto } from '../types/userAction.types';
 import { LEVEL_LABELS, CATEGORY_IMAGES } from '../types/recipe.types';
 import IngredientList from './IngredientList';
 import Modal from '../../../shared/components/UI/Modal';
+import ModalActions from '../../../shared/components/UI/ModalActions';
 import './RecipeDetail.css';
 
 import timeIcon      from '../../../assets/icons/meta-time.png';
@@ -318,12 +319,15 @@ export default function RecipeDetail({ recipe, onCommentAdded }: RecipeDetailPro
         <p className="rd-modal-text">
           Are you sure you want to delete <strong>"{recipe.name}"</strong>? This action cannot be undone.
         </p>
-        <div className="rd-modal-actions">
-          <button onClick={() => setShowDeleteConfirm(false)} className="rd-modal-cancel">Cancel</button>
-          <button onClick={handleDelete} disabled={deletingRecipe} className={`rd-modal-confirm ${deletingRecipe ? 'rd-modal-confirm--busy' : ''}`}>
-            {deletingRecipe ? 'Deleting...' : 'Yes, Delete'}
-          </button>
-        </div>
+        <ModalActions
+          className="modal-actions--flush"
+          onCancel={() => setShowDeleteConfirm(false)}
+          onConfirm={handleDelete}
+          confirmLabel="Yes, Delete"
+          confirmLoadingLabel="Deleting..."
+          confirmLoading={deletingRecipe}
+          danger
+        />
       </Modal>
     </div>
   );

@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useAppSelector } from '../../redux/hooks';
 import { useChat, conversationKey, type ChatMessage } from './hooks/useChat';
+import PageHeader from '../../shared/components/UI/PageHeader';
 import './ChatPage.css';
 
 type ChatMode = 'public' | 'private';
@@ -69,23 +70,27 @@ export default function ChatPage() {
   return (
     <div className="cp-page">
 
-      <header className="cp-header">
-        <div className="cp-header-inner">
-          <div>
-            <h1 className="cp-header-title">
-              Sweet Chat
-              <img src="/src/assets/icons/chat-bubble.png" alt="" className="cp-icon-lg" />
-            </h1>
-            <p className="cp-header-sub">Chat with bakers, share tips, ask questions!</p>
-          </div>
+      <PageHeader
+        variant="gradient"
+        layout="split"
+        size="lg"
+        align="left"
+        title={
+          <>
+            Sweet Chat
+            <img src="/src/assets/icons/chat-bubble.png" alt="" className="cp-icon-lg" />
+          </>
+        }
+        subtitle="Chat with bakers, share tips, ask questions!"
+        action={
           <div className="cp-status">
             <div className={`cp-status-dot${connected ? ' cp-status-dot--on' : ' cp-status-dot--off'}`} />
             <span className="cp-status-label">
               {connected ? `${onlineUsers.length + 1} online` : 'Connecting...'}
             </span>
           </div>
-        </div>
-      </header>
+        }
+      />
 
       <div className="cp-body">
 
