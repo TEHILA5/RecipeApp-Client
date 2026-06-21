@@ -1,15 +1,5 @@
-.recipe-list-page {
-  min-height: 100vh;
-  padding-top: var(--nav-height);
-  background: var(--soft-pink);
-}
-
 .page-header {
-  background: linear-gradient(135deg,
-    rgba(232, 121, 154, 0.08) 0%,
-    rgba(232, 196, 154, 0.08) 100%);
   padding: 60px 64px 40px;
-  border-bottom: 2px solid rgba(232, 121, 154, 0.1);
 }
 
 .header-content {
@@ -24,7 +14,7 @@
 .header-text { flex: 1; }
 
 .page-title {
-  font-family: 'Dancing Script', cursive;
+  font-family: var(--font-script);
   font-size: clamp(2.5rem, 4vw, 3.5rem);
   color: var(--text);
   margin-bottom: 12px;
@@ -36,26 +26,26 @@
 .page-subtitle { font-size: 1rem; color: var(--mid); font-weight: 500; }
 
 .btn-add-recipe {
-  background: linear-gradient(135deg, var(--pink), var(--deep-pink));
+  background: var(--gradient-primary);
   color: white;
   padding: 14px 32px;
-  border-radius: 999px;
-  font-family: 'Nunito', sans-serif;
+  border-radius: var(--radius-full);
+  font-family: var(--font-main);
   font-size: 0.9rem;
   font-weight: 700;
   text-decoration: none;
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  box-shadow: 0 6px 20px rgba(212, 84, 122, 0.35);
-  transition: all 0.2s;
+  box-shadow: var(--shadow-btn);
+  transition: var(--transition);
 }
 
 .btn-add-recipe span { font-size: 1.3rem; line-height: 1; }
 
 .btn-add-recipe:hover {
   transform: translateY(-3px);
-  box-shadow: 0 10px 28px rgba(212, 84, 122, 0.4);
+  box-shadow: var(--shadow-btn-hover);
 }
 
 .filters-section {
@@ -73,8 +63,8 @@
   width: 100%;
   padding: 16px 52px 16px 20px;
   border: 2px solid var(--blush);
-  border-radius: 999px;
-  font-family: 'Nunito', sans-serif;
+  border-radius: var(--radius-full);
+  font-family: var(--font-main);
   font-size: 0.95rem;
   background: white;
   transition: all 0.2s;
@@ -111,7 +101,7 @@
 .filter-group { display: flex; flex-direction: column; gap: 12px; }
 
 .filter-title {
-  font-family: 'Nunito', sans-serif;
+  font-family: var(--font-main);
   font-size: 0.85rem;
   font-weight: 700;
   letter-spacing: 0.08em;
@@ -127,7 +117,7 @@
   border: 2px solid var(--blush);
   background: white;
   color: var(--text);
-  font-family: 'Nunito', sans-serif;
+  font-family: var(--font-main);
   font-size: 0.85rem;
   font-weight: 600;
   cursor: pointer;
@@ -142,7 +132,7 @@
 .filter-chip:hover { border-color: var(--pink); background: var(--blush); }
 
 .filter-chip.active {
-  background: linear-gradient(135deg, var(--pink), var(--deep-pink));
+  background: var(--gradient-primary);
   border-color: var(--deep-pink);
   color: white;
   box-shadow: 0 4px 12px rgba(212, 84, 122, 0.3);
@@ -151,11 +141,11 @@
 .clear-filters-btn {
   align-self: flex-start;
   padding: 10px 24px;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   border: 2px solid var(--pink);
   background: transparent;
   color: var(--deep-pink);
-  font-family: 'Nunito', sans-serif;
+  font-family: var(--font-main);
   font-size: 0.85rem;
   font-weight: 700;
   cursor: pointer;
@@ -173,7 +163,7 @@
   border: 2px solid var(--blush);
   border-radius: 12px;
   background: white;
-  font-family: 'Nunito', sans-serif;
+  font-family: var(--font-main);
   font-size: 0.9rem;
   font-weight: 600;
   color: var(--text);
@@ -202,7 +192,7 @@
   padding: 6px 14px;
   background: var(--blush);
   color: var(--deep-pink);
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   font-size: 0.8rem;
   font-weight: 600;
 }
@@ -226,7 +216,7 @@
   background: transparent;
   border: 1px solid var(--pink);
   color: var(--deep-pink);
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   font-size: 0.8rem;
   font-weight: 600;
   cursor: pointer;
@@ -276,10 +266,10 @@
   position: absolute;
   top: 12px;
   left: 12px;
-  background: linear-gradient(135deg, var(--pink), var(--deep-pink));
+  background: var(--gradient-primary);
   color: white;
   padding: 5px 14px;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   font-size: 0.68rem;
   font-weight: 700;
   letter-spacing: 0.08em;
@@ -295,7 +285,7 @@
 .rating-count { font-size: 0.75rem; color: var(--light); }
 
 .card-title {
-  font-family: 'Dancing Script', cursive;
+  font-family: var(--font-script);
   font-size: 1.45rem;
   color: var(--text);
   margin-bottom: 10px;
@@ -362,7 +352,7 @@
   margin-bottom: 20px;
 }
 
-.no-results h3 { font-family: 'Dancing Script', cursive; font-size: 2rem; color: var(--text); margin-bottom: 12px; }
+.no-results h3 { font-family: var(--font-script); font-size: 2rem; color: var(--text); margin-bottom: 12px; }
 .no-results p  { font-size: 1rem; margin-bottom: 24px; }
 
 @media (max-width: 1024px) {
@@ -385,7 +375,7 @@
     background: white;
     border: 2px solid var(--blush);
     border-radius: 12px;
-    font-family: 'Nunito', sans-serif;
+    font-family: var(--font-main);
     font-size: 0.9rem;
     font-weight: 700;
     color: var(--text);

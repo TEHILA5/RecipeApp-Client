@@ -16,7 +16,7 @@
 }
 
 .rm-title {
-  font-family: 'Dancing Script', cursive;
+  font-family: var(--font-script);
   font-size: 1.5rem;
   color: #d4547a;
 }
@@ -34,8 +34,8 @@
 .rm-search {
   padding: 9px 36px 9px 14px;
   border: 2px solid #fce7f3;
-  border-radius: 999px;
-  font-family: 'Nunito', sans-serif;
+  border-radius: var(--radius-full);
+  font-family: var(--font-main);
   font-size: 0.85rem;
   outline: none;
   width: 220px;
@@ -51,11 +51,11 @@
 
 .rm-add-btn {
   padding: 9px 20px;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   text-decoration: none;
-  background: linear-gradient(135deg, #e8799a, #d4547a);
+  background: var(--gradient-primary);
   color: white;
-  font-family: 'Nunito', sans-serif;
+  font-family: var(--font-main);
   font-weight: 700;
   font-size: 0.85rem;
   white-space: nowrap;
@@ -94,7 +94,7 @@
 }
 
 .rm-thead-row {
-  background: #fdf2f8;
+  background: var(--soft-pink);
 }
 
 .rm-th {
@@ -160,7 +160,7 @@
 
 .rm-category-badge {
   padding: 4px 12px;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   font-size: 0.78rem;
   font-weight: 700;
   background: #fce7f3;
@@ -191,12 +191,12 @@
 
 .rm-edit-btn {
   padding: 6px 16px;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   border: 2px solid #fce7f3;
   background: white;
   color: #d4547a;
   text-decoration: none;
-  font-family: 'Nunito', sans-serif;
+  font-family: var(--font-main);
   font-weight: 700;
   font-size: 0.78rem;
   display: flex;
@@ -206,11 +206,11 @@
 
 .rm-delete-btn {
   padding: 6px 16px;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   border: none;
   background: #fee2e2;
   color: #991b1b;
-  font-family: 'Nunito', sans-serif;
+  font-family: var(--font-main);
   font-weight: 700;
   font-size: 0.78rem;
   cursor: pointer;

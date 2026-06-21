@@ -67,7 +67,7 @@
 }
 
 .nav-links a {
-  font-family: 'Nunito', sans-serif;
+  font-family: var(--font-main);
   font-size: 0.80rem;
   font-weight: 700;
   letter-spacing: 0.08em;
@@ -104,10 +104,10 @@
 }
 
 .admin-link {
-  background: linear-gradient(135deg, #e8799a, #d4547a) !important;
+  background: var(--gradient-primary) !important;
   color: white !important;
   padding: 6px 16px;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   font-weight: 700;
   font-size: 0.85rem;
 }
@@ -140,12 +140,12 @@
 .mobile-logout-btn {
   background: none;
   border: 2px solid #fce7f3;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   padding: 8px 16px;
   color: #d4547a;
   cursor: pointer;
   font-weight: 700;
-  font-family: 'Nunito', sans-serif;
+  font-family: var(--font-main);
 }
 .mobile-auth-btns { display: flex; gap: 8px; }
 
@@ -157,7 +157,7 @@
   gap: 8px;
   padding: 8px 16px;
   background: var(--blush);
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   text-decoration: none;
   color: var(--text);
   font-weight: 600;
@@ -192,18 +192,18 @@
   font-size: 0.85rem;
   text-decoration: none;
   padding: 8px 20px;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   transition: all 0.2s;
 }
 .btn-login:hover { background: var(--blush); }
 
 .btn-signup,
 .btn-logout {
-  background: linear-gradient(135deg, var(--pink), var(--deep-pink));
+  background: var(--gradient-primary);
   color: white;
   padding: 10px 24px;
-  border-radius: 999px;
-  font-family: 'Nunito', sans-serif;
+  border-radius: var(--radius-full);
+  font-family: var(--font-main);
   font-size: 0.85rem;
   font-weight: 700;
   border: none;

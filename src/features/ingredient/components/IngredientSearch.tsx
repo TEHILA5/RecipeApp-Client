@@ -18,7 +18,7 @@ export default function IngredientSearch({ value, onChange, total, filtered }: I
           placeholder="Search ingredients..."
         />
         <span>
-          <img src="/src/assets/icons/search-icon.png" alt="Search" style={{ width: '20px', height: '20px', objectFit: 'contain' }} />
+          <img src="/src/assets/icons/search-icon.png" alt="Search" className="icon-sm" />
         </span>
       </div>
 

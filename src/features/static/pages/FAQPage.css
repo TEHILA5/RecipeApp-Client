@@ -5,14 +5,14 @@
 }
 
 .faq-item {
-  background: #fdf2f8;
+  background: var(--soft-pink);
   border-radius: 16px;
   padding: 20px 24px;
   border-left: 4px solid #d4547a;
 }
 
 .faq-question {
-  font-family: 'Nunito', sans-serif;
+  font-family: var(--font-main);
   font-weight: 800;
   color: #d4547a;
   margin-bottom: 8px;

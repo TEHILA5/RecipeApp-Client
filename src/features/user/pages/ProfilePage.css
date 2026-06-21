@@ -1,14 +1,5 @@
-.profile-page {
-  min-height: 100vh;
-  background: #fdf2f8;
-  padding-top: var(--nav-height, 70px);
-  font-family: 'Nunito', sans-serif;
-}
-
 .profile-page-header {
-  background: linear-gradient(135deg, rgba(232, 121, 154, 0.08), rgba(232, 196, 154, 0.08));
   padding: 48px 24px 0;
-  border-bottom: 2px solid rgba(232, 121, 154, 0.1);
 }
 
 .profile-page-header-inner {
@@ -27,7 +18,7 @@
   border-radius: 12px 12px 0 0;
   border: none;
   cursor: pointer;
-  font-family: 'Nunito', sans-serif;
+  font-family: var(--font-main);
   font-weight: 700;
   font-size: 0.88rem;
   background: transparent;
@@ -70,7 +61,7 @@
 
 .stats-card h2,
 .danger-card h2 {
-  font-family: 'Dancing Script', cursive;
+  font-family: var(--font-script);
   font-size: 1.8rem;
   color: #d4547a;
   margin-bottom: 24px;
@@ -95,7 +86,7 @@
 .stat-item {
   padding: 24px 20px;
   border-radius: 16px;
-  background: linear-gradient(135deg, #fdf2f8, #fff8f2);
+  background: linear-gradient(135deg, var(--soft-pink), #fff8f2);
   border: 1px solid #fce7f3;
   text-align: center;
 }
@@ -112,7 +103,7 @@
 }
 
 .stat-value {
-  font-family: 'Dancing Script', cursive;
+  font-family: var(--font-script);
   font-size: 1.6rem;
   font-weight: 700;
   color: #d4547a;
@@ -158,22 +149,22 @@
 
 .signout-btn {
   padding: 10px 24px;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   border: 2px solid #e5e7eb;
   background: white;
   color: #6b7280;
-  font-family: 'Nunito', sans-serif;
+  font-family: var(--font-main);
   font-weight: 700;
   cursor: pointer;
 }
 
 .delete-btn {
   padding: 10px 24px;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   border: none;
   background: #fee2e2;
   color: #991b1b;
-  font-family: 'Nunito', sans-serif;
+  font-family: var(--font-main);
   font-weight: 700;
   cursor: pointer;
   display: flex;
@@ -204,22 +195,22 @@
 
 .modal-cancel {
   padding: 12px 28px;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   border: 2px solid #e5e7eb;
   background: white;
   color: #6b7280;
-  font-family: 'Nunito', sans-serif;
+  font-family: var(--font-main);
   font-weight: 700;
   cursor: pointer;
 }
 
 .modal-confirm {
   padding: 12px 28px;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   border: none;
   background: #ef4444;
   color: white;
-  font-family: 'Nunito', sans-serif;
+  font-family: var(--font-main);
   font-weight: 700;
   cursor: pointer;
   transition: opacity 0.2s;

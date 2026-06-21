@@ -1,14 +1,5 @@
-.my-recipes-page {
-  min-height: 100vh;
-  background: #fdf2f8;
-  padding-top: var(--nav-height, 70px);
-  font-family: 'Nunito', sans-serif;
-}
-
 .my-recipes-header {
-  background: linear-gradient(135deg, rgba(232, 121, 154, 0.08), rgba(232, 196, 154, 0.08));
   padding: 48px 64px 0;
-  border-bottom: 2px solid rgba(232, 121, 154, 0.1);
 }
 
 .my-recipes-header-inner {
@@ -41,7 +32,7 @@
 }
 
 .my-recipes-header h1 {
-  font-family: 'Dancing Script', cursive;
+  font-family: var(--font-script);
   font-size: clamp(2rem, 3.5vw, 3rem);
   color: #1f2937;
   margin-bottom: 6px;

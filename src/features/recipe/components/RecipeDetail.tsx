@@ -141,8 +141,8 @@ export default function RecipeDetail({ recipe, onCommentAdded }: RecipeDetailPro
             ? <img src={recipe.arrImage} alt={recipe.name} className="rd-img" />
             : <div className="rd-img-emoji">
                 {categoryImg
-                  ? <img src={categoryImg} alt={recipe.category} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
-                  : <img src={recipeBookIcon} alt="recipe" style={{ width: '80px', height: '80px', objectFit: 'contain' }} />
+                  ? <img src={categoryImg} alt={recipe.category} className="img-cover" />
+                  : <img src={recipeBookIcon} alt="recipe" className="icon-xl" />
                 }
               </div>
           }
@@ -151,10 +151,10 @@ export default function RecipeDetail({ recipe, onCommentAdded }: RecipeDetailPro
           {isAdmin && (
             <div className="rd-admin-btns">
               <button onClick={() => navigate(`/recipes/${recipe.id}/edit`)} className="rd-btn-edit">
-                <img src={editIcon} alt="Edit" style={{ width: '24px', height: '24px', objectFit: 'contain', marginRight: '0px', verticalAlign: 'middle' }} />
+                <img src={editIcon} alt="Edit" className="icon-xs" />
               </button>
               <button onClick={() => setShowDeleteConfirm(true)} className="rd-btn-delete-hero">
-                <img src={deleteIcon} alt="Delete" style={{ width: '24px', height: '24px', objectFit: 'contain', marginRight: '0px', verticalAlign: 'middle' }}/>
+                <img src={deleteIcon} alt="Delete" className="icon-xs" />
               </button>
             </div>
           )}
@@ -167,7 +167,7 @@ export default function RecipeDetail({ recipe, onCommentAdded }: RecipeDetailPro
             <img
               src={isBookmarked ? bookmarkOn : bookmarkOff}
               alt={isBookmarked ? 'Saved' : 'Save'}
-              style={{ width: '30px', height: '30px', objectFit: 'contain', filter: isBookmarked ? 'brightness(0) invert(1)' : 'none' }}
+              className={`rd-bookmark-icon ${isBookmarked ? 'rd-bookmark-icon--active' : ''}`}
             />
           </button>
 
@@ -180,20 +180,20 @@ export default function RecipeDetail({ recipe, onCommentAdded }: RecipeDetailPro
 
         <div className="rd-meta-bar">
           <div className="rd-meta-item">
-            <img src={timeIcon} alt="Prep time" style={{ width: '20px', height: '20px', objectFit: 'contain' }} />
+            <img src={timeIcon} alt="Prep time" />
             Prep: <strong>{recipe.prepTime}m</strong>
           </div>
           <div className="rd-meta-item">
-            <img src={timeIcon} alt="Total time" style={{ width: '20px', height: '20px', objectFit: 'contain' }} />
+            <img src={timeIcon} alt="Total time" />
             Total: <strong>{recipe.totalTime}m</strong>
           </div>
           <div className="rd-meta-item">
-            <img src={servingsIcon} alt="Servings" style={{ width: '20px', height: '20px', objectFit: 'contain' }} />
+            <img src={servingsIcon} alt="Servings" />
             Servings: <strong>{recipe.servings}</strong>
           </div>
           <div className="rd-meta-item">
-            <span className="rd-level-badge" style={{ background: LEVEL_COLORS[recipe.level] + '22', color: LEVEL_COLORS[recipe.level], display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <img src={levelIcon} alt={levelLabel} style={{ width: '20px', height: '20px', objectFit: 'contain' }} />
+            <span className="rd-level-badge" style={{ background: LEVEL_COLORS[recipe.level] + '22', color: LEVEL_COLORS[recipe.level] }}>
+              <img src={levelIcon} alt={levelLabel} />
               {levelLabel}
             </span>
           </div>
@@ -264,9 +264,8 @@ export default function RecipeDetail({ recipe, onCommentAdded }: RecipeDetailPro
                     onClick={handleSubmitComment}
                     disabled={submittingComment}
                     className={`rd-submit-btn ${submittingComment ? 'rd-submit-btn--busy' : ''}`}
-                    style={{ display: 'flex', alignItems: 'center', gap: '6px' }}
                   >
-                    <img src={saveIcon} alt="Submit" style={{ width: '20px', height: '20px', objectFit: 'contain' }} />
+                    <img src={saveIcon} alt="Submit" />
                     {submittingComment ? 'Submitting...' : 'Submit Review'}
                   </button>
                 </div>
@@ -288,7 +287,7 @@ export default function RecipeDetail({ recipe, onCommentAdded }: RecipeDetailPro
                 </div>
               ) : comments.length === 0 ? (
                 <div className="rd-no-comments">
-                  <img src={recipeBookIcon} alt="No comments" className="rd-no-comments-icon" style={{ width: '48px', height: '48px', objectFit: 'contain' }} />
+                  <img src={recipeBookIcon} alt="No comments" className="rd-no-comments-icon icon-empty" />
                   <p>No comments yet. Be the first to review!</p>
                 </div>
               ) : (

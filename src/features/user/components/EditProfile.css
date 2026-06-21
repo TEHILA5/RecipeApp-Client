@@ -9,7 +9,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  font-family: 'Dancing Script', cursive;
+  font-family: var(--font-script);
   font-size: 1.8rem;
   color: #d4547a;
   margin-bottom: 24px;
@@ -48,11 +48,11 @@
   align-items: center;
   gap: 8px;
   padding: 14px 32px;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   border: none;
-  background: linear-gradient(135deg, #e8799a, #d4547a);
+  background: var(--gradient-primary);
   color: white;
-  font-family: 'Nunito', sans-serif;
+  font-family: var(--font-main);
   font-weight: 700;
   font-size: 1rem;
   cursor: pointer;

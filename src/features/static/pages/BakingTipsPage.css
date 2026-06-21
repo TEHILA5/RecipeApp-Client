@@ -20,7 +20,7 @@
 }
 
 .tip-title {
-  font-family: 'Nunito', sans-serif;
+  font-family: var(--font-main);
   font-weight: 800;
   color: #1f2937;
   margin-bottom: 8px;

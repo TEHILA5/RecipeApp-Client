@@ -8,10 +8,7 @@
 .main-content {
   flex: 1;
   padding-top: var(--nav-height);
-  background:
-    radial-gradient(ellipse at 20% 60%, rgba(232, 196, 154, 0.18) 0%, transparent 55%),
-    radial-gradient(ellipse at 80% 30%, rgba(232, 121, 154, 0.15) 0%, transparent 55%),
-    var(--white);
+  background: var(--gradient-radial-bg), var(--white);
   min-height: calc(100vh - var(--nav-height));
 }
 
@@ -34,7 +31,7 @@
 }
 
 .container {
-  max-width: 1200px;
+  max-width: var(--container-max);
   margin: 0 auto;
   padding: 0 2rem;
   width: 100%;
@@ -45,15 +42,7 @@
 }
 
 @media (max-width: 768px) {
-  :root {
-    --nav-height: 64px;
-  }
-
   .container {
     padding: 0 1rem;
-  }
-
-  .main-content {
-    min-height: calc(100vh - 64px);
   }
 }

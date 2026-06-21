@@ -4,7 +4,7 @@ import './AboutPage.css';
 
 export default function AboutPage() {
   return (
-    <StaticPage icon={pageIcon} title="About Us" subtitle="The story behind Sweet&Treat">
+    <StaticPage className="about-page" icon={pageIcon} title="About Us" subtitle="The story behind Sweet&Treat">
       <Section title="Who We Are">
         Sweet&Treat is a passion project born from a love of baking and sharing.
         We believe every dessert tells a story — and we're here to help you tell yours.

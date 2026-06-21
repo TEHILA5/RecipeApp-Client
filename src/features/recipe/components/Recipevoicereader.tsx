@@ -528,7 +528,7 @@ export default function RecipeVoiceReader({ recipe }: RecipeVoiceReaderProps) {
     <div className="rvr-card">
       <div className="rvr-header">
         <span className="rvr-mic-icon">
-          <img src='/src/assets/icons/listening.png' alt="Microphone" style={{ width: '40px', height: '40px', objectFit: 'contain' }} />
+          <img src='/src/assets/icons/listening.png' alt="Microphone" className="icon-md" />
         </span>
         <div>
           <div className="rvr-title">Voice Recipe Reader</div>
@@ -555,7 +555,7 @@ export default function RecipeVoiceReader({ recipe }: RecipeVoiceReaderProps) {
 
       {status === STATUS.DONE && (
         <div className="rvr-done-msg">
-          <img src='/src/assets/icons/meta-servings.png' alt="Checkmark" style={{ width: '20px', height: '20px', objectFit: 'contain' }} />
+          <img src='/src/assets/icons/meta-servings.png' alt="Checkmark" className="icon-sm" />
           Recipe complete — enjoy your meal!
         </div>
       )}
@@ -627,11 +627,11 @@ function statusLabel(s: Status): string {
 
 function statusIcon(s: Status): React.ReactNode {
   const map: Record<Status, React.ReactNode> = {
-    idle:      <img src='/src/assets/icons/circle.png'    alt="Idle"      style={{ width: '30px', height: '30px', objectFit: 'contain' }} />,
-    speaking:  <img src='/src/assets/icons/speaking.png'  alt="Speaking"  style={{ width: '30px', height: '30px', objectFit: 'contain' }} />,
-    listening: <img src='/src/assets/icons/listening.png' alt="Listening" style={{ width: '30px', height: '30px', objectFit: 'contain' }} />,
-    paused:    <img src='/src/assets/icons/paused.png'    alt="Paused"    style={{ width: '30px', height: '30px', objectFit: 'contain' }} />,
-    done:      <img src='/src/assets/icons/done.png'      alt="Done"      style={{ width: '30px', height: '30px', objectFit: 'contain' }} />,
+    idle:      <img src='/src/assets/icons/circle.png'    alt="Idle"      className="icon-status" />,
+    speaking:  <img src='/src/assets/icons/speaking.png'  alt="Speaking"  className="icon-status" />,
+    listening: <img src='/src/assets/icons/listening.png' alt="Listening" className="icon-status" />,
+    paused:    <img src='/src/assets/icons/paused.png'    alt="Paused"    className="icon-status" />,
+    done:      <img src='/src/assets/icons/done.png'      alt="Done"      className="icon-status" />,
   };
   return map[s] ?? "";
 }

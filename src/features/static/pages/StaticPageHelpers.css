@@ -1,14 +1,5 @@
-.static-page {
-  min-height: 100vh;
-  background: #fdf2f8;
-  padding-top: var(--nav-height, 70px);
-  font-family: 'Nunito', sans-serif;
-}
-
 .static-page__header {
-  background: linear-gradient(135deg, rgba(232, 121, 154, 0.08), rgba(232, 196, 154, 0.08));
   padding: 56px 24px 44px;
-  border-bottom: 2px solid rgba(232, 121, 154, 0.1);
   text-align: center;
 }
 
@@ -25,7 +16,7 @@
 }
 
 .static-page__title {
-  font-family: 'Dancing Script', cursive;
+  font-family: var(--font-script);
   font-size: clamp(2.2rem, 4vw, 3rem);
   color: #1f2937;
   margin-bottom: 8px;
@@ -49,7 +40,7 @@
 }
 
 .static-section__title {
-  font-family: 'Dancing Script', cursive;
+  font-family: var(--font-script);
   font-size: 1.6rem;
   color: #d4547a;
   margin-bottom: 12px;

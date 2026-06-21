@@ -14,7 +14,7 @@
 }
 
 .ingredient-card.editing {
-  background: #fdf2f8;
+  background: var(--soft-pink);
   border: 2px solid #e8799a;
   display: block;
 }
@@ -44,11 +44,11 @@
   align-items: center;
   gap: 4px;
   padding: 6px 16px;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   border: 2px solid #fce7f3;
   background: white;
   color: #d4547a;
-  font-family: 'Nunito', sans-serif;
+  font-family: var(--font-main);
   font-weight: 700;
   font-size: 0.78rem;
   cursor: pointer;

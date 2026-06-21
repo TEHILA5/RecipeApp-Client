@@ -1,0 +1,143 @@
+/**
+ * Shared layout, typography, button, and icon utilities.
+ * Import via global.css — do not import from individual components.
+ */
+
+/* ── Page shell (full-height pages below the nav) ── */
+.page-shell,
+.search-page,
+.profile-page,
+.my-recipes-page,
+.static-page,
+.newsletter-page,
+.as-page,
+.recipe-list-page,
+.recipe-edit-page,
+.rdp-page,
+.recipe-create-page,
+.ingredient-page,
+.conversions-page,
+.cp-page,
+.mu-page,
+.manage-recipes-page,
+.mi-page,
+.ad-page {
+  min-height: 100vh;
+  padding-top: var(--nav-height);
+  background: var(--soft-pink);
+  font-family: var(--font-main);
+}
+
+/* ── Page header gradient band ── */
+.page-header-band,
+.search-header,
+.profile-page-header,
+.my-recipes-header,
+.static-page__header,
+.page-header,
+.recipe-edit-header,
+.recipe-create-header,
+.ingredient-header,
+.as-hero {
+  background: var(--gradient-header-band);
+  border-bottom: 2px solid var(--header-band-border);
+}
+
+/* ── Script headings ── */
+.heading-script {
+  font-family: var(--font-script);
+  color: var(--text-heading);
+  line-height: 1.1;
+}
+
+.heading-script span,
+.heading-script .accent {
+  color: var(--deep-pink);
+}
+
+/* ── Gradient button base ── */
+.btn-gradient {
+  background: var(--gradient-primary);
+  color: var(--white);
+  border: none;
+  border-radius: var(--radius-full);
+  font-family: var(--font-main);
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: var(--shadow-btn);
+  transition: var(--transition);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  text-decoration: none;
+}
+
+.btn-gradient:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-btn-hover);
+}
+
+/* ── Icon sizes ── */
+.icon-sm {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+}
+
+.icon-xs {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+  vertical-align: middle;
+}
+
+.icon-status {
+  width: 30px;
+  height: 30px;
+  object-fit: contain;
+}
+
+.icon-md {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+}
+
+.icon-lg {
+  width: 60px;
+  height: 60px;
+  object-fit: contain;
+}
+
+.icon-xl {
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+}
+
+.icon-empty {
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
+}
+
+.img-cover {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* ── Background utilities ── */
+.bg-soft-pink {
+  background: var(--soft-pink);
+}
+
+.bg-gradient-primary {
+  background: var(--gradient-primary);
+}
+
+.bg-radial {
+  background: var(--gradient-radial-bg), var(--white);
+}

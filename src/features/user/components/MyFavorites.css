@@ -17,7 +17,7 @@
 }
 
 .favorites-empty h3 {
-  font-family: 'Dancing Script', cursive;
+  font-family: var(--font-script);
   font-size: 1.8rem;
   color: #d4547a;
   margin-bottom: 8px;
@@ -30,11 +30,11 @@
 
 .browse-btn {
   padding: 12px 28px;
-  border-radius: 999px;
-  background: linear-gradient(135deg, #e8799a, #d4547a);
+  border-radius: var(--radius-full);
+  background: var(--gradient-primary);
   color: white;
   text-decoration: none;
-  font-family: 'Nunito', sans-serif;
+  font-family: var(--font-main);
   font-weight: 700;
 }
 
@@ -101,7 +101,7 @@
 }
 
 .favorite-body h3 {
-  font-family: 'Dancing Script', cursive;
+  font-family: var(--font-script);
   font-size: 1.3rem;
   color: #1f2937;
   margin: 8px 0 6px;
@@ -143,11 +143,11 @@
 .remove-btn {
   width: 100%;
   padding: 9px;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   border: 2px solid #fce7f3;
   background: white;
   color: #d4547a;
-  font-family: 'Nunito', sans-serif;
+  font-family: var(--font-main);
   font-weight: 700;
   font-size: 0.82rem;
   cursor: pointer;

@@ -12,7 +12,7 @@
   padding: 10px 14px;
   border-radius: 10px;
   border: 2px solid #fce7f3;
-  font-family: 'Nunito', sans-serif;
+  font-family: var(--font-main);
   font-size: 0.9rem;
   box-sizing: border-box;
   outline: none;
@@ -29,8 +29,8 @@
 
 .if-btn {
   padding: 10px 20px;
-  border-radius: 999px;
-  font-family: 'Nunito', sans-serif;
+  border-radius: var(--radius-full);
+  font-family: var(--font-main);
   font-weight: 700;
   font-size: 0.85rem;
   white-space: nowrap;
@@ -47,7 +47,7 @@
 }
 
 .if-btn--save-active {
-  background: linear-gradient(135deg, #e8799a, #d4547a);
+  background: var(--gradient-primary);
   color: white;
   cursor: pointer;
   box-shadow: 0 3px 10px rgba(212, 84, 122, 0.3);

@@ -1,10 +1,10 @@
 .reply-page {
-  min-height: 100vh;
-  background: #fdf2f8;
-  padding-top: 70px;
   display: flex;
   justify-content: center;
-  font-family: 'Nunito', sans-serif;
+  min-height: 100vh;
+  background: var(--soft-pink);
+  padding-top: var(--nav-height);
+  font-family: var(--font-main);
 }
 
 .reply-card {
@@ -20,7 +20,7 @@
 }
 
 .title {
-  font-family: 'Dancing Script', cursive;
+  font-family: var(--font-script);
   color: #d4547a;
   margin-bottom: 10px;
   display: flex;
@@ -41,7 +41,7 @@
   padding: 11px 14px;
   border-radius: 12px;
   border: 2px solid #fce7f3;
-  font-family: 'Nunito', sans-serif;
+  font-family: var(--font-main);
   box-sizing: border-box;
 }
 
@@ -54,11 +54,11 @@
   margin-top: 15px;
   width: 100%;
   padding: 14px;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   border: none;
   background: linear-gradient(135deg, #d4547a, #e8799a);
   color: white;
-  font-family: 'Nunito', sans-serif;
+  font-family: var(--font-main);
   font-weight: 700;
   cursor: pointer;
 }
@@ -67,11 +67,11 @@
   margin-top: 10px;
   width: 100%;
   padding: 12px;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   border: 2px solid #fce7f3;
   background: white;
   color: #d4547a;
-  font-family: 'Nunito', sans-serif;
+  font-family: var(--font-main);
   font-weight: 700;
   cursor: pointer;
 }

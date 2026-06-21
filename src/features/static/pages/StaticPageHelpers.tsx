@@ -1,14 +1,15 @@
 import React from 'react';
 import './StaticPageHelpers.css';
 
-export function StaticPage({ icon, title, subtitle, children }: {
+export function StaticPage({ icon, title, subtitle, children, className }: {
   icon: string;
   title: string;
   subtitle: string;
   children: React.ReactNode;
+  className?: string;
 }) {
   return (
-    <div className="static-page">
+    <div className={['static-page', className].filter(Boolean).join(' ')}>
       <div className="static-page__header">
         <div className="static-page__icon-wrap">
           <img src={icon} alt={title} className="static-page__icon" />

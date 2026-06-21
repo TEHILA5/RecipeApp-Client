@@ -10,7 +10,7 @@
 }
 
 .sc-value {
-  font-family: 'Dancing Script', cursive;
+  font-family: var(--font-script);
   font-size: 2rem;
   font-weight: 700;
 }

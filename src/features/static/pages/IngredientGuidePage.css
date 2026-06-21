@@ -23,7 +23,7 @@
 }
 
 .ingredient-card__name {
-  font-family: 'Nunito', sans-serif;
+  font-family: var(--font-main);
   font-weight: 800;
   color: #d4547a;
   margin: 0 0 4px;

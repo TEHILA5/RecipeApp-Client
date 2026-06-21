@@ -4,7 +4,7 @@
   align-items: center;
   justify-content: center;
   padding: 40px 20px;
-  background: #fdf2f8;
+  background: var(--soft-pink);
 }
 
 .login-container {
@@ -36,7 +36,7 @@
 .visual-content { max-width: 340px; }
 
 .visual-title {
-  font-family: 'Dancing Script', cursive;
+  font-family: var(--font-script);
   font-size: 3rem;
   margin-bottom: 20px;
   line-height: 1.2;
@@ -90,7 +90,7 @@
 }
 
 .form-logo .logo-text {
-  font-family: 'Dancing Script', cursive;
+  font-family: var(--font-script);
   font-size: 2rem;
   color: #d4547a;
 }

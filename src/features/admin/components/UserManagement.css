@@ -16,7 +16,7 @@
 }
 
 .um-title {
-  font-family: 'Dancing Script', cursive;
+  font-family: var(--font-script);
   font-size: 1.5rem;
   color: #d4547a;
 }
@@ -28,8 +28,8 @@
 .um-search {
   padding: 9px 36px 9px 14px;
   border: 2px solid #fce7f3;
-  border-radius: 999px;
-  font-family: 'Nunito', sans-serif;
+  border-radius: var(--radius-full);
+  font-family: var(--font-main);
   font-size: 0.85rem;
   outline: none;
   width: 240px;
@@ -57,7 +57,7 @@
 }
 
 .um-thead-row {
-  background: #fdf2f8;
+  background: var(--soft-pink);
 }
 
 .um-th {
@@ -93,7 +93,7 @@
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #e8799a, #d4547a);
+  background: var(--gradient-primary);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -128,7 +128,7 @@
   padding: 6px 10px;
   border: 2px solid #fce7f3;
   border-radius: 8px;
-  font-family: 'Nunito', sans-serif;
+  font-family: var(--font-main);
   font-size: 0.88rem;
   outline: none;
 }
@@ -143,8 +143,8 @@
 
 .um-btn {
   padding: 6px 16px;
-  border-radius: 999px;
-  font-family: 'Nunito', sans-serif;
+  border-radius: var(--radius-full);
+  font-family: var(--font-main);
   font-weight: 700;
   font-size: 0.78rem;
   cursor: pointer;

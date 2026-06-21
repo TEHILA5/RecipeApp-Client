@@ -16,7 +16,7 @@
   width: 100%;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
   animation: fadeUp 0.2s ease;
-  font-family: 'Nunito', sans-serif;
+  font-family: var(--font-main);
 }
 
 @keyframes fadeUp {
@@ -32,7 +32,7 @@
 }
 
 .modal-header h3 {
-  font-family: 'Dancing Script', cursive;
+  font-family: var(--font-script);
   font-size: 1.8rem;
   color: #1f2937;
   margin: 0;

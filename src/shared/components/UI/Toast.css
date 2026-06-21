@@ -15,7 +15,7 @@
   padding: 12px 20px;
   border-radius: 14px;
   border: 1px solid;
-  font-family: 'Nunito', sans-serif;
+  font-family: var(--font-main);
   font-weight: 600;
   font-size: 0.9rem;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);

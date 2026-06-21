@@ -1,7 +1,7 @@
 .il-empty {
   color: #9ca3af;
   text-align: center;
-  font-family: 'Nunito', sans-serif;
+  font-family: var(--font-main);
 }
 
 .il-list {
@@ -16,9 +16,9 @@
   justify-content: space-between;
   padding: 14px 20px;
   border-radius: 14px;
-  background: #fdf2f8;
+  background: var(--soft-pink);
   border: 1px solid #fce7f3;
-  font-family: 'Nunito', sans-serif;
+  font-family: var(--font-main);
 }
 
 .il-left {
@@ -47,6 +47,6 @@
   font-size: 0.7rem;
   font-weight: 700;
   padding: 3px 10px;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   letter-spacing: 0.05em;
 }

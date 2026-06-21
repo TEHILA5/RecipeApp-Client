@@ -31,14 +31,14 @@
   width: 260px;
   height: 6px;
   background: rgba(255, 255, 255, 0.12);
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   overflow: hidden;
 }
 
 .loading-bar {
   height: 100%;
   background: linear-gradient(90deg, #e8799a, #e8c49a);
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   animation: barFill 1.8s ease forwards;
 }
 

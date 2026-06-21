@@ -1,5 +1,5 @@
 .recipe-filters {
-  font-family: 'Nunito', sans-serif;
+  font-family: var(--font-main);
   margin-bottom: 20px;
 }
 
@@ -8,11 +8,11 @@
   align-items: center;
   gap: 6px;
   padding: 10px 20px;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   border: 2px solid #fce7f3;
   background: white;
   color: #d4547a;
-  font-family: 'Nunito', sans-serif;
+  font-family: var(--font-main);
   font-weight: 700;
   font-size: 0.9rem;
   cursor: pointer;
@@ -20,7 +20,7 @@
 }
 
 .filters-toggle:hover {
-  background: #fdf2f8;
+  background: var(--soft-pink);
 }
 
 .filters-toggle-icon {
@@ -94,11 +94,11 @@
   display: inline-flex;
   align-items: center;
   padding: 6px 16px;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   border: 2px solid #fce7f3;
   background: white;
   color: #6b7280;
-  font-family: 'Nunito', sans-serif;
+  font-family: var(--font-main);
   font-weight: 600;
   font-size: 0.82rem;
   cursor: pointer;
@@ -113,7 +113,7 @@
 
 .filter-chip.active {
   border-color: #d4547a;
-  background: #fdf2f8;
+  background: var(--soft-pink);
   color: #d4547a;
 }
 
@@ -150,11 +150,11 @@
 .clear-filters-btn {
   align-self: flex-start;
   padding: 8px 20px;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   border: 2px solid #fce7f3;
   background: white;
   color: #9ca3af;
-  font-family: 'Nunito', sans-serif;
+  font-family: var(--font-main);
   font-weight: 700;
   font-size: 0.82rem;
   cursor: pointer;

@@ -1,14 +1,5 @@
-.search-page {
-  min-height: 100vh;
-  background: #fdf2f8;
-  padding-top: var(--nav-height, 70px);
-  font-family: 'Nunito', sans-serif;
-}
-
 .search-header {
-  background: linear-gradient(135deg, rgba(232, 121, 154, 0.08), rgba(232, 196, 154, 0.08));
   padding: 48px 24px 36px;
-  border-bottom: 2px solid rgba(232, 121, 154, 0.1);
   text-align: center;
 }
 
@@ -27,7 +18,7 @@
 }
 
 .search-header h1 {
-  font-family: 'Dancing Script', cursive;
+  font-family: var(--font-script);
   font-size: clamp(2.2rem, 4vw, 3rem);
   color: #1f2937;
   margin-bottom: 10px;
@@ -55,7 +46,7 @@
   display: flex;
   gap: 4px;
   background: #f3e8ef;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   padding: 4px;
   margin-bottom: 28px;
 }
@@ -63,9 +54,9 @@
 .search-tab {
   flex: 1;
   padding: 10px 8px;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   border: none;
-  font-family: 'Nunito', sans-serif;
+  font-family: var(--font-main);
   font-weight: 700;
   font-size: 0.82rem;
   cursor: pointer;

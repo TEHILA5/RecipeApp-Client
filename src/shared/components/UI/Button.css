@@ -1,9 +1,9 @@
 .btn {
-  border-radius: 999px;
-  font-family: 'Nunito', sans-serif;
+  border-radius: var(--radius-full);
+  font-family: var(--font-main);
   font-weight: 700;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: var(--transition);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -12,26 +12,26 @@
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, #e8799a, #d4547a);
-  color: white;
-  box-shadow: 0 4px 14px rgba(212, 84, 122, 0.3);
+  background: var(--gradient-primary);
+  color: var(--white);
+  box-shadow: var(--shadow-btn-sm);
 }
 
 .btn-outline {
-  background: white;
-  color: #d4547a;
-  border: 2px solid #fce7f3;
+  background: var(--white);
+  color: var(--deep-pink);
+  border: 2px solid var(--blush);
 }
 
 .btn-danger {
-  background: #fee2e2;
-  color: #991b1b;
+  background: var(--danger-bg);
+  color: var(--danger-text);
 }
 
 .btn-ghost {
   background: transparent;
-  color: #6b7280;
-  border: 2px solid #e5e7eb;
+  color: var(--mid);
+  border: 2px solid var(--border);
 }
 
 .btn-sm { padding: 6px 16px;   font-size: 0.78rem; }
